@@ -1,0 +1,52 @@
+[class~='ant-carousel'] {
+    [class~='slick-slider'] {
+        .slick-dots {
+            background-color: rgba(237, 237, 237, 0.7); // Svijetla pozadina
+            width: auto; // Automatska širina
+            max-width: 120px; // Maksimalna širina
+            height: 30px; // Visina pozadine
+            padding: 5px; // Padding za bolji izgled
+            border-radius: 15px; // Zaobljeni rubovi
+            display: flex; // U red
+            justify-content: center; // Centriranje horizontalno
+            align-items: center; // Centriranje vertikalno
+            position: absolute; // Apsolutna pozicija
+            left: 50%; // Poravnanje u sredinu
+            transform: translateX(-50%); // Centriranje
+            z-index: 1; // Iznad drugih elemenata
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); // Suptilna sjena
+
+            &:hover {
+                background-color: rgba(237, 237, 237, 1); // Svijetla pozadina
+                height: 40px; // Povećanje visine na hover
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); // Veća sjena na hover
+                transition: background-color 0.3s ease, height 0.3s ease, box-shadow 0.3s ease; // Glatke tranzicije
+            }
+        }
+
+
+        li {
+            margin: 0 6px; // Razmak između točaka
+            display: flex; // Flex container za centriranje
+
+            button {
+                width: 13px; // Širina točke
+                height: 13px; // Visina točke
+                border-radius: 50%; // Zaobljeni gumbi
+                background-color: rgba(80, 80, 80, 0.6); // Tamno siva polu-prozirna boja
+                transition: background-color 0.3s ease, transform 0.3s ease; // Glatka promjena boje i transformacije
+                align-self: center; // Centriranje točke unutar li
+
+                &:hover {
+                    // background-color: rgba(40, 40, 40, 1); // Tamnija siva na hover
+                    transform: scale(1.2); // Blago povećanje na hover
+                }
+            }
+        }
+
+        li.slick-active button {
+            background-color: rgb(70, 70, 70); // Tamna siva za aktivnu točku
+            // box-shadow: 0 0 6px rgb(70, 70, 70, 0.5); // Lagana sjena za aktivnu točku
+        }
+    }
+}
