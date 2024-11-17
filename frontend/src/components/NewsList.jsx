@@ -59,13 +59,13 @@ export default function NewsList() {
             <List
                 dataSource={data?.content || []}
                 renderItem={(item) => (
-                    <List.Item className="p-0 mb-4">
+                    <List.Item className="p-0 mb-4 ">
                         <Card
                             hoverable
-                            className="w-full overflow-hidden"
+                            className="w-full overflow-hidden  rounded-3xl"
                             bodyStyle={{ padding: 0 }}
                         >
-                            <div className="flex flex-col sm:flex-row">
+                            <div className="flex flex-col sm:flex-row ">
                                 {item.thumbnailPath && (
                                     <div className="sm:w-1/3">
                                         <Image

@@ -5,12 +5,15 @@ import { usePlayerSearch } from '../hooks/usePlayerSearch';
 import { Link } from 'react-router-dom';
 import PlayerListItem from './PlayerListItem';
 import { useGetCometImage } from '../hooks/useGetCometImage';
+import { useGetSeniorCompetition } from '../hooks/useGetSeniorCompetition'
 
 export default function FirstTeam() {
     const [players, setPlayers] = useState([]);
     const [searchKeyword, setSearchKeyword] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState('');
+    const { data: competition } = useGetSeniorCompetition();
+
 
     const { data: searchResults, isLoading } = usePlayerSearch(searchKeyword);
 
@@ -44,7 +47,7 @@ export default function FirstTeam() {
 
         return (
             <div className="w-36 m-2 bg-white rounded-lg shadow-lg overflow-hidden transition transform hover:scale-105">
-                <Link to={`/stats/${player.personId}`}>
+                <Link to={`/stats/${player.personId}`} state={{ competition }}>
                     <div className="relative h-36 bg-gray-200">
                         {playerImage ? (
                             <img
@@ -63,7 +66,7 @@ export default function FirstTeam() {
                     <Link to={`/stats/${player.personId}`} className="text-sm font-semibold text-gray-800">
                         {player.shortName}
                     </Link>
-                    <p className="text-xs text-gray-500">Age: {player.age}</p>
+                    <br />
                     <DeleteOutlined
                         className="text-red-500 cursor-pointer mt-2"
                         onClick={() => removePlayer(player.personId)}
@@ -95,13 +98,13 @@ export default function FirstTeam() {
     );
 
     return (
-        <div className="p-6">
+        <div className="p-6 md:w-[70%] mx-auto rounded-3xl shadow-lg bg-gray-50 md:my-36">
             <h1 className="text-2xl font-bold text-center mb-8">First Team</h1>
 
-            {renderPositionSection('Goalkeepers', 'goalkeeper')}
-            {renderPositionSection('Defenders', 'defender')}
-            {renderPositionSection('Midfielders', 'midfielder')}
-            {renderPositionSection('Attackers', 'attacker')}
+            {renderPositionSection('Vratar', 'goalkeeper')}
+            {renderPositionSection('Branič', 'defender')}
+            {renderPositionSection('Vezni', 'midfielder')}
+            {renderPositionSection('Napradač', 'attacker')}
 
             <Modal
                 title="Add Player"

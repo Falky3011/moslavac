@@ -78,7 +78,7 @@ function Standings() {
     ];
 
     return (
-        <div className="overflow-x-auto bg-gray-50 shadow-lg rounded-lg p-6 max-w-3xl mx-auto my-12">
+        <div className="overflow-x-auto bg-gray-50 p-6 max-w-3xl mx-auto my-12 rounded-3xl shadow-xl ">
             <h2 className="text-3xl font-bold text-center text-gray-900 mb-6">Tablica</h2>
             <Table
                 dataSource={data}

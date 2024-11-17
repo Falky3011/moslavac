@@ -98,7 +98,7 @@ export default function CustomHeader() {
 
     return (
         <Header className={`sticky top-0 z-50 h-auto ${isMobile ? 'bg-black' : 'bg-white border-b border-gray-300 shadow-xl'} px-0 transition-all duration-300`}>
-            <div className={`max-w-screen-xl mx-auto flex items-center h-full relative py-4 ${scrolling ? 'py-2' : 'py-4'} transition-all duration-300`}>
+            <div className={`max-w-screen-xl mx-auto flex items-center h-full relative py-4 ${scrolling ? 'py-4' : 'py-4'} transition-all duration-300`}>
                 {isMobile && (
                     <Button
                         type="text"

@@ -1,9 +1,8 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { Spin, Alert, Typography, Progress } from 'antd';
 import { UserOutlined, TrophyOutlined, ClockCircleOutlined, WarningOutlined, FieldTimeOutlined } from '@ant-design/icons';
 import useGetPlayerStats from '../hooks/useGetPlayerStats';
-import { useGetSeniorCompetition } from '../hooks/useGetSeniorCompetition';
 import { useGetPlayerDetails } from '../hooks/useGetPlayerDetails';
 import { useGetCometImage } from '../hooks/useGetCometImage';
 import { AnimatedNumber } from './AnimatedNumber';
@@ -17,11 +16,16 @@ const { Title, Text } = Typography;
 
 const PlayerStats = () => {
     const { playerId } = useParams();
+    const location = useLocation();
+    const competition = location.state?.competition;
     const { data: player } = useGetPlayerDetails(playerId);
-    const { data: competition } = useGetSeniorCompetition();
     const { data: stats, isLoading, isError } = useGetPlayerStats(playerId, competition?.id);
     const { data: playerImage } = useGetCometImage(player?.picture);
     const { data: flagImage } = useGetCometImage(player?.flag);
+
+    console.log(competition)
+
+
 
     if (isLoading) {
         return (
@@ -60,23 +64,23 @@ const PlayerStats = () => {
     const minutesPlayedPercentage = (stats.minutesPlayed / (stats.matchesPlayed * 90)) * 100;
 
     return (
-        <div className="max-w-6xl mx-auto my-12 p-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl shadow-xl">
+        <div className="max-w-6xl mx-auto my-24 p-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl shadow-xl">
             <div className="flex flex-col md:flex-row items-center md:items-start mb-12">
                 <div className="w-48 h-48 rounded-full overflow-hidden mb-6 md:mb-0 md:mr-12 border-4 border-white shadow-lg">
                     {playerImage && (
-                        <img src={playerImage} alt={player.name} className="w-full h-full object-cover" />
+                        <img src={playerImage} alt={player?.name} className="w-full h-full object-cover" />
                     )}
                 </div>
                 <div className="text-center md:text-left">
-                    <Title level={1} className="mb-2 text-4xl font-bold text-gray-800">{player.name}</Title>
+                    <Title level={1} className="mb-2 text-4xl font-bold text-gray-800">{player?.name}</Title>
                     <div className="flex items-center justify-center md:justify-start mb-4">
                         {flagImage && (
-                            <img src={flagImage} alt={player.nationality} className="w-8 h-6 mr-3 shadow-sm" />
+                            <img src={flagImage} alt={player?.nationality} className="w-8 h-6 mr-3 shadow-sm" />
                         )}
-                        <Text className="text-xl text-gray-600">{player.nationality}</Text>
+                        <Text className="text-xl text-gray-600">{player?.nationality}</Text>
                     </div>
-                    <Text className="text-lg text-gray-700 block mb-2">Godine: {player.age}</Text>
-                    <Text className="text-lg text-gray-700 block mb-4">{player.club.name}, {player.club.place}</Text>
+                    <Text className="text-lg text-gray-700 block mb-2">Godine: {player?.age}</Text>
+                    <Text className="text-lg text-gray-700 block mb-4">{player?.club.name}, {player?.club.place}</Text>
                     <div className="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-2 rounded-full">
                         {stats.competition.name}
                     </div>
@@ -90,7 +94,7 @@ const PlayerStats = () => {
                 <StatCard icon={<FaSquareFull className="text-red-500" />} title="Crveni kartoni" value={stats.redCards} />
             </div>
 
-            <div className="bg-white p-8 rounded-2xl shadow-lg">
+            {stats.minutesPlayed && <div className="bg-white p-8 rounded-2xl shadow-lg">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                         <div className="mb-6">
@@ -124,6 +128,7 @@ const PlayerStats = () => {
 
                 </div>
             </div>
+            }
         </div>
     );
 };

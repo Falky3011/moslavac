@@ -9,7 +9,7 @@ const { Title, Text } = Typography;
 export default function SeasonTicketPromo() {
     return (
         <Card
-            className="max-w-4xl mx-auto rounded-3xl shadow-xl overflow-hidden border-none my-36 transition-all duration-300 hover:shadow-2xl hover:border-gray-300"
+            className="max-w-4xl mx-auto  overflow-hidden border-none my-36 rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-gray-300"
             bodyStyle={{ padding: 0 }}
         >
             <Row className="flex flex-wrap">

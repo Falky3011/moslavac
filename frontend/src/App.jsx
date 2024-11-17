@@ -19,6 +19,7 @@ import SeasonTicketPurchase from './components/SeasonTicketPurchase';
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
   useEffect(() => {
     const isModalShown = sessionStorage.getItem('isModalShown');
 

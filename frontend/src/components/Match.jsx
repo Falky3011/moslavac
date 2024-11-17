@@ -3,7 +3,16 @@ import Countdown from './Countdown';
 import { useGetCometImage } from '../hooks/useGetCometImage';
 import { FireFilled } from '@ant-design/icons';
 
-function Match({ match, homeTeam, awayTeam, date, location, homeScore, awayScore, liveStatus }) {
+export default function Match({
+    match,
+    homeTeam,
+    awayTeam,
+    date,
+    location,
+    homeScore,
+    awayScore,
+    liveStatus
+}) {
     const { data: homeTeamImage } = useGetCometImage(homeTeam.picture);
     const { data: awayTeamImage } = useGetCometImage(awayTeam.picture);
 
@@ -19,44 +28,36 @@ function Match({ match, homeTeam, awayTeam, date, location, homeScore, awayScore
     const matchDateAndTime = formatDate(date);
 
     return (
-        <div className="bg-gray-50 border border-gray-200 rounded-3xl p-6 text-center min-w-96 w-[28rem] mx-auto shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-gray-300">
-            <h2 className="text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
-                {match === "Današnja utakmica" && <FireFilled style={{ color: '#FF5722', fontSize: '1.5rem' }} />}
+        <div className="bg-gray-50 border border-gray-200 rounded-3xl p-4 sm:p-6 text-center w-full max-w-[28rem] mx-auto shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-gray-300">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
+                {match === "Današnja utakmica" && <FireFilled style={{ color: '#FF5722', fontSize: '1.25rem' }} />}
                 {match}
             </h2>
 
-            {/* Timovi */}
+            {/* Teams */}
             <div className="flex justify-between items-center mb-4">
                 <div className="flex flex-col items-center">
-                    <img src={homeTeamImage} alt={`${homeTeam.name} logo`} className="h-16 w-16 mb-2" />
-                    <span className="font-semibold text-gray-700">{homeTeam.name}</span>
+                    <img src={homeTeamImage} alt={`${homeTeam.name} logo`} className="h-12 w-12 sm:h-16 sm:w-16 mb-2" />
+                    <span className="font-semibold text-gray-700 text-sm sm:text-base">{homeTeam.name}</span>
                 </div>
-                <div className="text-gray-400 font-bold text-lg">VS</div>
+                <div className="text-gray-400 font-bold text-base sm:text-lg">VS</div>
                 <div className="flex flex-col items-center">
-                    <img src={awayTeamImage} alt={`${awayTeam.name} logo`} className="h-16 w-16 mb-2" />
-                    <span className="font-semibold text-gray-700">{awayTeam.name}</span>
+                    <img src={awayTeamImage} alt={`${awayTeam.name} logo`} className="h-12 w-12 sm:h-16 sm:w-16 mb-2" />
+                    <span className="font-semibold text-gray-700 text-sm sm:text-base">{awayTeam.name}</span>
                 </div>
             </div>
 
-            {/* Datum, vrijeme, lokacija */}
+            {/* Date, time, location */}
             <div className="mb-4 text-gray-500">
-                <p className="font-medium">{matchDateAndTime.date}</p>
-                <p>{matchDateAndTime.time}</p>
-                <p className="text-sm">{location}</p>
+                <p className="font-medium text-sm sm:text-base">{matchDateAndTime.date}</p>
+                <p className="text-sm">{matchDateAndTime.time}</p>
+                <p className="text-xs sm:text-sm">{location}</p>
             </div>
 
-            {/* Rezultat ili odbrojavanje */}
-            <div className="bg-gray-200 py-2 px-4 rounded-md text-lg font-bold text-gray-800 border border-gray-200">
-                {liveStatus === "PLAYED" ? (
-                    <>
-                        {homeScore} - {awayScore}
-                    </>
-                ) : (
-                    <Countdown targetDate={date} />
-                )}
+            {/* Score or countdown */}
+            <div className="bg-gray-200 py-2 px-4 rounded-md text-base sm:text-lg font-bold text-gray-800 border border-gray-200">
+                <Countdown targetDate={date} homeScore={homeScore} awayScore={awayScore} />
             </div>
         </div>
     );
 }
-
-export default Match;
