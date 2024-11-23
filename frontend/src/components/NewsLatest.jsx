@@ -1,69 +1,66 @@
-import React, { useRef } from 'react';
+'use client';
+
+import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Carousel, Spin, Alert } from 'antd';
-import { Link } from 'react-router-dom';
-import '../css/customDots.scss';
+import { Card, Row, Col, Typography, Spin } from 'antd';
+import { Link } from 'react-router-dom'
 
-export default function NewsLatest() {
-    const carouselRef = useRef(null);
+const { Title, Text } = Typography;
 
+const NewsLatest = () => {
     const { data, error, isLoading } = useQuery({
         queryKey: ['latestNews'],
-        queryFn: () =>
-            fetch("http://localhost:8080/news/latest")
-                .then(res => res.json())
+        queryFn: async () => {
+            const response = await fetch('http://localhost:8080/api/news/latest');
+            if (!response.ok) {
+                throw new Error('Failed to fetch news');
+            }
+            return response.json();
+        },
     });
 
-    if (isLoading) {
-        return <Spin tip="Loading..." className="flex justify-center items-center h-64" />;
-    }
-
-    if (error) {
-        return <Alert message="Error" description={error.message} type="error" className="max-w-5xl mx-auto mt-16" />;
-    }
-
-    if (!data || data.length === 0) {
-        return <Alert message="No News Available" type="info" className="max-w-5xl mx-auto mt-16" />;
-    }
+    if (error) return <Text type="danger">Error fetching news</Text>;
 
     return (
-        <div className="relative w-full max-w-5xl mx-auto bg-gray-100 rounded-3xl shadow-xl overflow-hidden mt-16">
-            <Carousel
-                ref={carouselRef}
-                autoplay
-                dotPosition='bottom'
-                className="overflow-hidden"
-            >
-                {data.map((news) => (
-                    <div key={news.id} className="h-[36rem] transition-shadow duration-300 hover:shadow-2xl">
-                        <div className="flex flex-col md:flex-row h-full group">
-                            <div className="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden">
-                                <img
-                                    src={news.thumbnailPath}
-                                    alt={news.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                            </div>
-                            <div className="flex flex-col justify-center px-8 py-6 md:w-1/2 h-1/2 md:h-full">
-                                <h2 className="text-gray-800 text-2xl md:text-3xl font-semibold mb-2 line-clamp-2">
-                                    {news.title}
-                                </h2>
-                                <p className="text-sm text-gray-400 mb-4">
-                                    {new Date(news.date).toLocaleDateString()}
-                                </p>
-                                <p className="text-gray-600 text-sm md:text-base leading-relaxed mb-6 line-clamp-3 md:line-clamp-4">
-                                    {news.content}
-                                </p>
-                                <Link to={`/news/${news.newsID}`} className="self-start">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <Title level={2} className="text-3xl font-bold mb-8 text-center">Vijesti</Title>
+            {isLoading ? (
+                <div className="flex justify-center">
+                    <Spin size="large" />
+                </div>
+            ) : (
+                <Row gutter={[24, 24]}>
+                    {data?.map((item) => (
+                        <Col xs={24} sm={12} lg={8} key={item.newsID}>
+                            <Card
+                                hoverable
+                                className="h-full  transition-shadow duration-300 ease-in-out hover:shadow-2xl  rounded-3xl shadow-xl"
+                                cover={
+                                    <div className="relative h-48">
+                                        <img
+                                            src={item.thumbnailPath || '/placeholder.svg'}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover rounded-t-lg"
+                                        />
+                                    </div>
+                                }
+                            >
+                                <Title level={4} className="mb-2 line-clamp-2 text-gray-900 h-16">
+                                    {item.title}
+                                </Title>
+
+                                <Link to={`/news/${item.newsID}`} className="self-start mt-3">
                                     <span className="text-white bg-blue-600 px-4 py-2 rounded-md font-medium text-sm md:text-base hover:bg-blue-700 transition duration-200 ease-in-out shadow-lg hover:shadow-2xl">
                                         PROČITAJ
                                     </span>
                                 </Link>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </Carousel>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            )}
         </div>
     );
-}
+};
+
+export default NewsLatest;

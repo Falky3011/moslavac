@@ -18,14 +18,14 @@ export default function NewsManager() {
     const { data: news, isLoading } = useQuery({
         queryKey: ['news'],
         queryFn: async () => {
-            const response = await axios.get('http://localhost:8080/news');
+            const response = await axios.get('http://localhost:8080/api/news');
             return response.data.content;
         },
     });
 
     const addNewsMutation = useMutation({
         mutationFn: async (newNews) => {
-            const response = await axios.post('http://localhost:8080/news', {
+            const response = await axios.post('http://localhost:8080/api/news', {
                 title: newNews.title,
                 content: newNews.content
             });
@@ -33,7 +33,7 @@ export default function NewsManager() {
             if (newNews.thumbnail) {
                 let formData = new FormData();
                 formData.append('thumbnail', newNews.thumbnail);
-                await axios.put(`http://localhost:8080/news/thumbnail/${response.data.newsID}`, formData, {
+                await axios.put(`http://localhost:8080/api/news/thumbnail/${response.data.newsID}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
             }
@@ -41,7 +41,7 @@ export default function NewsManager() {
             if (newNews.files && newNews.files.length > 0) {
                 let formData = new FormData();
                 newNews.files.forEach(file => formData.append('files', file));
-                await axios.put(`http://localhost:8080/news/photos/${response.data.newsID}`, formData, {
+                await axios.put(`http://localhost:8080/api/news/photos/${response.data.newsID}`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                 });
             }
@@ -69,7 +69,7 @@ export default function NewsManager() {
             if (updatedNews.files && updatedNews.files.length > 0) {
                 updatedNews.files.forEach(file => formData.append('files', file));
             }
-            const response = await axios.put(`http://localhost:8080/news/${updatedNews.newsID}`, formData, {
+            const response = await axios.put(`http://localhost:8080/api/news/${updatedNews.newsID}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             return response.data;
@@ -82,7 +82,7 @@ export default function NewsManager() {
     });
 
     const deleteNewsMutation = useMutation({
-        mutationFn: (newsId) => axios.delete(`http://localhost:8080/news/${newsId}`),
+        mutationFn: (newsId) => axios.delete(`http://localhost:8080/api/news/${newsId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['news'] });
             setIsModalVisible(false);

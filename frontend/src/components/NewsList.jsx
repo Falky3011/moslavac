@@ -14,18 +14,21 @@ export default function NewsList() {
     const pageSize = 10
 
     const fetchNews = async (page) => {
-        const response = await fetch(`http://localhost:8080/news?page=${page - 1}&size=${pageSize}`)
+        const response = await fetch(`http://localhost:8080/api/news?page=${page - 1}&size=${pageSize}`)
         if (!response.ok) {
             throw new Error('Network response was not ok')
         }
         return response.json()
     }
 
+
     const { data, error, isLoading } = useQuery({
         queryKey: ['newslist', currentPage],
         queryFn: () => fetchNews(currentPage),
         keepPreviousData: true,
     })
+
+    console.log(data)
 
     const handlePageChange = (page) => {
         setCurrentPage(page)
@@ -53,19 +56,27 @@ export default function NewsList() {
 
     return (
         <div className="max-w-4xl mx-auto p-4">
+            <div className="mb-6 flex justify-end">
+                <Link
+                    to="/admin/manage-news"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+                >
+                    Uredi vijesti
+                </Link>
+            </div>
             <Title level={2} className="mb-6 text-center text-2xl font-bold text-gray-800">
-                Latest News
+                Vijesti
             </Title>
             <List
                 dataSource={data?.content || []}
                 renderItem={(item) => (
-                    <List.Item className="p-0 mb-4 ">
+                    <List.Item className="p-0 mb-4 bg-white">
                         <Card
                             hoverable
-                            className="w-full overflow-hidden  rounded-3xl"
+                            className="w-full overflow-hidden rounded-3xl"
                             bodyStyle={{ padding: 0 }}
                         >
-                            <div className="flex flex-col sm:flex-row ">
+                            <div className="flex flex-col sm:flex-row">
                                 {item.thumbnailPath && (
                                     <div className="sm:w-1/3">
                                         <Image
@@ -81,7 +92,7 @@ export default function NewsList() {
                                     </Title>
                                     <div className="flex items-center text-sm text-gray-500 mb-2">
                                         <CalendarIcon className="w-4 h-4 mr-1" />
-                                        {format(new Date(item.date), 'MMMM d, yyyy')}
+                                        {new Date(item.date).toLocaleDateString()}
                                     </div>
                                     <Paragraph ellipsis={{ rows: 2 }} className="text-sm text-gray-600">
                                         {item.content}

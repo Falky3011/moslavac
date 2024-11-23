@@ -1,11 +1,8 @@
 import React from "react";
-import { Card, Typography, Space, List, Row, Col } from 'antd';
-import { FaFutbol, FaSquareFull } from 'react-icons/fa';
+import { FaSquareFull, FaFutbol } from 'react-icons/fa';
 import { SwapOutlined } from '@ant-design/icons';
 import GoalEvent from './GoalEvent';
 import { Link } from "react-router-dom";
-
-const { Text } = Typography;
 
 const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
     const formatEventTime = (minuteFull, stoppageTime) => {
@@ -14,7 +11,7 @@ const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
 
     const renderEvent = (event) => {
         const isMoslavacEvent = (moslavacIsHome && event.homeTeam) || (!moslavacIsHome && !event.homeTeam);
-        const eventStyle = isMoslavacEvent ? { color: '#1890ff' } : { color: 'rgba(0, 0, 0, 0.45)' };
+        const eventTextColor = isMoslavacEvent ? 'text-blue-600' : 'text-gray-600';
 
         const renderPlayerName = (player) => {
             if (event.teamOfficial) {
@@ -22,7 +19,7 @@ const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
             }
 
             return isMoslavacEvent ? (
-                <Link to={`/stats/${player?.personId}`} state={{ competition }}>
+                <Link to={`/stats/${player?.personId}`} state={{ competition }} className="hover:underline">
                     {player?.name}
                 </Link>
             ) : (
@@ -33,55 +30,61 @@ const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
         const eventContent = (() => {
             switch (event.eventType.fcdName) {
                 case 'START':
-                    return event.matchPhase.fcdName === 'FIRST_HALF' ? <Text strong>POČETAK</Text> : null;
+                    return event.matchPhase.fcdName === 'FIRST_HALF' ? <span className="font-bold">POČETAK</span> : null;
                 case 'END':
-                    return event.matchPhase.fcdName === 'FIRST_HALF' ? <Text strong>POLUVRIJEME</Text> : null;
+                    return event.matchPhase.fcdName === 'FIRST_HALF' ? <span className="font-bold">POLUVRIJEME</span> : null;
                 case 'GOAL':
                 case 'PENALTY':
                     return <GoalEvent event={event} isMoslavacEvent={isMoslavacEvent} isOwnGoal={false} competition={competition} />;
                 case 'OWN_GOAL':
-                    return <GoalEvent event={event} isMoslavacEvent={isMoslavacEvent} isOwnGoal={true} />;
+                    return <GoalEvent event={event} isMoslavacEvent={isMoslavacEvent} isOwnGoal={true} competition={competition} />;
                 case 'YELLOW':
                     return (
-                        <Space>
+                        <div className="flex items-center space-x-2">
                             <FaSquareFull className="text-yellow-500" />
-                            <Text strong style={eventStyle}>
+                            <span className={`font-semibold ${eventTextColor}`}>
                                 {renderPlayerName(event.player || event.teamOfficial)} {formatEventTime(event.minuteFull, event.stoppageTime)}
-                            </Text>
-                        </Space>
+                            </span>
+                        </div>
                     );
                 case 'SECOND_YELLOW':
                     return (
-                        <Space>
-                            <div className="relative inline-block">
+                        <div className="flex items-center space-x-2">
+                            <div className="relative">
                                 <FaSquareFull className="text-yellow-500" />
                                 <FaSquareFull className="text-red-500 absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4" />
                             </div>
-                            {renderPlayerName(event.player || event.teamOfficial)} {formatEventTime(event.minuteFull, event.stoppageTime)}
-                        </Space>
+                            <span className={eventTextColor}>
+                                {renderPlayerName(event.player || event.teamOfficial)} {formatEventTime(event.minuteFull, event.stoppageTime)}
+                            </span>
+                        </div>
                     );
                 case 'RED':
                     return (
-                        <Space>
+                        <div className="flex items-center space-x-2">
                             <FaSquareFull className="text-red-500" />
-                            {renderPlayerName(event.player || event.teamOfficial)} {formatEventTime(event.minuteFull, event.stoppageTime)}
-                        </Space>
+                            <span className={eventTextColor}>
+                                {renderPlayerName(event.player || event.teamOfficial)} {formatEventTime(event.minuteFull, event.stoppageTime)}
+                            </span>
+                        </div>
                     );
                 case 'SUBSTITUTION':
                     return (
-                        <Space direction="vertical" size="small">
-                            <Space>
-                                <SwapOutlined />
-                                <Text strong style={eventStyle}>{renderPlayerName(event.player)}</Text>
-                            </Space>
-                            <Space>
-                                <Text style={eventStyle}>{renderPlayerName(event.player2)} {formatEventTime(event.minuteFull, event.stoppageTime)}</Text>
-                            </Space>
-                        </Space>
+                        <div className="flex flex-col space-y-1">
+                            <div className="flex items-center space-x-2">
+                                <SwapOutlined className="text-green-500" />
+                                <span className={`font-semibold ${eventTextColor}`}>{renderPlayerName(event.player)}</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <span className={eventTextColor}>
+                                    {renderPlayerName(event.player2)} {formatEventTime(event.minuteFull, event.stoppageTime)}
+                                </span>
+                            </div>
+                        </div>
                     );
                 case 'FULL_TIME':
                     return (
-                        <Text strong>KRAJ</Text>
+                        <span className="font-bold">KRAJ</span>
                     );
                 default:
                     return null;
@@ -90,30 +93,33 @@ const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
 
         if (!eventContent) return null;
 
-        const rowJustify = event.homeTeam === undefined ? "center" : event.homeTeam ? "start" : "end";
-        const textAlign = event.homeTeam === undefined ? "text-center" : event.homeTeam ? "text-left" : "text-right";
+        const justifyClass = event.homeTeam === undefined ? "justify-center" : event.homeTeam ? "justify-start" : "justify-end";
+        const textAlignClass = event.homeTeam === undefined ? "text-center" : event.homeTeam ? "text-left" : "text-right";
 
         return (
-            <Row justify={rowJustify} className="w-full">
-                <Col className={textAlign}>
-                    {eventContent}
-                </Col>
-            </Row>
+            <div className={`w-full flex ${justifyClass} ${textAlignClass}`}>
+                {eventContent}
+            </div>
         );
     };
 
     return (
-        <Card className="mb-4 sm:mb-8 w-full sm:max-w-[90%] md:max-w-[80%] lg:max-w-[70%] mx-auto bg-gray-50 rounded-2xl sm:rounded-3xl shadow-md sm:shadow-xl border-gray-200">
-            <List
-                dataSource={matchEvents}
-                renderItem={(event) => {
+        <div className="mb-8 w-full max-w-3xl mx-auto bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
+            <div className="divide-y divide-gray-200">
+                {matchEvents.map((event, index) => {
                     const eventContent = renderEvent(event);
                     if (!eventContent) return null;
-                    return <List.Item>{eventContent}</List.Item>;
-                }}
-            />
-        </Card>
+                    return (
+                        <div key={index} className="p-4 hover:bg-gray-50 transition-colors duration-150">
+                            {eventContent}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
     );
+
 };
 
 export default MatchEvents;
+

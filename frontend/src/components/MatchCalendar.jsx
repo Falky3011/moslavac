@@ -1,22 +1,20 @@
-import React from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import React, { useState, useEffect } from 'react';
+import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import { addHours } from 'date-fns';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import useGetAllMatches from '../hooks/useGetAllMatches';
 import '../css/calendar.css';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for routing
-
+import { useNavigate } from 'react-router-dom';
 
 const localizer = momentLocalizer(moment);
 
 // Postavite lokalizaciju na hrvatski i prvi dan u tjednu na ponedjeljak
-moment.locale('hr'); // Postavljanje hrvatskog jezika
+moment.locale('hr');
 moment.updateLocale('hr', {
-    week: { dow: 1 } // `dow: 1` postavlja ponedjeljak kao prvi dan
+    week: { dow: 1 }
 });
 
-// Definirajte poruke na hrvatskom jeziku
 const messages = {
     date: 'Datum',
     time: 'Vrijeme',
@@ -39,6 +37,22 @@ const messages = {
 function MatchCalendar() {
     const navigate = useNavigate();
     const { data, error, isLoading } = useGetAllMatches();
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [calendarView, setCalendarView] = useState(Views.MONTH);
+
+    useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    useEffect(() => {
+        if (windowWidth < 768) {
+            setCalendarView(Views.DAY);
+        } else {
+            setCalendarView(Views.MONTH);
+        }
+    }, [windowWidth]);
 
     if (isLoading) return <div>Učitavanje...</div>;
     if (error) return <div>Greška pri učitavanju utakmica</div>;
@@ -59,23 +73,25 @@ function MatchCalendar() {
     });
 
     return (
-        <div className='h-[500px] my-20 w-10/12 mx-auto'>
+        <div className='my-5 w-full px-4 md:w-10/12 md:mx-auto  '>
             <Calendar
                 localizer={localizer}
                 events={events}
                 startAccessor="start"
                 endAccessor="end"
                 tooltipAccessor="description"
-                style={{ height: 500 }}
                 views={['month', 'week', 'day']}
-                defaultView="month"
-                messages={messages} // Dodane poruke na hrvatskom
+                defaultView={calendarView}
+                view={calendarView}
+                onView={setCalendarView}
+                messages={messages}
                 selectable
                 onSelectEvent={event => navigate(`/matches/${event.id}`)}
                 min={moment().set({ hour: 7, minute: 0 }).toDate()}
+                className="rbc-calendar min-h-[700px] h-auto pb-[20px] rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl"
             />
         </div>
     );
-};
+}
 
 export default MatchCalendar;

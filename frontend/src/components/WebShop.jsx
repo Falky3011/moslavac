@@ -21,7 +21,7 @@ export default function WebShop() {
     const carouselRef = React.useRef(null);
 
     return (
-        <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12 bg-gray-50 rounded-3xl shadow-xl my-12 sm:my-24 md:my-36 transition-all duration-300 hover:shadow-2xl hover:border-gray-300">
+        <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12  rounded-3xl shadow-xl  transition-all duration-300 hover:shadow-2xl hover:border-gray-300">
             <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-gray-900">WebShop</h1>
             <div className="relative">
                 <Carousel

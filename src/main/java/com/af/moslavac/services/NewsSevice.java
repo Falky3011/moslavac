@@ -90,7 +90,7 @@ public class NewsSevice {
 
             Files.copy(image.getInputStream(), fileStorageLocation.resolve(filename), REPLACE_EXISTING);
 
-            return ServletUriComponentsBuilder.fromCurrentContextPath().path("/news/image/" + filename).toUriString();
+            return ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/news/image/" + filename).toUriString();
         } catch (Exception e) {
             throw new RuntimeException("Unable to save image");
         }
@@ -98,6 +98,6 @@ public class NewsSevice {
 
     public List<News> getLatestNews() {
         List<News> allNews = newsRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));
-        return allNews.size() <= 4 ? allNews : allNews.subList(0, 4);
+        return allNews.size() <= 6 ? allNews : allNews.subList(0, 6);
     }
 }

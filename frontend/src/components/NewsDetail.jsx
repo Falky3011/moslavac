@@ -15,7 +15,7 @@ function NewsDetail() {
     const { data, error, isLoading } = useQuery({
         queryKey: ['newsDetail', id],
         queryFn: () =>
-            fetch(`http://localhost:8080/news/${id}`).then(res => {
+            fetch(`http://localhost:8080/api/news/${id}`).then(res => {
                 if (!res.ok) {
                     throw new Error('Network response was not ok')
                 }
@@ -62,7 +62,7 @@ function NewsDetail() {
 
     return (
         <div className="max-w-4xl mx-auto p-4 my-10">
-            <article className="bg-gray-50 shadow-lg rounded-3xl overflow-hidden">
+            <article className="bg-white shadow-lg rounded-3xl overflow-hidden">
 
                 <div className="p-6 md:p-8">
                     <Title level={1} className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
@@ -70,7 +70,7 @@ function NewsDetail() {
                     </Title>
                     <div className="flex items-center text-sm text-gray-500 mb-6">
                         <CalendarIcon className="w-4 h-4 mr-2" />
-                        <span className="mr-4">{format(new Date(data.date), 'MMMM d, yyyy')}</span>
+                        <span className="mr-4">{new Date(data.date).toLocaleDateString()}</span>
                         <ClockIcon className="w-4 h-4 mr-2" />
                         <span>{format(new Date(data.date), 'h:mm a')}</span>
                     </div>

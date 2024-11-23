@@ -5,11 +5,38 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: "src/main/resources/static",
+    outDir: "../src/main/resources/static",
+    emptyOutDir: true,
     rollupOptions: {
-      input: {
-        index: "./frontend/src/index.jsx",
-      },
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor'; // All node_modules will be bundled into a 'vendor' chunk
+          }
+        }
+      }
     },
+    chunkSizeWarningLimit: 2000
+    // rollupOptions: {
+    //   input: {
+    //     index: "./frontend/src/main.jsx",
+    //   },
+    //   output: {
+    //     entryFileNames: "[name].js",
+    //     chunkFileNames: "[name].js",
+    //     assetFileNames: ({ name }) => {
+    //       if (/\.png$|\.jpg$|\.jpeg$|\.svg$|\.gif$/.test(name ?? "")) {
+    //         return "images/[name].[ext]"
+    //       }
+    //       if (/\.woff$|\.woff2$|\.eot$|\.ttf$|\.otf$/.test(name ?? "")) {
+    //         return "fonts/[name].[ext]";
+    //       }
+
+    //       return "[name].[ext]";
+    //     },
+    //   },
+    // },
+
   },
+
 })

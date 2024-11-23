@@ -1,10 +1,7 @@
 import React from 'react'
 import { FaFutbol } from 'react-icons/fa'
-import { Typography } from 'antd'
 import { useGetCometImage } from '../hooks/useGetCometImage'
 import { Link } from 'react-router-dom'
-
-const { Text } = Typography
 
 const GoalEvent = ({ event, isMoslavacEvent, isOwnGoal, competition }) => {
     const { data: playerImage } = useGetCometImage(event.player.picture);
@@ -16,7 +13,7 @@ const GoalEvent = ({ event, isMoslavacEvent, isOwnGoal, competition }) => {
     const renderPlayerName = () => {
         if (isMoslavacEvent) {
             return (
-                <Link to={`/stats/${event.player.personId}`} state={{ competition }}>
+                <Link to={`/stats/${event.player.personId}`} state={{ competition }} className="hover:underline">
                     {event.player.name}
                 </Link>
             );
@@ -25,24 +22,25 @@ const GoalEvent = ({ event, isMoslavacEvent, isOwnGoal, competition }) => {
     }
 
     return (
-        <div className={`w-full flex items-center p-2 sm:p-4 rounded-lg ${isMoslavacEvent ? 'bg-blue-100' : 'bg-gray-100'}`}>
+        <div className={`w-auto flex items-center p-3 rounded-lg ${isMoslavacEvent ? 'bg-blue-100' : 'bg-gray-100'}`}>
             <FaFutbol
                 className={`
-                    ${isOwnGoal ? 'text-red-500' : isMoslavacEvent ? 'text-blue-500 text-xl sm:text-2xl' : 'text-gray-500'} 
-                    ${isMoslavacEvent && isOwnGoal ? 'text-xl sm:text-2xl' : ''} 
-                    mr-2 sm:mr-4
+                    ${isOwnGoal ? 'text-red-500' : isMoslavacEvent ? 'text-blue-500' : 'text-gray-500'} 
+                    ${isMoslavacEvent || isOwnGoal ? 'text-2xl' : 'text-xl'} 
+                    mr-4
                 `}
             />
             {playerImage && isMoslavacEvent && (
-                <img src={playerImage} alt={event.player.name} className="w-8 h-8 sm:w-12 sm:h-12 rounded-full mr-2 sm:mr-4 object-cover" />
+                <img src={playerImage} alt={event.player.name} className="w-12 h-12 rounded-full mr-4 object-cover" />
             )}
             <div>
-                <Text strong style={{ color: isMoslavacEvent ? '#1890ff' : 'rgba(0, 0, 0, 0.45)' }} className="text-sm sm:text-lg">
+                <span className={`font-semibold ${isMoslavacEvent ? 'text-blue-600' : 'text-gray-600'}`}>
                     {renderPlayerName()} {formatEventTime(event.minuteFull, event.stoppageTime)}
-                </Text>
+                </span>
             </div>
         </div>
     )
 }
 
 export default GoalEvent
+

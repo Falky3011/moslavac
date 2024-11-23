@@ -28,22 +28,32 @@ export default function Match({
     const matchDateAndTime = formatDate(date);
 
     return (
-        <div className="bg-gray-50 border border-gray-200 rounded-3xl p-4 sm:p-6 text-center w-full max-w-[28rem] mx-auto shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-gray-300">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
+        <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-6 text-center w-full max-w-[28rem] mx-auto shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-gray-300 flex flex-col justify-between min-h-[400px]">
+            <h2 className="text-xl sm:text-2xl font-semibold mb-2 text-gray-800 flex items-center justify-center gap-2">
                 {match === "Današnja utakmica" && <FireFilled style={{ color: '#FF5722', fontSize: '1.25rem' }} />}
                 {match}
             </h2>
 
             {/* Teams */}
-            <div className="flex justify-between items-center mb-4">
-                <div className="flex flex-col items-center">
-                    <img src={homeTeamImage} alt={`${homeTeam.name} logo`} className="h-12 w-12 sm:h-16 sm:w-16 mb-2" />
-                    <span className="font-semibold text-gray-700 text-sm sm:text-base">{homeTeam.name}</span>
+            <div className="flex items-center justify-center flex-1 space-x-4 mb-4">
+                <div className="flex-1 text-center">
+                    <img
+                        src={homeTeamImage}
+                        alt={`${homeTeam.name} logo`}
+                        className="h-12 w-12 sm:h-16 sm:w-16 mb-2 mx-auto"
+                    />
+                    <span className="font-semibold text-gray-700 text-sm sm:text-base break-words">{homeTeam.name}</span>
                 </div>
-                <div className="text-gray-400 font-bold text-base sm:text-lg">VS</div>
-                <div className="flex flex-col items-center">
-                    <img src={awayTeamImage} alt={`${awayTeam.name} logo`} className="h-12 w-12 sm:h-16 sm:w-16 mb-2" />
-                    <span className="font-semibold text-gray-700 text-sm sm:text-base">{awayTeam.name}</span>
+                <div className="flex-shrink-0 text-gray-400 font-bold text-base sm:text-lg">
+                    VS
+                </div>
+                <div className="flex-1 text-center">
+                    <img
+                        src={awayTeamImage}
+                        alt={`${awayTeam.name} logo`}
+                        className="h-12 w-12 sm:h-16 sm:w-16 mb-2 mx-auto"
+                    />
+                    <span className="font-semibold text-gray-700 text-sm sm:text-base break-words">{awayTeam.name}</span>
                 </div>
             </div>
 
@@ -55,9 +65,10 @@ export default function Match({
             </div>
 
             {/* Score or countdown */}
-            <div className="bg-gray-200 py-2 px-4 rounded-md text-base sm:text-lg font-bold text-gray-800 border border-gray-200">
+            <div className="bg-gray-200 py-2 px-4 rounded-3xl text-base sm:text-lg font-bold text-gray-800 border border-gray-200">
                 <Countdown targetDate={date} homeScore={homeScore} awayScore={awayScore} />
             </div>
         </div>
+
     );
 }

@@ -35,10 +35,11 @@ const MatchItem = ({ match }) => {
                         </Typography.Text>
                     </div>
                 </div>
-                <div className="flex-1 text-center sm:text-right">
+                <div className="flex-1 text-center sm:text-right ">
                     {match.liveStatus === 'PLAYED'
                         &&
-                        < Link to={`/matches/${match.id}`} className="text-blue-600 hover:underline uppercase font-bold">
+                        < Link to={`/matches/${match.id}`}
+                            className="px-4 py-2 bg-blue-600 text-white text-sm font-bold uppercase rounded-lg hover:bg-blue-700 hover:shadow-md transition duration-200">
                             Detalji
                         </Link>
                     }

@@ -11,8 +11,6 @@ export default function CustomHeader() {
     const [visible, setVisible] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const [scrolling, setScrolling] = useState(false);
-    const location = useLocation();
-    const isAdmin = location.pathname.includes("/admin");
     const { data: competitions, isLoading } = useGetCurrentSeasonCompetitions();
 
 
@@ -75,22 +73,13 @@ export default function CustomHeader() {
         { key: 'webshop', label: 'Webshop', to: 'https://alpashrvatska.hr/snk-moslavac-popovaca/' },
     ];
 
-    const adminItems = [
-        { key: 'admin-news', label: 'Uredi vijesti', to: '/admin/manage-news' },
-    ];
+
 
     const renderMenuItems = () => (
         <>
             {menuItems.map((item) => (
                 <Menu.Item key={item.key}>
                     {item.to ? <Link to={item.to} onClick={() => setVisible(false)}>{item.label}</Link> : item.label}
-                </Menu.Item>
-            ))}
-            {isAdmin && adminItems.map((item) => (
-                <Menu.Item key={item.key}>
-                    <Link to={item.to} onClick={() => setVisible(false)}>
-                        <Button type="primary" danger>{item.label}</Button>
-                    </Link>
                 </Menu.Item>
             ))}
         </>

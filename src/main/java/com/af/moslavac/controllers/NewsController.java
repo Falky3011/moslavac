@@ -24,6 +24,7 @@ import static org.springframework.util.MimeTypeUtils.IMAGE_PNG_VALUE;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/news")
 public class NewsController {
 
     @Autowired
@@ -32,36 +33,36 @@ public class NewsController {
     @Autowired
     private SubscriberService subscriberService;
 
-    @GetMapping("/news")
+    @GetMapping()
     public Page<News> getAllNews(@RequestParam(value = "page", defaultValue = "0") int page,
                               @RequestParam(value = "size", defaultValue = "10") int size) {
         return newsSevice.getAllNews(page, size);
     }
 
-    @GetMapping("/news/{newsID}")
+    @GetMapping("/{newsID}")
     public Optional<News> getNews(@PathVariable int newsID) {
         return newsSevice.getNewsById(newsID);
     }
 
-    @PostMapping("/news")
+    @PostMapping()
     public ResponseEntity<News> addNews(@RequestBody News news) {
         News createdNews = newsSevice.save(news);
-        subscriberService.sendNewsletter(news.getTitle(), news.getContent());
+        //subscriberService.sendNewsletter(news.getTitle(), news.getContent());
         return ResponseEntity.ok(createdNews);
     }
 
-    @DeleteMapping("/news/{newsID}")
+    @DeleteMapping("/{newsID}")
     public ResponseEntity<Void> deleteNews(@PathVariable int newsID) {
         newsSevice.deleteNewsById(newsID);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/news/{newsID}")
+    @PutMapping("/{newsID}")
     public ResponseEntity<News> updateNews(@PathVariable int newsID, @RequestBody News news) {
         return ResponseEntity.ok(newsSevice.updateNews(newsID, news));
     }
 
-    @PutMapping("/news/thumbnail/{newsID}")
+    @PutMapping("/thumbnail/{newsID}")
     public ResponseEntity<String> uploadThumbnail(@PathVariable("newsID") Integer newsID,
                                                        @RequestParam("thumbnail") MultipartFile file) {
         System.out.println(file.getOriginalFilename());
@@ -74,7 +75,7 @@ public class NewsController {
         return ResponseEntity.ok("Thumbnail uploaded successfully");
     }
 
-    @PutMapping("/news/photos/{newsID}")
+    @PutMapping("/photos/{newsID}")
     public ResponseEntity<String> uploadMultiplePhotos(@PathVariable("newsID") Integer newsID,
                                                        @RequestParam("files") List<MultipartFile> files) {
 
@@ -91,12 +92,12 @@ public class NewsController {
     }
 
 
-    @GetMapping("/news/latest")
+    @GetMapping("/latest")
     public ResponseEntity<List<News>> getLatestNews() {
         return ResponseEntity.ok(newsSevice.getLatestNews());
     }
 
-    @GetMapping("/news/image/{filename}")
+    @GetMapping("/image/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) {
         try {
             Path path = Paths.get(NEWS_PHOTO_DIRECTORY).resolve(filename);
