@@ -13,7 +13,7 @@ const PlayerCard = ({ player, onRemove }) => {
                 {playerImage ? (
                     <img
                         alt={player.name}
-                        src={playerImage}
+                        src={playerImage.image}
                         className="w-full h-36 object-cover rounded-md mb-2"
                     />
                 ) : (

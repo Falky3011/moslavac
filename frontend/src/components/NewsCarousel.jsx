@@ -2,7 +2,6 @@ import React, { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Carousel, Spin, Alert } from 'antd';
 import { Link } from 'react-router-dom';
-// import '../css/carousel-dots.css';
 
 export default function NewsCarousel() {
     const carouselRef = useRef(null);
@@ -19,38 +18,39 @@ export default function NewsCarousel() {
     }
 
     if (error) {
-        return <Alert message="Error" description={error.message} type="error" className="max-w-5xl mx-auto mt-16" />;
+        return <Alert message="Error" description={error.message} type="error" className="max-w-6xl mx-auto mt-8" />;
     }
 
     if (!data || data.length === 0) {
-        return <Alert message="No News Available" type="info" className="max-w-5xl mx-auto mt-16" />;
+        return <Alert message="No News Available" type="info" className="max-w-6xl mx-auto mt-8" />;
     }
 
     return (
-        <div className="relative w-full max-w-5xl mx-auto bg-white rounded-3xl shadow-xl overflow-hidden md:mt-16">
+        <div className="relative w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden ">
             <Carousel
                 ref={carouselRef}
                 autoplay
                 dotPosition='bottom'
                 className="overflow-hidden"
-
             >
                 {data.map((news) => (
-                    <div key={news.id} className="h-[36rem] transition-shadow duration-300 hover:shadow-2xl">
-                        <div className="flex flex-col md:flex-row h-full group">
-                            <div className="w-full h-1/2 md:h-full relative overflow-hidden">
-                                <img
-                                    src={news.thumbnailPath}
-                                    alt={news.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                            </div>
-                            <div className="flex flex-col justify-center px-8 py-6 md:w-1/2 h-1/2 md:h-full ">
-                                <h2 className="text-gray-800 text-2xl md:text-3xl font-semibold mb-2 line-clamp-2">
+                    <div key={news.id} className="h-[28rem] sm:h-[32rem] md:h-[36rem] lg:h-[40rem]">
+                        <div className="relative h-full group">
+                            <img
+                                src={news.thumbnailPath}
+                                alt={news.title}
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-70"></div>
+                            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-10 lg:p-12 flex flex-col justify-end h-full">
+                                <h2 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-4 line-clamp-3 leading-tight">
                                     {news.title}
                                 </h2>
-                                <Link to={`/news/${news.newsID}`} className="self-start mt-3">
-                                    <span className="text-white bg-blue-600 px-4 py-2 rounded-md font-medium text-sm md:text-base hover:bg-blue-700 transition duration-200 ease-in-out shadow-lg hover:shadow-2xl">
+                                <Link
+                                    to={`/news/${news.newsID}`}
+                                    className="self-start mt-4 group inline-flex items-center"
+                                >
+                                    <span className="text-white bg-blue-600 px-6 py-3 rounded-full font-semibold text-sm sm:text-base transition duration-300 ease-in-out group-hover:bg-blue-700 shadow-lg group-hover:shadow-blue-500/50">
                                         PROČITAJ
                                     </span>
                                 </Link>

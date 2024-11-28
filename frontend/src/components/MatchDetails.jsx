@@ -19,6 +19,7 @@ export default function MatchDetails() {
     const homeTeamImage = useGetCometImage(matchInfo?.homeTeam?.picture)
     const awayTeamImage = useGetCometImage(matchInfo?.awayTeam?.picture)
 
+    console.log(matchId)
     useEffect(() => {
         if (matchInfo) {
             setMoslavacIsHome(matchInfo.homeTeam.name === "SNK Moslavac")

@@ -23,9 +23,6 @@ const PlayerStats = () => {
     const { data: playerImage } = useGetCometImage(player?.picture);
     const { data: flagImage } = useGetCometImage(player?.flag);
 
-    console.log(competition)
-
-
 
     if (isLoading) {
         return (
@@ -68,14 +65,14 @@ const PlayerStats = () => {
             <div className="flex flex-col md:flex-row items-center md:items-start mb-12">
                 <div className="w-48 h-48 rounded-full overflow-hidden mb-6 md:mb-0 md:mr-12 border-4 border-white shadow-lg">
                     {playerImage && (
-                        <img src={playerImage} alt={player?.name} className="w-full h-full object-cover" />
+                        <img src={playerImage.image} alt={player?.name} className="w-full h-full object-cover" />
                     )}
                 </div>
                 <div className="text-center md:text-left">
                     <Title level={1} className="mb-2 text-4xl font-bold text-gray-800">{player?.name}</Title>
                     <div className="flex items-center justify-center md:justify-start mb-4">
                         {flagImage && (
-                            <img src={flagImage} alt={player?.nationality} className="w-8 h-6 mr-3 shadow-sm" />
+                            <img src={flagImage.image} alt={player?.nationality} className="w-8 h-6 mr-3 shadow-sm" />
                         )}
                         <Text className="text-xl text-gray-600">{player?.nationality}</Text>
                     </div>

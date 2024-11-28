@@ -79,7 +79,7 @@ export default function NewsList() {
                             <div className="flex flex-col sm:flex-row">
                                 {item.thumbnailPath && (
                                     <div className="sm:w-1/3">
-                                        <Image
+                                        <img
                                             alt={item.title}
                                             src={item.thumbnailPath}
                                             className="object-cover w-full h-48 sm:h-full"

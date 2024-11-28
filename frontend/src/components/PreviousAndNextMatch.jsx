@@ -8,22 +8,35 @@ function PreviousAndNextMatch() {
     const { data: nextMatch, error: nextMatchError, isLoading: nextMatchIsLoading } = useGetNextMatch();
     const { data: previousMatch, error: previousMatchError, isLoading: previousMatchIsLoading } = useGetPreviousMatch();
 
-    if (nextMatchIsLoading || previousMatchIsLoading) return <div className="text-center py-8">Loading...</div>;
-    if (nextMatchError || previousMatchError) return <div className="text-center py-8 text-red-500">Error loading matches</div>;
+    // Loading state
+    if (nextMatchIsLoading || previousMatchIsLoading) {
+        return <div className="text-center py-8">Loading...</div>;
+    }
 
-    const todayMatch = previousMatch?.dateTimeUTC &&
-        new Date(previousMatch.dateTimeUTC).toDateString() === new Date().toDateString()
-        ? "Današnja utakmica"
-        : "Prethodna utakmica";
+    // Error state
+    if (nextMatchError || previousMatchError) {
+        return <div className="text-center py-8 text-red-500">Error loading matches</div>;
+    }
 
-    const matchesCount = [previousMatch, nextMatch].filter(Boolean).length;
+    // Provera praznih podataka
+    const isNextMatchValid = nextMatch && Object.keys(nextMatch).length > 0;
+    const isPreviousMatchValid = previousMatch && Object.keys(previousMatch).length > 0;
+
+    const todayMatch =
+        previousMatch?.dateTimeUTC &&
+            new Date(previousMatch.dateTimeUTC).toDateString() === new Date().toDateString()
+            ? "Današnja utakmica"
+            : "Prethodna utakmica";
+
+    const matchesCount = [isPreviousMatchValid, isNextMatchValid].filter(Boolean).length;
 
     return (
         <div
             className={`flex ${matchesCount === 1 ? 'justify-center' : 'justify-between'
                 } flex-col md:flex-row gap-8 w-full max-w-5xl mx-auto px-4`}
         >
-            {previousMatch && (
+            {/* Renderuje prethodnu utakmicu samo ako je validna */}
+            {isPreviousMatchValid && (
                 <Link to={`/matches/${previousMatch.id}`} className="w-full md:w-1/2">
                     <Match
                         match={todayMatch}
@@ -37,7 +50,8 @@ function PreviousAndNextMatch() {
                     />
                 </Link>
             )}
-            {nextMatch && (
+            {/* Renderuje sledeću utakmicu samo ako je validna */}
+            {isNextMatchValid && (
                 <Link to={`/matches/${nextMatch.id}`} className="w-full md:w-1/2">
                     <Match
                         match="Sljedeća utakmica"

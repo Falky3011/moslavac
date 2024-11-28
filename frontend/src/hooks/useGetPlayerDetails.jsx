@@ -9,12 +9,12 @@ export function useGetPlayerDetails(personId) {
                 throw new Error('Invalid personId');
             }
 
-            // 2. Dohvati podatke o igraču
-            const response = await fetch(`https://api-hns.analyticom.de/api/live/player/${personId}?teamIdFilter=1337`, {
+            // 2. Dohvati podatke o igraču s backend API-ja
+            const response = await fetch(`http://localhost:8080/api/player-details/${personId}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
-                    'API_KEY': 'bd993d1e4919fd190ef3822902f81fa7a2a9f30f90a7b998f560b8ac21d4acabb62206f59cd09cac7089dbb7df709793c1b4b3a8ddf1596729eb6d5ae61d7f97'
+                    // Nema potrebe dodavati API_KEY ako je backend već konfiguriran za autentifikaciju
                 }
             });
 
@@ -27,6 +27,6 @@ export function useGetPlayerDetails(personId) {
             const playerData = await response.json();
             return playerData;
         },
-        enabled: !!personId // Hook će se aktivirati samo ako personId postoji
+        enabled: !!personId, // Hook će se aktivirati samo ako personId postoji
     });
 }

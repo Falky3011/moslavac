@@ -69,14 +69,14 @@ const MatchLineups = ({ moslavacIsHome, homeTeam, awayTeam, competition, homeTea
                         className={`flex-1 py-4 px-6 text-center ${activeTab === 'home' ? 'bg-gray-100 font-semibold' : ''}`}
                         onClick={() => setActiveTab('home')}
                     >
-                        <img src={homeTeamImage?.data} alt={homeTeam.name} className="w-12 h-12 mx-auto mb-2" />
+                        <img src={homeTeamImage?.image} alt={homeTeam.name} className="w-12 h-12 mx-auto mb-2" />
                         <span>{homeTeam.name}</span>
                     </button>
                     <button
                         className={`flex-1 py-4 px-6 text-center ${activeTab === 'away' ? 'bg-gray-100 font-semibold' : ''}`}
                         onClick={() => setActiveTab('away')}
                     >
-                        <img src={awayTeamImage?.data} alt={awayTeam.name} className="w-12 h-12 mx-auto mb-2" />
+                        <img src={awayTeamImage?.image} alt={awayTeam.name} className="w-12 h-12 mx-auto mb-2" />
                         <span>{awayTeam.name}</span>
                     </button>
                 </div>

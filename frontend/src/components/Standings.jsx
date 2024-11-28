@@ -130,7 +130,7 @@ const TeamImage = ({ picture, teamName }) => {
     if (isLoading) return <Spin size="small" />;
     if (error) return <Alert message="Error" description={error.message} type="error" />;
 
-    return <img src={data} alt={teamName} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full mr-2" />;
+    return <img src={data.image} alt={teamName} className="w-6 h-6 sm:w-8 sm:h-8 rounded-full mr-2" />;
 };
 
 export default Standings;

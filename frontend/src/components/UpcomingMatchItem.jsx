@@ -34,7 +34,7 @@ const UpcomingMatchItem = ({ match }) => {
                         {/* Home Team */}
                         <div className="flex-1 text-center flex flex-col items-center">
                             <img
-                                src={homeTeamImage?.data || '/placeholder.svg'}
+                                src={homeTeamImage.data || '/placeholder.svg'}
                                 alt={`${homeTeam.name} logo`}
                                 className="h-16 w-16 mb-2"
                             />

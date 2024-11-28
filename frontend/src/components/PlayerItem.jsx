@@ -32,7 +32,7 @@ export default function PlayerItem({ playerId, competitionId }) {
             <Link to={`/players/${playerId}/stats/${competitionId}`} className="flex items-center space-x-4">
                 <Avatar
                     size={64}
-                    src={playerImage}
+                    src={playerImage.image}
                     icon={<UserOutlined />}
                     alt={playerDetails.name}
                 />
