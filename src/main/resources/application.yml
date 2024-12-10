@@ -1,3 +1,6 @@
+app:
+  firebase-configuration-file: moslavac-9d4c8-firebase-adminsdk-jgmzm-f2fb4aecb9.json
+
 spring:
   codec:
     max-in-memory-size: 10MB
@@ -36,3 +39,5 @@ spring:
       base-url: https://api-hns.analyticom.de
     team:
       id: 1337
+  admin:
+    password: 123

@@ -24,6 +24,7 @@ const PlayerStats = () => {
     const { data: flagImage } = useGetCometImage(player?.flag);
 
 
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">

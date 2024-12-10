@@ -1,6 +1,8 @@
 import React from 'react';
 import { Card, Typography, Button } from 'antd';
 import { CalendarOutlined } from '@ant-design/icons';
+import grb from '../assets/grb.png'
+
 
 const { Meta } = Card;
 const { Paragraph } = Typography;
@@ -13,7 +15,7 @@ const NewsCard = ({ title, content, date, imageUrl, id }) => {
             cover={
                 <div className="relative w-full h-48">
                     <img
-                        src={imageUrl}
+                        src={imageUrl ? imageUrl : grb}
                         alt={title}
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                     />

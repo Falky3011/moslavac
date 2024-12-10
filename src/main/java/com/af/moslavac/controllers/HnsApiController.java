@@ -80,6 +80,11 @@ public class HnsApiController {
         return hnsApiService.fetchTeamStandings(competitionId);
     }
 
+    @GetMapping("/api/competition/{competitionId}/standings/unofficial")
+    public Object getTeamStandingsUnofficial(@PathVariable Integer competitionId) {
+        return hnsApiService.fetchTeamStandingsUnofficial(competitionId);
+    }
+
     @GetMapping("/api/player/search")
     public Object searchPlayers(@RequestParam String keyword) {
         return hnsApiService.searchPlayers(keyword);

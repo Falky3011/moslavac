@@ -161,6 +161,19 @@ public class HnsApiService {
         return fetchFromApi(endpoint, Object.class);
     }
 
+    public Object fetchTeamStandingsUnofficial(Integer competitionId) {
+        if (competitionId == null) {
+            throw new IllegalArgumentException("Invalid competitionId");
+        }
+
+        String endpoint = String.format(
+                "/api/live/competition/%d/standings/unofficial?teamIdFilter=1337",
+                competitionId
+        );
+
+        return fetchFromApi(endpoint, Object.class);
+    }
+
     public Object searchPlayers(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new IllegalArgumentException("Keyword cannot be null or empty");

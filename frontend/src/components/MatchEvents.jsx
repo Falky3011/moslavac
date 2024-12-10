@@ -9,7 +9,6 @@ const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
         return stoppageTime ? `${minuteFull}+${stoppageTime}` : `${minuteFull}'`;
     };
 
-    console.log(matchEvents)
 
     const renderEvent = (event) => {
         const isMoslavacEvent = (moslavacIsHome && event.homeTeam) || (!moslavacIsHome && !event.homeTeam);

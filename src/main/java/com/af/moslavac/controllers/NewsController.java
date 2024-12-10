@@ -58,9 +58,17 @@ public class NewsController {
     }
 
     @PutMapping("/{newsID}")
-    public ResponseEntity<News> updateNews(@PathVariable int newsID, @RequestBody News news) {
-        return ResponseEntity.ok(newsSevice.updateNews(newsID, news));
+    public ResponseEntity<News> updateNews(
+            @PathVariable int newsID,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail,
+            @RequestParam(value = "files", required = false) List<MultipartFile> files) {
+        // Update the news entity using the service
+        News updatedNews = newsSevice.updateNews(newsID, title, content, thumbnail, files);
+        return ResponseEntity.ok(updatedNews);
     }
+
 
     @PutMapping("/thumbnail/{newsID}")
     public ResponseEntity<String> uploadThumbnail(@PathVariable("newsID") Integer newsID,

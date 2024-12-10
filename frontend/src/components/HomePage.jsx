@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { motion, useAnimation, useScroll, useTransform } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import NewsCarousel from "./NewsCarousel";
 import PreviousAndNextMatch from './PreviousAndNextMatch';
@@ -7,6 +7,17 @@ import WebShop from "./WebShop";
 import SeasonTicketPromo from "./SeasonTicketPromo";
 import UpcomingMatches from "./UpcomingMatches";
 import NewsLatest from "./NewsLatest";
+
+const ParallaxSection = ({ children, className }) => {
+    const { scrollY } = useScroll();
+    const y = useTransform(scrollY, [0, 500], [0, -100]);
+
+    return (
+        <motion.div style={{ y }} className={className}>
+            {children}
+        </motion.div>
+    );
+};
 
 const AnimatedSection = ({ children, className }) => {
     const controls = useAnimation();
@@ -41,29 +52,29 @@ const AnimatedSection = ({ children, className }) => {
 function HomePage() {
     return (
         <div className="py-6 space-y-8 sm:space-y-12 md:space-y-16">
-            <AnimatedSection>
+            <ParallaxSection>
                 <NewsCarousel />
-            </AnimatedSection>
+            </ParallaxSection>
 
             <AnimatedSection className="bg-gray-100 p-6 sm:p-8 md:p-10 rounded-lg border border-gray-200">
                 <PreviousAndNextMatch />
             </AnimatedSection>
 
-            <AnimatedSection>
+            <ParallaxSection>
                 <NewsLatest />
-            </AnimatedSection>
+            </ParallaxSection>
 
             <AnimatedSection className="bg-gray-100 p-6 sm:p-8 md:p-10 rounded-lg border border-gray-200">
                 <UpcomingMatches />
             </AnimatedSection>
 
-            <AnimatedSection>
+            <ParallaxSection>
                 <SeasonTicketPromo />
-            </AnimatedSection>
+            </ParallaxSection>
 
-            <AnimatedSection>
+            <ParallaxSection>
                 <WebShop />
-            </AnimatedSection>
+            </ParallaxSection>
         </div>
     );
 }

@@ -46,15 +46,32 @@ public class NewsSevice {
         return newsRepository.save(news);
     }
 
-    public News updateNews(int newsID, News updatedNews) {
+    public News updateNews(int newsID, String title, String content, MultipartFile thumbnail, List<MultipartFile> files) {
         Optional<News> oldNews = newsRepository.findById(newsID);
 
         if (oldNews.isPresent()) {
-            oldNews.get().setContent(updatedNews.getContent());
-            oldNews.get().setTitle(updatedNews.getTitle());
-        }
+            News news = oldNews.get();
+            news.setTitle(title);
+            news.setContent(content);
 
-        return newsRepository.save(oldNews.get());
+            // Update thumbnail if provided
+            if (thumbnail != null && !thumbnail.isEmpty()) {
+                String thumbnailUrl = imageFunction.apply(newsID, thumbnail);
+                news.setThumbnailPath(thumbnailUrl);
+            }
+
+            // Update additional images if provided
+            if (files != null && !files.isEmpty()) {
+                for (MultipartFile file : files) {
+                    String imageUrl = imageFunction.apply(newsID, file);
+                    news.getImagePaths().add(imageUrl);
+                }
+            }
+
+            return newsRepository.save(news);
+        } else {
+            throw new RuntimeException("News with ID " + newsID + " not found");
+        }
     }
 
     public String uploadThumbnail(Integer newsID, MultipartFile file) {

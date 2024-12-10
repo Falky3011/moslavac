@@ -5,12 +5,9 @@ import MatchItem from './MatchItem';
 import useGetAllCompetitionMatches from '../hooks/useGetAllCompetitionMatches';
 
 const CompetitionMatches = ({ competitionId }) => {
-    console.log(competitionId)
     const { data, error, isLoading } = useGetAllCompetitionMatches(competitionId);
-    console.log(data)
 
-    if (error)
-        console.log(error.message)
+
 
     const groupMatchesByMonth = (matches) => {
         return matches.reduce((acc, match) => {

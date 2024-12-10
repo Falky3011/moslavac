@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Row, Col, Typography, Spin } from 'antd';
-import { Link } from 'react-router-dom'
+import { Typography, Spin } from 'antd';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import grb from '../assets/grb.png';
 
 const { Title, Text } = Typography;
 
@@ -19,6 +21,8 @@ const NewsLatest = () => {
         },
     });
 
+    const scrollRef = useRef(null); // Ensure this is correctly initialized
+
     if (error) return <Text type="danger">Error fetching news</Text>;
 
     return (
@@ -29,35 +33,49 @@ const NewsLatest = () => {
                     <Spin size="large" />
                 </div>
             ) : (
-                <Row gutter={[24, 24]}>
-                    {data?.map((item) => (
-                        <Col xs={24} sm={12} lg={8} key={item.newsID}>
-                            <Card
-                                hoverable
-                                className="h-full  transition-shadow duration-300 ease-in-out hover:shadow-2xl  rounded-3xl shadow-xl"
-                                cover={
+                <div className="relative">
+                    <motion.div
+                        ref={scrollRef} // Make sure this is correctly assigned
+                        className="flex md:grid md:grid-cols-3 md:grid-rows-2 gap-6 md:gap-8 overflow-x-auto md:overflow-x-visible pb-4 md:pb-0"
+                        style={{
+                            scrollSnapType: 'x mandatory',
+                            WebkitOverflowScrolling: 'touch',
+                            scrollbarWidth: 'none',
+                            msOverflowStyle: 'none',
+                        }}
+                    >
+                        {data?.slice(0, 6).map((item, index) => (
+                            <motion.div
+                                key={item.newsID}
+                                className="w-80 md:w-full flex-shrink-0 snap-center md:snap-align-none"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                            >
+                                <div className="bg-white rounded-3xl shadow-xl transition-shadow duration-300 ease-in-out hover:shadow-2xl h-full">
                                     <div className="relative h-48">
                                         <img
-                                            src={item.thumbnailPath || '/placeholder.svg'}
+                                            src={item.thumbnailPath ? item.thumbnailPath : grb}
                                             alt={item.title}
-                                            className="w-full h-full object-cover rounded-t-lg"
+                                            className="w-full h-full object-cover rounded-t-3xl "
                                         />
                                     </div>
-                                }
-                            >
-                                <Title level={4} className="mb-2 line-clamp-2 text-gray-900 h-16">
-                                    {item.title}
-                                </Title>
-
-                                <Link to={`/news/${item.newsID}`} className="self-start mt-3">
-                                    <span className="text-white bg-blue-600 px-4 py-2 rounded-md font-medium text-sm md:text-base hover:bg-blue-700 transition duration-200 ease-in-out shadow-lg hover:shadow-2xl">
-                                        PROČITAJ
-                                    </span>
-                                </Link>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
+                                    <div className="p-6">
+                                        <h3 className="text-xl font-semibold mb-4 line-clamp-2 h-16 text-gray-900">
+                                            {item.title}
+                                        </h3>
+                                        <Link to={`/news/${item.newsID}`} className="inline-block">
+                                            <span className="text-white bg-blue-600 px-4 py-2 rounded-md font-medium text-sm md:text-base hover:bg-blue-700 transition duration-200 ease-in-out shadow-lg hover:shadow-2xl">
+                                                PROČITAJ
+                                            </span>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                    <div className="absolute left-0 right-0 bottom-0 h-4 bg-gradient-to-t from-white to-transparent md:hidden" />
+                </div>
             )}
         </div>
     );

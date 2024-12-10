@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom'
 import { Typography, Spin, Alert, Image, Divider } from 'antd'
 import { format } from 'date-fns'
 import { CalendarIcon, ClockIcon } from 'lucide-react'
+import grb from '../assets/grb.png'
 
 const { Title, Paragraph } = Typography
 
@@ -23,7 +24,6 @@ function NewsDetail() {
             })
     })
 
-    console.log(data)
 
     if (isLoading) {
         return (
@@ -66,15 +66,15 @@ function NewsDetail() {
         <div className="max-w-4xl mx-auto p-4 my-10">
             <article className="bg-white shadow-lg rounded-3xl overflow-hidden">
 
-                {data.thumbnailPath && (
-                    <div className="w-full flex justify-center">
-                        <Image
-                            src={data.thumbnailPath}
-                            alt="News Thumbnail"
-                            className=" object-cover rounded-md shadow-md" // Adjusted size
-                        />
-                    </div>
-                )}
+
+                <div className="w-full flex justify-center">
+                    <Image
+                        src={data.thumbnailPath ? data.thumbnailPath : grb}
+                        alt="News Thumbnail"
+                        className=" object-cover" // Adjusted size
+                    />
+                </div>
+
 
 
                 <div className="p-6 md:p-8">

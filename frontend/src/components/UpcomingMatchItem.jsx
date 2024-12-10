@@ -1,94 +1,105 @@
-import React from 'react';
-import { Spin } from 'antd';
+import React, { useState } from 'react';
+import { Typography } from 'antd';
 import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGetCometImage } from '../hooks/useGetCometImage';
 import Countdown from './Countdown';
-import { Link } from 'react-router-dom'
+
+const { Text } = Typography;
 
 const UpcomingMatchItem = ({ match }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
     const { homeTeam, awayTeam, dateTimeUTC, competition } = match;
     const matchDate = new Date(dateTimeUTC);
 
     const homeTeamImage = useGetCometImage(homeTeam?.picture);
     const awayTeamImage = useGetCometImage(awayTeam?.picture);
 
+    const toggleExpand = () => setIsExpanded(!isExpanded);
+
     return (
-        <div className="rounded-3xl bg-white shadow-lg overflow-hidden transition-all duration-300 ease-in-out border border-gray-100 w-[300px] h-[420px] flex flex-col">
-            <div className="flex flex-col h-full">
-                <div className="flex flex-col p-6 h-full">
-                    {/* Competition Name */}
-                    <span className="sm:text-sm text-xs px-4 py-1 w-auto mx-auto mb-4 font-semibold text-blue-600 bg-blue-50 rounded-full truncate overflow-hidden text-ellipsis text-center max-w-[14rem] sm:max-w-[16rem] whitespace-nowrap">
-                        <Link
-                            to={`/season/${competition?.id}/${encodeURIComponent(competition?.name)}`}
-                            className="hover:underline"
-                        >
+        <motion.div
+            layout
+            onClick={toggleExpand}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full sm:w-[340px] h-[180px] sm:h-[200px] rounded-2xl sm:rounded-3xl shadow-lg cursor-pointer relative overflow-hidden md:m-6"
+            style={{ background: 'white' }}
+        >
+            <AnimatePresence>
+                {!isExpanded && (
+                    <motion.div
+                        key="content"
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="p-4 sm:p-6 h-full flex flex-col"
+                    >
+                        <Text className="text-xs sm:text-sm font-semibold mb-2 sm:mb-4 block text-center text-blue-600 tracking-wide">
                             {competition?.name}
-                        </Link>
-                    </span>
-
-
-
-
-                    {/* Team Logos and Names */}
-                    <div className="flex items-center justify-center flex-1 mb-4">
-                        {/* Home Team */}
-                        <div className="flex-1 text-center flex flex-col items-center">
-                            <img
-                                src={homeTeamImage.data || '/placeholder.svg'}
-                                alt={`${homeTeam.name} logo`}
-                                className="h-16 w-16 mb-2"
-                            />
-                            <span className="font-semibold text-gray-700 text-sm sm:text-sm break-words text-center max-w-[6rem] line-clamp-2">
-                                {homeTeam.name}
-                            </span>
+                        </Text>
+                        <div className="flex justify-between items-center mb-2 sm:mb-4 flex-grow">
+                            <TeamInfo name={homeTeam.name} logo={homeTeamImage.data} />
+                            <Text strong className="text-lg sm:text-xl font-bold text-gray-600">vs</Text>
+                            <TeamInfo name={awayTeam.name} logo={awayTeamImage?.data} />
                         </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-                        {/* VS */}
-                        <div className="flex-shrink-0 mx-4 text-gray-400 font-bold text-lg sm:text-xl flex items-center justify-center h-16">
-                            VS
-                        </div>
-
-                        {/* Away Team */}
-                        <div className="flex-1 text-center flex flex-col items-center">
-                            <img
-                                src={awayTeamImage?.data || '/placeholder.svg'}
-                                alt={`${awayTeam.name} logo`}
-                                className="h-16 w-16 mb-2"
-                            />
-                            <span className="font-semibold text-gray-700 text-sm sm:text-sm break-words text-center max-w-[6rem] line-clamp-2">
-                                {awayTeam.name}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Date, Time, and Countdown */}
-                <div className="flex flex-col bg-gradient-to-r from-blue-400 to-blue-600 p-6 rounded-t-3xl">
-                    <div className="flex flex-col justify-between w-auto mx-auto text-sm text-gray-600">
-                        <div className="flex items-center mb-2">
-                            <CalendarOutlined className="mr-2 text-white" />
-                            <span className="text-white">
-                                {matchDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                            </span>
-                        </div>
-                        <div className="flex items-center">
-                            <ClockCircleOutlined className="mr-2 text-white" />
-                            <span className="text-white">
+            <AnimatePresence>
+                {isExpanded && (
+                    <motion.div
+                        key="details"
+                        initial={{ y: '100%' }}
+                        animate={{ y: 0 }}
+                        exit={{ y: '100%' }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        className="absolute inset-0 bg-gradient-to-br from-blue-400 to-blue-600 p-4 sm:p-6 flex flex-col justify-center items-center text-white"
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="flex items-center mb-2 sm:mb-4"
+                        >
+                            <CalendarOutlined className="mr-2 text-base sm:text-xl" />
+                            <Text className="text-white text-sm sm:text-lg font-medium">
+                                {matchDate.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                            </Text>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="flex items-center mb-3 sm:mb-6"
+                        >
+                            <ClockCircleOutlined className="mr-2 text-base sm:text-xl" />
+                            <Text className="text-white text-sm sm:text-lg font-medium">
                                 {matchDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Countdown */}
-                    <div className="mt-auto pt-4">
-                        <div className="py-2 px-4 font-semibold bg-gray-100 rounded-2xl text-gray-800 border border-gray-100 flex items-center justify-center text-center">
+                            </Text>
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                        >
                             <Countdown targetDate={dateTimeUTC} homeScore={0} awayScore={0} />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 };
 
+const TeamInfo = ({ name, logo }) => (
+    <div className="flex flex-col items-center w-1/3">
+        <img src={logo || '/placeholder.svg'} alt={`${name} logo`} className="w-12 h-12 sm:w-16 sm:h-16 mb-1 sm:mb-2 object-contain" />
+        <Text strong className="text-center text-xs sm:text-sm line-clamp-2 font-medium">
+            {name}
+        </Text>
+    </div>
+);
+
 export default UpcomingMatchItem;
+

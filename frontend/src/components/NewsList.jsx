@@ -1,17 +1,77 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { List, Card, Pagination, Image, Typography, Spin, Alert } from 'antd'
-import { format } from 'date-fns'
-import { Link } from 'react-router-dom'
+import { List, Card, Pagination, Typography, Spin, Alert, Modal, Input, Button, message } from 'antd'
+import { Link, useLocation } from 'react-router-dom'
 import { CalendarIcon, ChevronRightIcon } from 'lucide-react'
+import grb from '../assets/grb.png'
 
 const { Title, Paragraph } = Typography
 
 export default function NewsList() {
     const [currentPage, setCurrentPage] = useState(1)
     const pageSize = 10
+    const location = useLocation();
+    const isAdminRoute = location.pathname.endsWith("/admin");
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [password, setPassword] = useState('');
+
+    // Provjera tokena pri učitavanju stranice
+    useEffect(() => {
+        const token = localStorage.getItem('adminToken');
+        if (token) {
+            validateToken(token);
+        } else if (isAdminRoute) {
+            setIsModalVisible(true);
+        }
+    }, [isAdminRoute]);
+
+    const validateToken = async (token) => {
+        try {
+            const response = await fetch('http://localhost:8080/api/admin/validate-token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ token }),
+            });
+
+            if (response.ok) {
+                setIsAdmin(true);
+            } else {
+                localStorage.removeItem('adminToken');
+                if (isAdminRoute) setIsModalVisible(true);
+            }
+        } catch (error) {
+            console.error('Token validation failed', error);
+        }
+    };
+
+    const handlePasswordSubmit = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/admin/validate-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('adminToken', data.token);
+                message.success('Uspješna autentifikacija!');
+                setIsAdmin(true);
+                setIsModalVisible(false);
+            } else {
+                message.error('Pogrešna šifra!');
+            }
+        } catch (error) {
+            message.error('Greška pri provjeri šifre!');
+        }
+    };
 
     const fetchNews = async (page) => {
         const response = await fetch(`http://localhost:8080/api/news?page=${page - 1}&size=${pageSize}`)
@@ -21,14 +81,11 @@ export default function NewsList() {
         return response.json()
     }
 
-
     const { data, error, isLoading } = useQuery({
         queryKey: ['newslist', currentPage],
         queryFn: () => fetchNews(currentPage),
         keepPreviousData: true,
     })
-
-    console.log(data)
 
     const handlePageChange = (page) => {
         setCurrentPage(page)
@@ -56,14 +113,40 @@ export default function NewsList() {
 
     return (
         <div className="max-w-4xl mx-auto p-4">
-            <div className="mb-6 flex justify-end">
-                <Link
-                    to="/admin/manage-news"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
-                >
-                    Uredi vijesti
-                </Link>
-            </div>
+            {/* Modal za unos šifre */}
+            <Modal
+                title="Administratorska autentifikacija"
+                visible={isModalVisible}
+                onCancel={() => setIsModalVisible(false)}
+                footer={[
+                    <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+                        Odustani
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={handlePasswordSubmit}>
+                        Potvrdi
+                    </Button>,
+                ]}
+            >
+                <p>Molimo unesite administratorsku šifru za pristup.</p>
+                <Input.Password
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Unesite šifru"
+                />
+            </Modal>
+
+            {/* Gumb za uređivanje vijesti vidljiv samo nakon autentifikacije */}
+            {isAdmin && (
+                <div className="mb-6 flex justify-end">
+                    <Link
+                        to="/admin/manage-news"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
+                    >
+                        Uredi vijesti
+                    </Link>
+                </div>
+            )}
+
             <Title level={2} className="mb-6 text-center text-2xl font-bold text-gray-800">
                 Vijesti
             </Title>
@@ -77,15 +160,15 @@ export default function NewsList() {
                             bodyStyle={{ padding: 0 }}
                         >
                             <div className="flex flex-col sm:flex-row">
-                                {item.thumbnailPath && (
-                                    <div className="sm:w-1/3">
-                                        <img
-                                            alt={item.title}
-                                            src={item.thumbnailPath}
-                                            className="object-cover w-full h-48 sm:h-full"
-                                        />
-                                    </div>
-                                )}
+
+                                <div className="sm:w-1/3">
+                                    <img
+                                        alt={item.title}
+                                        src={item.thumbnailPath ? item.thumbnailPath : grb}
+                                        className="object-cover w-full h-48 sm:h-full"
+                                    />
+                                </div>
+
                                 <div className="p-4 sm:w-2/3">
                                     <Title level={4} className="mb-2 text-lg font-semibold">
                                         {item.title}

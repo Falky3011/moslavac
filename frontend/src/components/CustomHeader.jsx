@@ -13,7 +13,6 @@ export default function CustomHeader() {
     const [isMobile, setIsMobile] = useState(false);
     const { data: competitions, isLoading } = useGetCurrentSeasonCompetitions();
 
-    console.log(competitions)
 
     const y = useSpring(0, { stiffness: 1000, damping: 100, mass: 1 });
     const height = useTransform(y, [0, 100], [100, 64]);

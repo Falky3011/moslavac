@@ -15,7 +15,6 @@ export default function Match({
 }) {
     const { data: homeTeamImage } = useGetCometImage(homeTeam.picture);
     const { data: awayTeamImage } = useGetCometImage(awayTeam.picture);
-    console.log(homeTeamImage)
 
     const formatDate = (dateString) => {
         if (!dateString) return { date: "N/A", time: "N/A" };

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import UpcomingMatchItem from './UpcomingMatchItem';
 import useGetAllMatches from '../hooks/useGetAllMatches';
 
@@ -26,7 +27,7 @@ const UpcomingMatches = () => {
 
     const scroll = (direction) => {
         if (sliderRef.current) {
-            const scrollAmount = sliderRef.current.clientWidth * 0.8;
+            const scrollAmount = sliderRef.current.offsetWidth;
             sliderRef.current.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth',
@@ -47,32 +48,33 @@ const UpcomingMatches = () => {
     }
 
     return (
-        <div className="relative max-w-full mx-auto px-4 py-12 bg-gray-100">
-            <h2 className="text-3xl font-bold text-gray-900 text-center mb-8">Nadolazeće utakmice</h2>
+        <div className="relative max-w-full mx-auto px-2 sm:px-4 py-6 sm:py-12 bg-gray-100">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-4 sm:mb-8">Sljedeće utakmice</h2>
             <div className="relative overflow-hidden">
-                <div
+                <motion.div
                     ref={sliderRef}
-                    className="flex space-x-10 overflow-x-auto snap-x snap-mandatory"
+                    className="flex space-x-4 sm:space-x-6 overflow-x-auto snap-x snap-mandatory pb-4"
                     style={{
                         scrollSnapType: 'x mandatory',
                         scrollbarWidth: 'none', // Firefox
                         msOverflowStyle: 'none', // IE 10+
                     }}
                     onScroll={checkScroll}
+                    whileTap={{ cursor: "grabbing" }}
                 >
                     {matches.map((match) => (
-                        <div
+                        <motion.div
                             key={match.id}
-                            className="flex-shrink-0 w-[300px] snap-start"
-                            style={{
-                                overflow: 'hidden',
-                            }}
+                            className="flex-shrink-0 w-full sm:w-[340px] snap-start"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                         >
                             <UpcomingMatchItem match={match} />
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </div>
+
         </div>
     );
 };

@@ -1,264 +1,276 @@
-import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import { Button, Modal, Form, Input, Table, Upload, message } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Button, Modal, Form, Input, Upload, message, Popconfirm, Spin } from 'antd';
+import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
+import useFetchNews from '../hooks/useFetchNews';
+import useAddNews from '../hooks/useAddNews';
+import useUpdateNews from '../hooks/useUpdateNews';
+import useDeleteNews from '../hooks/useDeleteNews';
+import useValidateToken from '../hooks/useValidateToken';
+import grb from '../assets/grb.png'
+import useSendNotification from '../hooks/useSendNotification';
 
 const { TextArea } = Input;
 
 export default function NewsManager() {
     const [selectedNews, setSelectedNews] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [modalType, setModalType] = useState('');
+    const [modalMode, setModalMode] = useState('');
     const [form] = Form.useForm();
+    const navigate = useNavigate();
 
-    const queryClient = useQueryClient();
+    const validateToken = useValidateToken(navigate);
+    const sendNotification = useSendNotification();
 
-    const { data: news, isLoading } = useQuery({
-        queryKey: ['news'],
-        queryFn: async () => {
-            const response = await axios.get('http://localhost:8080/api/news');
-            return response.data.content;
-        },
-    });
-
-    const addNewsMutation = useMutation({
-        mutationFn: async (newNews) => {
-            const response = await axios.post('http://localhost:8080/api/news', {
-                title: newNews.title,
-                content: newNews.content
-            });
-
-            if (newNews.thumbnail) {
-                let formData = new FormData();
-                formData.append('thumbnail', newNews.thumbnail);
-                await axios.put(`http://localhost:8080/api/news/thumbnail/${response.data.newsID}`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
-            }
-
-            if (newNews.files && newNews.files.length > 0) {
-                let formData = new FormData();
-                newNews.files.forEach(file => formData.append('files', file));
-                await axios.put(`http://localhost:8080/api/news/photos/${response.data.newsID}`, formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
-            }
-
-            return response.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['news'] });
-            setIsModalVisible(false);
-            message.success('News added successfully');
-        },
-        onError: () => {
-            message.error('Failed to add news');
-        },
-    });
-
-    const updateNewsMutation = useMutation({
-        mutationFn: async (updatedNews) => {
-            const formData = new FormData();
-            formData.append('title', updatedNews.title);
-            formData.append('content', updatedNews.content);
-            if (updatedNews.thumbnail) {
-                formData.append('thumbnail', updatedNews.thumbnail);
-            }
-            if (updatedNews.files && updatedNews.files.length > 0) {
-                updatedNews.files.forEach(file => formData.append('files', file));
-            }
-            const response = await axios.put(`http://localhost:8080/api/news/${updatedNews.newsID}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
-            return response.data;
-        },
-        onSuccess: ({ data }) => {
-            queryClient.invalidateQueries({ queryKey: ['news'] });
-            setIsModalVisible(false);
-            setSelectedNews(data);
-        },
-    });
-
-    const deleteNewsMutation = useMutation({
-        mutationFn: (newsId) => axios.delete(`http://localhost:8080/api/news/${newsId}`),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['news'] });
-            setIsModalVisible(false);
-        },
-    });
-
-    const showModal = (type) => {
-        if ((type === 'view' || type === 'edit' || type === 'delete') && !selectedNews) {
-            Modal.error({
-                title: 'No news selected',
-                content: 'Please select a news item first.',
-            });
-            return;
+    useEffect(() => {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            message.error('No admin access. Redirecting to login...');
+            navigate('/news');
+        } else {
+            validateToken(token);
         }
-        setModalType(type);
-        setIsModalVisible(true);
-        if (type === 'edit') {
+    }, []);
+
+    const { data: news, isLoading } = useFetchNews();
+    const addNews = useAddNews();
+    const updateNews = useUpdateNews();
+    const deleteNews = useDeleteNews();
+
+    const showModal = (mode, newsItem = null) => {
+        setModalMode(mode);
+        setSelectedNews(newsItem);
+
+        if (mode === 'edit' && newsItem) {
             form.setFieldsValue({
-                ...selectedNews,
+                ...newsItem,
+                thumbnail: newsItem.thumbnailPath
+                    ? [
+                        {
+                            uid: '-1', // A unique ID for the file
+                            name: 'thumbnail', // Name of the file
+                            status: 'done', // Status to indicate it's uploaded
+                            url: newsItem.thumbnailPath, // URL of the image
+                        },
+                    ]
+                    : [],
+                files: newsItem.imagePaths?.map((file, index) => ({
+                    uid: `-${index + 1}`,
+                    name: `file-${index + 1}`,
+                    status: 'done',
+                    url: file, // URL of the additional image
+                })) || [],
             });
-        } else if (type === 'add') {
+
+            console.log("Form Values After Setting (Edit Mode):", form.getFieldsValue());
+        } else if (mode === 'add') {
             form.resetFields();
-            setSelectedNews({});
+
+            // Log the form values after resetting
+            console.log("Form Values After Resetting (Add Mode):", form.getFieldsValue());
         }
+
+        setIsModalVisible(true);
     };
 
-    const handleOk = () => {
-        if (modalType === 'add' || modalType === 'edit') {
-            form.validateFields().then((values) => {
-                const newsData = {
-                    ...values,
-                    thumbnail: values.thumbnail ? values.thumbnail.fileList[0].originFileObj : null,
-                    files: values.files ? values.files.fileList.map(file => file.originFileObj) : [],
-                };
-                if (modalType === 'add') {
-                    addNewsMutation.mutate(newsData);
-                } else {
-                    updateNewsMutation.mutate({ ...newsData, newsID: selectedNews.newsID });
-                }
-            });
-        } else if (modalType === 'delete') {
-            deleteNewsMutation.mutate(selectedNews.newsID);
-        }
-    };
+
 
     const handleCancel = () => {
         setIsModalVisible(false);
+        setSelectedNews(null);
+        form.resetFields();
     };
 
-    const columns = [
-        {
-            title: 'Thumbnail',
-            dataIndex: 'thumbnailPath',
-            key: 'thumbnail',
-            render: (thumbnailPath) => (
-                thumbnailPath ? (
-                    <img
-                        src={thumbnailPath}
-                        alt="Thumbnail"
-                        style={{
-                            width: 50, height: 50, objectFit: 'cover', borderRadius: '25px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'  // Adds shadow effect
-                        }}
-                    />
-                ) : (
-                    <div style={{ width: 50, height: 50, backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        No Image
-                    </div>
-                )
-            ),
-        },
-        { title: 'Title', dataIndex: 'title', key: 'title' },
-        {
-            title: 'Date',
-            dataIndex: 'date',
-            key: 'date',
-            render: (text) => moment(text).format('YYYY-MM-DD HH:mm'),
-        },
-        {
-            title: 'Content',
-            dataIndex: 'content',
-            key: 'content',
-            render: (text) => (text.length > 50 ? text.substring(0, 50) + '...' : text),
-        },
-    ];
+    const handleSubmit = () => {
+        form.validateFields().then((values) => {
+            const newsData = {
+                ...values,
+                thumbnail: values.thumbnail?.[0]?.originFileObj || values.thumbnail?.[0],
+                files: values.files?.map(file => file.originFileObj || file),
+            };
 
-    const onSelectChange = (selectedRow) => {
-        const vijest = news.find(n => n.newsID === selectedRow[0]);
-        setSelectedNews(vijest);
+            if (modalMode === 'add') {
+                addNews.mutate(newsData, {
+                    onSuccess: () => {
+                        handleCancel();
+                        message.success('News added successfully!');
+                        const token = localStorage.getItem('firebaseToken');
+                        if (!token) {
+                            message.error('Firebase token not found. Cannot send notification.');
+                            return;
+                        }
+                        sendNotification.mutate({
+                            token: token, // Spremljeni Firebase token
+                            title: values.title, // Koristimo `values.title`
+                            body: values.content.slice(0, 100), // Koristimo `values.content`
+                        });
+
+                    },
+                });
+            } else if (modalMode === 'edit') {
+                updateNews.mutate({ ...newsData, newsID: selectedNews.newsID }, {
+                    onSuccess: () => {
+                        handleCancel();
+                        message.success('News updated successfully!');
+                    },
+                });
+            }
+        });
     };
 
-    const rowSelection = {
-        type: 'radio',
-        onChange: onSelectChange,
+    const handleDelete = (newsID) => {
+        deleteNews.mutate(newsID, {
+            onSuccess: () => {
+                message.success('News deleted successfully!');
+            },
+        });
     };
+
+
 
     return (
-        <div className="p-4 my-12">
-            <div className="mb-4 flex space-x-2">
-                <Button onClick={(e) => { e.stopPropagation(); showModal('view'); }}>View</Button>
-                <Button onClick={(e) => { e.stopPropagation(); showModal('add'); }}>Add</Button>
-                <Button onClick={(e) => { e.stopPropagation(); showModal('edit'); }}>Edit</Button>
-                <Button onClick={(e) => { e.stopPropagation(); showModal('delete'); }}>Delete</Button>
-            </div>
-            <Table
-                dataSource={news}
-                columns={columns}
-                rowKey="newsID"
-                rowSelection={rowSelection}
-            />
-            <Modal
-                title={modalType.charAt(0).toUpperCase() + modalType.slice(1) + ' News'}
-                visible={isModalVisible}
-                onOk={handleOk}
-                onCancel={handleCancel}
-                footer={modalType === 'view' ? null : undefined}
+        <div className="p-4 my-12 max-w-7xl mx-auto">
+            <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => showModal('add')}
+                className="mb-4 w-full sm:w-auto"
             >
-                {modalType === 'view' ? (
-                    <div>
+                Dodaj
+            </Button>
+
+
+            {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                    <Spin size="large" />
+                </div>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="min-w-full bg-white">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thumbnail</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Naslov</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Datum</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sadržaj</th>
+                                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Akcije</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                            {news?.map((item) => (
+                                <tr key={item.newsID}>
+                                    <td className="px-4 py-2 whitespace-nowrap">
+
+                                        <img src={item.thumbnailPath ? item.thumbnailPath : grb} alt="Thumbnail" className="w-12 h-12 object-cover rounded" />
+
+                                    </td>
+                                    <td className="px-4 py-2 whitespace-nowrap">
+                                        <div className="text-sm font-medium text-gray-900 truncate max-w-xs">{item.title}</div>
+                                    </td>
+                                    <td className="px-4 py-2 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500">{moment(item.date).format('YYYY-MM-DD HH:mm')}</div>
+                                    </td>
+                                    <td className="px-4 py-2 whitespace-nowrap">
+                                        <div className="text-sm text-gray-500 truncate max-w-xs">{item.content}</div>
+                                    </td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm font-medium">
+                                        <Button
+                                            icon={<EyeOutlined />}
+                                            onClick={() => showModal('view', item)}
+                                            className="mr-2"
+                                        />
+                                        <Button
+                                            icon={<EditOutlined />}
+                                            onClick={() => showModal('edit', item)}
+                                            className="mr-2"
+                                        />
+                                        <Popconfirm
+                                            title="Jeste li sigurni da želite izbrisati ovu vijest?"
+                                            onConfirm={() => handleDelete(item.newsID)}
+                                            okText="Da"
+                                            cancelText="Ne"
+                                        >
+                                            <Button icon={<DeleteOutlined />} />
+                                        </Popconfirm>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            <Modal
+                title={`${modalMode.charAt(0).toUpperCase() + modalMode.slice(1)} News`}
+                visible={isModalVisible}
+                onCancel={handleCancel}
+                footer={
+                    modalMode !== 'view' ? [
+                        <Button key="cancel" onClick={handleCancel}>
+                            Otkaži
+                        </Button>,
+                        <Button key="submit" type="primary" onClick={handleSubmit}>
+                            Potvrdi
+                        </Button>,
+                    ] : null
+                }
+                width={720}
+            >
+                {modalMode === 'view' ? (
+                    <div className="space-y-4">
                         {selectedNews?.thumbnailPath && (
                             <img
                                 src={selectedNews.thumbnailPath}
                                 alt="Thumbnail"
-                                style={{
-                                    width: 200, height: 200, objectFit: 'cover', marginBottom: 16, borderRadius: '25px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'  // Adds shadow effect
-                                }}
+                                className=" h-40 object-contain rounded-lg shadow-md"
                             />
                         )}
                         <div>
-                            <p className='font-bold'>Title: </p>
+                            <p className="font-bold">Naslov:</p>
                             <span>{selectedNews?.title}</span>
                         </div>
-
                         <div>
-                            <p className='font-bold'>Date: </p>
+                            <p className="font-bold">Datum:</p>
                             <span>{moment(selectedNews?.date).format('YYYY-MM-DD HH:mm')}</span>
                         </div>
-
                         <div>
-                            <p className='font-bold'>Content: </p>
-                            <div>
-                                {selectedNews?.content}
-                            </div>
+                            <p className="font-bold">Sadržaj:</p>
+                            <div className="max-h-60 overflow-y-auto">{selectedNews?.content}</div>
                         </div>
                     </div>
-                ) : modalType === 'delete' ? (
-                    <p>Are you sure you want to delete this news item?</p>
                 ) : (
-                    <Form form={form} layout="vertical">
-                        <Form.Item name="title" label="Title" rules={[{ required: true }]}>
+                    <Form form={form} layout="vertical" className="space-y-4">
+                        <Form.Item name="title" label="Naslov" rules={[{ required: true }]}>
                             <Input />
                         </Form.Item>
-                        <Form.Item name="content" label="Content" rules={[{ required: true }]}>
+                        <Form.Item name="content" label="Sadržaj" rules={[{ required: true }]}>
                             <TextArea rows={4} />
                         </Form.Item>
-                        <Form.Item name="thumbnail" label="Thumbnail" rules={[{ required: true }]}>
+                        <Form.Item name="thumbnail" label="Thumbnail">
                             <Upload
-                                accept="image/*"
-                                maxCount={1}
                                 beforeUpload={() => false}
                                 listType="picture-card"
+                                maxCount={1}
+                                fileList={form.getFieldValue('thumbnail')} // Use the form field value for file list
+
                             >
                                 <div>
-                                    <UploadOutlined />
+                                    <PlusOutlined />
                                     <div style={{ marginTop: 8 }}>Upload</div>
                                 </div>
                             </Upload>
                         </Form.Item>
-                        <Form.Item name="files" label="Additional Photos">
+                        <Form.Item name="files" label="Dodatne slike">
                             <Upload
-                                accept="image/*"
-                                multiple
                                 beforeUpload={() => false}
                                 listType="picture-card"
+                                multiple
+                                fileList={form.getFieldValue('files')} // Bind the fileList to the form value
+
                             >
                                 <div>
-                                    <UploadOutlined />
+                                    <PlusOutlined />
                                     <div style={{ marginTop: 8 }}>Upload</div>
                                 </div>
                             </Upload>
@@ -269,3 +281,4 @@ export default function NewsManager() {
         </div>
     );
 }
+
