@@ -117,7 +117,7 @@ function StandingsUnofficial({ competitionId }) {
     ];
 
     return (
-        <div className="bg-white border border-gray-200  p-4 sm:p-6 max-w-full sm:max-w-3xl mx-auto mb-8 rounded-3xl shadow-xl">
+        <div className="bg-white border border-gray-200  p-4 sm:p-6 max-w-full sm:max-w-3xl mx-auto mb-8 rounded-3xl shadow-md">
             <h2 className="text-lg sm:text-2xl font-bold text-center text-gray-900 mb-4 sm:mb-6">
                 Neslužbena Tablica
             </h2>

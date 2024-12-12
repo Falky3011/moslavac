@@ -62,9 +62,9 @@ const PlayerStats = () => {
     const minutesPlayedPercentage = (stats.minutesPlayed / (stats.matchesPlayed * 90)) * 100;
 
     return (
-        <div className="max-w-6xl mx-auto my-24 p-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl shadow-xl">
+        <div className="max-w-6xl mx-auto my-24 p-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl shadow-md">
             <div className="flex flex-col md:flex-row items-center md:items-start mb-12">
-                <div className="w-48 h-48 rounded-full overflow-hidden mb-6 md:mb-0 md:mr-12 border-4 border-white shadow-lg">
+                <div className="w-48 h-48 rounded-full overflow-hidden mb-6 md:mb-0 md:mr-12 border-4 border-white shadow-md">
                     {playerImage && (
                         <img src={playerImage.image} alt={player?.name} className="w-full h-full object-cover" />
                     )}
@@ -92,7 +92,7 @@ const PlayerStats = () => {
                 <StatCard icon={<FaSquareFull className="text-red-500" />} title="Crveni kartoni" value={stats.redCards} />
             </div>
 
-            {stats.minutesPlayed && <div className="bg-white p-8 rounded-2xl shadow-lg">
+            {stats.minutesPlayed && <div className="bg-white p-8 rounded-2xl shadow-md">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                         <div className="mb-6">

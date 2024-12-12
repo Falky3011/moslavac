@@ -1,102 +1,52 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { List, Card, Pagination, Typography, Spin, Alert, Modal, Input, Button, message } from 'antd'
-import { Link, useLocation } from 'react-router-dom'
-import { CalendarIcon, ChevronRightIcon } from 'lucide-react'
-import grb from '../assets/grb.png'
+import React, { useState, useEffect } from 'react';
+import { List, Card, Pagination, Typography, Spin, Alert, Modal, Input, Button } from 'antd';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { CalendarIcon, ChevronRightIcon } from 'lucide-react';
+import grb from '../assets/grb.png';
+import useValidatePassword from '../hooks/useValidatePassword';
+import useValidateToken from '../hooks/useValidateToken';
+import useFetchNewsPaginated from '../hooks/useFetchNewsPaginated';
 
-const { Title, Paragraph } = Typography
+const { Title, Paragraph } = Typography;
 
 export default function NewsList() {
-    const [currentPage, setCurrentPage] = useState(1)
-    const pageSize = 10
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
     const location = useLocation();
-    const isAdminRoute = location.pathname.endsWith("/admin");
+    const navigate = useNavigate();
+    const isAdminRoute = location.pathname.endsWith('/admin');
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(false);
     const [password, setPassword] = useState('');
 
-    // Provjera tokena pri učitavanju stranice
+    const { refetch: validateToken, isAdmin } = useValidateToken(navigate);
+    const { mutate: validatePassword } = useValidatePassword(validateToken, setIsModalVisible);
+    const { data, error, isLoading } = useFetchNewsPaginated(currentPage, pageSize);
+
     useEffect(() => {
         const token = localStorage.getItem('adminToken');
         if (token) {
-            validateToken(token);
+            validateToken();
         } else if (isAdminRoute) {
             setIsModalVisible(true);
         }
-    }, [isAdminRoute]);
+    }, [isAdminRoute, validateToken]);
 
-    const validateToken = async (token) => {
-        try {
-            const response = await fetch('http://localhost:8080/api/admin/validate-token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ token }),
-            });
-
-            if (response.ok) {
-                setIsAdmin(true);
-            } else {
-                localStorage.removeItem('adminToken');
-                if (isAdminRoute) setIsModalVisible(true);
-            }
-        } catch (error) {
-            console.error('Token validation failed', error);
-        }
+    const handlePasswordSubmit = () => {
+        validatePassword(password);
     };
-
-    const handlePasswordSubmit = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/api/admin/validate-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ password }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('adminToken', data.token);
-                message.success('Uspješna autentifikacija!');
-                setIsAdmin(true);
-                setIsModalVisible(false);
-            } else {
-                message.error('Pogrešna šifra!');
-            }
-        } catch (error) {
-            message.error('Greška pri provjeri šifre!');
-        }
-    };
-
-    const fetchNews = async (page) => {
-        const response = await fetch(`http://localhost:8080/api/news?page=${page - 1}&size=${pageSize}`)
-        if (!response.ok) {
-            throw new Error('Network response was not ok')
-        }
-        return response.json()
-    }
-
-    const { data, error, isLoading } = useQuery({
-        queryKey: ['newslist', currentPage],
-        queryFn: () => fetchNews(currentPage),
-        keepPreviousData: true,
-    })
 
     const handlePageChange = (page) => {
-        setCurrentPage(page)
-    }
+        setCurrentPage(page);
+    };
 
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen">
                 <Spin size="large" />
             </div>
-        )
+        );
     }
 
     if (error) {
@@ -108,12 +58,11 @@ export default function NewsList() {
                 showIcon
                 className="max-w-4xl mx-auto mt-4"
             />
-        )
+        );
     }
 
     return (
         <div className="max-w-4xl mx-auto p-4">
-            {/* Modal za unos šifre */}
             <Modal
                 title="Administratorska autentifikacija"
                 visible={isModalVisible}
@@ -135,7 +84,6 @@ export default function NewsList() {
                 />
             </Modal>
 
-            {/* Gumb za uređivanje vijesti vidljiv samo nakon autentifikacije */}
             {isAdmin && (
                 <div className="mb-6 flex justify-end">
                     <Link
@@ -160,7 +108,6 @@ export default function NewsList() {
                             bodyStyle={{ padding: 0 }}
                         >
                             <div className="flex flex-col sm:flex-row">
-
                                 <div className="sm:w-1/3">
                                     <img
                                         alt={item.title}
@@ -204,5 +151,5 @@ export default function NewsList() {
                 />
             </div>
         </div>
-    )
+    );
 }

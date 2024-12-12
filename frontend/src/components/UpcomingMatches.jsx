@@ -73,8 +73,12 @@ const UpcomingMatches = () => {
                         </motion.div>
                     ))}
                 </motion.div>
-            </div>
 
+                {/* Fade effect */}
+                {canScrollRight && (
+                    <div className="absolute top-0 right-0 w-12 h-full bg-gradient-to-l from-gray-100 to-transparent pointer-events-none"></div>
+                )}
+            </div>
         </div>
     );
 };

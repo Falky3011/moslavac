@@ -64,7 +64,7 @@ function NewsDetail() {
 
     return (
         <div className="max-w-4xl mx-auto p-4 my-10">
-            <article className="bg-white shadow-lg rounded-3xl overflow-hidden">
+            <article className="bg-white shadow-md rounded-3xl overflow-hidden">
 
 
                 <div className="w-full flex justify-center">

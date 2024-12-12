@@ -88,7 +88,7 @@ function MatchCalendar() {
                 selectable
                 onSelectEvent={event => navigate(`/matches/${event.id}`)}
                 min={moment().set({ hour: 7, minute: 0 }).toDate()}
-                className="rbc-calendar min-h-[700px] h-auto pb-[20px] rounded-3xl shadow-xl transition-all duration-300 hover:shadow-2xl"
+                className="rbc-calendar min-h-[700px] h-auto pb-[20px] rounded-3xl shadow-md "
             />
         </div>
     );

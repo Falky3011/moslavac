@@ -6,7 +6,7 @@ const { Title, Paragraph } = Typography;
 
 export default function SeasonTicketPurchase() {
     return (
-        <div className="max-w-3xl mx-auto p-4 sm:p-6 rounded-3xl shadow-xl bg-gray-50 my-8 sm:my-20">
+        <div className="max-w-3xl mx-auto p-4 sm:p-6 rounded-3xl shadow-md bg-gray-50 my-8 sm:my-20">
             <Card className='bg-gray-50 border-none'>
                 <Title level={2} className="text-center text-xl sm:text-2xl">Postani naš 12. igrač!</Title>
                 <Paragraph className='text-base sm:text-lg'>

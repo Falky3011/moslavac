@@ -11,7 +11,7 @@ const NewsCard = ({ title, content, date, imageUrl, id }) => {
     return (
         <Card
             hoverable
-            className="w-full overflow-hidden transition-all duration-300 hover:shadow-lg"
+            className="w-full overflow-hidden transition-all duration-300 hover:shadow-md"
             cover={
                 <div className="relative w-full h-48">
                     <img

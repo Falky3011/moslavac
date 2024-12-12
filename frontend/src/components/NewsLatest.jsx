@@ -52,7 +52,7 @@ const NewsLatest = () => {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                             >
-                                <div className="bg-white rounded-3xl shadow-xl transition-shadow duration-300 ease-in-out hover:shadow-2xl h-full">
+                                <div className="bg-white rounded-3xl shadow-md transition-shadow duration-300 ease-in-out hover:shadow-xl h-full">
                                     <div className="relative h-48">
                                         <img
                                             src={item.thumbnailPath ? item.thumbnailPath : grb}

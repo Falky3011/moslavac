@@ -1,21 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Input, Modal, Divider, List } from 'antd';
+import { Button, Input, Modal, Divider, List, message } from 'antd';
 import { DeleteOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { usePlayerSearch } from '../hooks/usePlayerSearch';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import PlayerListItem from './PlayerListItem';
 import { useGetCometImage } from '../hooks/useGetCometImage';
-import { useGetSeniorCompetition } from '../hooks/useGetSeniorCompetition'
+import { useGetSeniorCompetition } from '../hooks/useGetSeniorCompetition';
+import useValidateToken from '../hooks/useValidateToken';
+import useValidatePassword from '../hooks/useValidatePassword';
 
 export default function FirstTeam() {
     const [players, setPlayers] = useState([]);
     const [searchKeyword, setSearchKeyword] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [passwordModalVisible, setPasswordModalVisible] = useState(false);
+    const [password, setPassword] = useState('');
     const [selectedPosition, setSelectedPosition] = useState('');
     const { data: competition } = useGetSeniorCompetition();
+    const location = useLocation();
+    const navigate = useNavigate();
 
+    const { isAdmin, refetch: validateToken } = useValidateToken(navigate);
+    const { mutate: validatePassword } = useValidatePassword(validateToken, setPasswordModalVisible);
 
     const { data: searchResults, isLoading } = usePlayerSearch(searchKeyword);
+
+    // Check if the URL ends with "/admin" to display the password modal
+    useEffect(() => {
+        const token = localStorage.getItem('adminToken');
+        if (location.pathname.endsWith('/admin')) {
+            if (!token) {
+                setPasswordModalVisible(true);
+            } else {
+                validateToken();
+            }
+        }
+    }, [location.pathname, validateToken]);
 
     useEffect(() => {
         const storedPlayers = localStorage.getItem('players');
@@ -42,11 +62,11 @@ export default function FirstTeam() {
         setPlayers(updatedPlayers);
     };
 
-    const PlayerCard = ({ player }) => {
+    const PlayerCard = ({ player, isAdmin, removePlayer, competition }) => {
         const { data: playerImage } = useGetCometImage(player.picture);
 
         return (
-            <div className="w-36 m-2 bg-white rounded-lg shadow-lg overflow-hidden transition transform hover:scale-105">
+            <div className="w-36 m-2 bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
                 <Link to={`/stats/${player.personId}`} state={{ competition }}>
                     <div className="relative h-36 bg-gray-200">
                         {playerImage ? (
@@ -63,14 +83,19 @@ export default function FirstTeam() {
                     </div>
                 </Link>
                 <div className="p-2 text-center">
-                    <Link to={`/stats/${player.personId}`} className="text-sm font-semibold text-gray-800">
+                    <Link
+                        to={`/stats/${player.personId}`}
+                        className="text-sm font-semibold text-gray-800 hover:underline"
+                    >
                         {player.shortName}
                     </Link>
                     <br />
-                    <DeleteOutlined
-                        className="text-red-500 cursor-pointer mt-2"
-                        onClick={() => removePlayer(player.personId)}
-                    />
+                    {isAdmin && (
+                        <DeleteOutlined
+                            className="text-red-500 cursor-pointer mt-2"
+                            onClick={() => removePlayer(player.personId)}
+                        />
+                    )}
                 </div>
             </div>
         );
@@ -81,30 +106,42 @@ export default function FirstTeam() {
             <Divider orientation="left" className="text-lg font-semibold">{title}</Divider>
             <div className="flex flex-wrap">
                 {players.filter(p => p.position === position).map(player => (
-                    <PlayerCard key={player.personId} player={player} />
+                    <PlayerCard
+                        key={player.personId}
+                        player={player}
+                        isAdmin={isAdmin} // Pass isAdmin prop
+                        removePlayer={removePlayer} // Pass removePlayer function
+                        competition={competition} // Pass competition if needed
+                    />
                 ))}
-                <div
-                    onClick={() => {
-                        setSelectedPosition(position);
-                        setIsModalVisible(true);
-                    }}
-                    className="w-36 h-56 m-2 flex flex-col items-center justify-center bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 transition"
-                >
-                    <PlusOutlined className="text-2xl text-gray-400" />
-                    <p className="text-sm text-gray-500 mt-2">Add {title}</p>
-                </div>
+                {isAdmin && (
+                    <div
+                        onClick={() => {
+                            setSelectedPosition(position);
+                            setIsModalVisible(true);
+                        }}
+                        className="w-36 h-56 m-2 flex flex-col items-center justify-center bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-200 transition"
+                    >
+                        <PlusOutlined className="text-2xl text-gray-400" />
+                        <p className="text-sm text-gray-500 mt-2">Add {title}</p>
+                    </div>
+                )}
             </div>
         </div>
     );
 
+    const handlePasswordSubmit = () => {
+        validatePassword(password);
+    };
+
     return (
-        <div className="p-6 md:w-[70%] mx-auto rounded-3xl shadow-lg bg-gray-50 md:my-36">
-            <h1 className="text-2xl font-bold text-center mb-8">First Team</h1>
+        <div className="p-6 md:w-[70%] mx-auto rounded-3xl shadow-md bg-gray-50 my-8">
+            <h1 className="text-2xl font-bold text-center mb-8">Momčad</h1>
 
             {renderPositionSection('Vratar', 'goalkeeper')}
             {renderPositionSection('Branič', 'defender')}
             {renderPositionSection('Vezni', 'midfielder')}
-            {renderPositionSection('Napradač', 'attacker')}
+            {renderPositionSection('Napadač', 'attacker')}
 
             <Modal
                 title="Add Player"
@@ -125,6 +162,27 @@ export default function FirstTeam() {
                     renderItem={(player) => (
                         <PlayerListItem player={player} onAdd={addPlayer} />
                     )}
+                />
+            </Modal>
+
+            <Modal
+                title="Administratorska autentifikacija"
+                visible={passwordModalVisible}
+                onCancel={() => setPasswordModalVisible(false)}
+                footer={[
+                    <Button key="cancel" onClick={() => setPasswordModalVisible(false)}>
+                        Odustani
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={handlePasswordSubmit}>
+                        Potvrdi
+                    </Button>,
+                ]}
+            >
+                <p>Molimo unesite administratorsku šifru za pristup.</p>
+                <Input.Password
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Unesite šifru"
                 />
             </Modal>
         </div>

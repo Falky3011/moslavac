@@ -37,7 +37,7 @@ export default function MatchDetails() {
 
     return (
         <div className="container mx-auto px-4 py-4 sm:py-8 max-w-4xl">
-            <div className="bg-white shadow-xl rounded-3xl overflow-hidden">
+            <div className="bg-white shadow-md rounded-3xl overflow-hidden">
                 <div className="bg-gradient-to-r from-blue-400 to-blue-600 text-white p-4 sm:p-6">
                     <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
                         <span className="text-xs sm:text-sm font-medium mb-2 sm:mb-0">{new Date(dateTimeUTC).toLocaleDateString()}</span>
@@ -69,19 +69,7 @@ export default function MatchDetails() {
                     </div>
 
                 </div>
-                <div className="p-4 sm:p-6">
-                    <div className="flex flex-col gap-2">
-                        {matchReferees.matchOfficials
-                            .filter(official => official.role !== "Delegat")
-                            .map((official, index) => (
-                                <div key={index} className="bg-gray-100 rounded-lg p-2 sm:p-3 flex justify-between items-center">
-                                    <span className="font-medium text-sm sm:text-base">{official.name}</span>
-                                    <span className="text-gray-600 text-xs sm:text-sm">{official.role}</span>
-                                </div>
-                            ))
-                        }
-                    </div>
-                </div>
+
             </div>
 
             <div >
@@ -94,6 +82,20 @@ export default function MatchDetails() {
                     homeTeamImage={homeTeamImage}
                     awayTeamImage={awayTeamImage}
                 />
+            </div>
+            <div className="mt-4 bg-gray-100 rounded-3xl shadow-md p-4 ">
+                <h3 className="text-lg text-gray-800 font-semibold mb-2">Službene osobe</h3>
+                <div className="space-y-2">
+                    {matchReferees.matchOfficials
+                        .filter(official => official.role !== "Delegat")
+                        .map((official, index) => (
+                            <div key={index} className="flex justify-between items-center">
+                                <span className="text-sm font-medium">{official.name}</span>
+                                <span className="text-xs text-gray-600">{official.role}</span>
+                            </div>
+                        ))
+                    }
+                </div>
             </div>
         </div>
     )

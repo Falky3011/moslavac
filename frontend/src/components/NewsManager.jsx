@@ -7,9 +7,9 @@ import useFetchNews from '../hooks/useFetchNews';
 import useAddNews from '../hooks/useAddNews';
 import useUpdateNews from '../hooks/useUpdateNews';
 import useDeleteNews from '../hooks/useDeleteNews';
-import useValidateToken from '../hooks/useValidateToken';
-import grb from '../assets/grb.png'
+import grb from '../assets/grb.png';
 import useSendNotification from '../hooks/useSendNotification';
+import useValidateToken from '../hooks/useValidateToken';
 
 const { TextArea } = Input;
 
@@ -17,10 +17,12 @@ export default function NewsManager() {
     const [selectedNews, setSelectedNews] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalMode, setModalMode] = useState('');
+    const [thumbnailList, setThumbnailList] = useState([]);
+    const [filesList, setFilesList] = useState([]);
     const [form] = Form.useForm();
     const navigate = useNavigate();
 
-    const validateToken = useValidateToken(navigate);
+    const { refetch: validateToken } = useValidateToken(navigate);
     const sendNotification = useSendNotification();
 
     useEffect(() => {
@@ -29,9 +31,9 @@ export default function NewsManager() {
             message.error('No admin access. Redirecting to login...');
             navigate('/news');
         } else {
-            validateToken(token);
+            validateToken();
         }
-    }, []);
+    }, [validateToken, navigate]);
 
     const { data: news, isLoading } = useFetchNews();
     const addNews = useAddNews();
@@ -45,49 +47,50 @@ export default function NewsManager() {
         if (mode === 'edit' && newsItem) {
             form.setFieldsValue({
                 ...newsItem,
-                thumbnail: newsItem.thumbnailPath
-                    ? [
-                        {
-                            uid: '-1', // A unique ID for the file
-                            name: 'thumbnail', // Name of the file
-                            status: 'done', // Status to indicate it's uploaded
-                            url: newsItem.thumbnailPath, // URL of the image
-                        },
-                    ]
-                    : [],
-                files: newsItem.imagePaths?.map((file, index) => ({
+                thumbnail: [],
+                files: [],
+            });
+            setThumbnailList(newsItem.thumbnailPath
+                ? [
+                    {
+                        uid: '-1',
+                        name: 'thumbnail',
+                        status: 'done',
+                        url: newsItem.thumbnailPath,
+                    },
+                ]
+                : []);
+            setFilesList(
+                newsItem.imagePaths?.map((file, index) => ({
                     uid: `-${index + 1}`,
                     name: `file-${index + 1}`,
                     status: 'done',
-                    url: file, // URL of the additional image
-                })) || [],
-            });
-
-            console.log("Form Values After Setting (Edit Mode):", form.getFieldsValue());
+                    url: file,
+                })) || []
+            );
         } else if (mode === 'add') {
             form.resetFields();
-
-            // Log the form values after resetting
-            console.log("Form Values After Resetting (Add Mode):", form.getFieldsValue());
+            setThumbnailList([]);
+            setFilesList([]);
         }
 
         setIsModalVisible(true);
     };
 
-
-
     const handleCancel = () => {
         setIsModalVisible(false);
         setSelectedNews(null);
         form.resetFields();
+        setThumbnailList([]);
+        setFilesList([]);
     };
 
     const handleSubmit = () => {
         form.validateFields().then((values) => {
             const newsData = {
                 ...values,
-                thumbnail: values.thumbnail?.[0]?.originFileObj || values.thumbnail?.[0],
-                files: values.files?.map(file => file.originFileObj || file),
+                thumbnail: thumbnailList[0]?.originFileObj || thumbnailList[0]?.url,
+                files: filesList.map(file => file.originFileObj || file.url),
             };
 
             if (modalMode === 'add') {
@@ -101,11 +104,10 @@ export default function NewsManager() {
                             return;
                         }
                         sendNotification.mutate({
-                            token: token, // Spremljeni Firebase token
-                            title: values.title, // Koristimo `values.title`
-                            body: values.content.slice(0, 100), // Koristimo `values.content`
+                            token: token,
+                            title: values.title,
+                            body: values.content.slice(0, 100),
                         });
-
                     },
                 });
             } else if (modalMode === 'edit') {
@@ -127,8 +129,6 @@ export default function NewsManager() {
         });
     };
 
-
-
     return (
         <div className="p-4 my-12 max-w-7xl mx-auto">
             <Button
@@ -139,7 +139,6 @@ export default function NewsManager() {
             >
                 Dodaj
             </Button>
-
 
             {isLoading ? (
                 <div className="flex justify-center items-center h-64">
@@ -161,9 +160,7 @@ export default function NewsManager() {
                             {news?.map((item) => (
                                 <tr key={item.newsID}>
                                     <td className="px-4 py-2 whitespace-nowrap">
-
                                         <img src={item.thumbnailPath ? item.thumbnailPath : grb} alt="Thumbnail" className="w-12 h-12 object-cover rounded" />
-
                                     </td>
                                     <td className="px-4 py-2 whitespace-nowrap">
                                         <div className="text-sm font-medium text-gray-900 truncate max-w-xs">{item.title}</div>
@@ -223,7 +220,7 @@ export default function NewsManager() {
                             <img
                                 src={selectedNews.thumbnailPath}
                                 alt="Thumbnail"
-                                className=" h-40 object-contain rounded-lg shadow-md"
+                                className="h-40 object-contain rounded-lg shadow-md"
                             />
                         )}
                         <div>
@@ -252,8 +249,8 @@ export default function NewsManager() {
                                 beforeUpload={() => false}
                                 listType="picture-card"
                                 maxCount={1}
-                                fileList={form.getFieldValue('thumbnail')} // Use the form field value for file list
-
+                                fileList={thumbnailList}
+                                onChange={({ fileList }) => setThumbnailList(fileList)}
                             >
                                 <div>
                                     <PlusOutlined />
@@ -266,8 +263,8 @@ export default function NewsManager() {
                                 beforeUpload={() => false}
                                 listType="picture-card"
                                 multiple
-                                fileList={form.getFieldValue('files')} // Bind the fileList to the form value
-
+                                fileList={filesList}
+                                onChange={({ fileList }) => setFilesList(fileList)}
                             >
                                 <div>
                                     <PlusOutlined />
@@ -281,4 +278,3 @@ export default function NewsManager() {
         </div>
     );
 }
-

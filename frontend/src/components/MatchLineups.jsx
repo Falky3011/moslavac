@@ -47,7 +47,7 @@ const MatchLineups = ({ moslavacIsHome, homeTeam, awayTeam, competition, homeTea
     );
 
     return (
-        <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden mb-8 mx-auto max-w-4xl">
+        <div className="bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden mb-8 mx-auto max-w-4xl">
             <div className="hidden md:block p-6">
                 <h3 className="text-xl font-semibold mb-6 text-center">Početna postava</h3>
                 <div className="grid grid-cols-2 gap-8 mb-8">

@@ -13,7 +13,7 @@ const CompetitionInfo = () => {
             <h1 className="text-2xl font-bold text-center mb-4">{decodeURIComponent(competitionName)}</h1>
 
             <div className="flex justify-center mb-6">
-                <div className="inline-flex rounded-md shadow-sm" role="group">
+                <div className="inline-flex rounded-lg " role="group">
                     <button
                         type="button"
                         className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${activeTab === 'matches'

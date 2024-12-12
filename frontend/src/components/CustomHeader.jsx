@@ -98,7 +98,7 @@ export default function CustomHeader() {
             }}
             className="sticky top-0 z-50 w-full"
         >
-            <Header className="h-full bg-white border-b border-gray-300 shadow-xl px-4">
+            <Header className="h-full bg-white border-b border-gray-300 shadow-md px-4">
                 <div className="max-w-screen-xl mx-auto flex items-center h-full relative">
                     {isMobile && (
                         <Button

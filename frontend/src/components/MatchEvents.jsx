@@ -105,7 +105,7 @@ const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
     };
 
     return (
-        <div className="mb-8 w-full max-w-3xl mx-auto bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
+        <div className="mb-8 w-full max-w-3xl mx-auto bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden">
             <div className="divide-y divide-gray-200">
                 {matchEvents.map((event, index) => {
                     const eventContent = renderEvent(event);

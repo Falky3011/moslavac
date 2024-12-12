@@ -45,7 +45,7 @@ const CompetitionMatches = ({ competitionId }) => {
     const sortedMonths = sortMonthsAscending(matchesByMonth);
 
     return (
-        <div className="max-w-full mx-auto p-4 bg-gray-50 shadow-lg rounded-3xl md:max-w-[75%]">
+        <div className="max-w-full mx-auto p-4  shadow-md rounded-3xl md:max-w-[75%]">
             {sortedMonths.map((month) => (
                 <div key={month} className="mb-6">
                     <Typography.Title level={4} className="text-lg font-bold text-gray-800 uppercase">

@@ -28,7 +28,7 @@ export default function Match({
     const matchDateAndTime = formatDate(date);
 
     return (
-        <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-3xl p-4 sm:p-6 text-center w-full max-w-[28rem] mx-auto shadow-lg transition-all duration-300 hover:shadow-xl hover:border-gray-300 flex flex-col justify-between min-h-[400px]">
+        <div className="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-3xl p-4 sm:p-6 text-center w-full max-w-[28rem] mx-auto shadow-md transition-all duration-300 hover:shadow-md hover:border-gray-300 flex flex-col justify-between min-h-[400px]">
             <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
                 {match === "Današnja utakmica" && <FireFilled style={{ color: '#FF3B30', fontSize: '1.25rem' }} />}
                 {match}

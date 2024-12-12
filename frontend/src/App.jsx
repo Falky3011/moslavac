@@ -74,6 +74,8 @@ function App() {
         <Route path="/admin/manage-news" element={<NewsManager />}></Route>
         <Route path="/matches/:matchId" element={<MatchDetails />} />
         <Route path="/first-team" element={<FirstTeam />} />
+        <Route path="/first-team/admin  " element={<FirstTeam />} />
+
         <Route path="/season-ticket-purchase" element={<SeasonTicketPurchase />} />
       </Routes>
 
