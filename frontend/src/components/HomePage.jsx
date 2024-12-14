@@ -41,7 +41,7 @@ const AnimatedSection = ({ children, className }) => {
 
 function HomePage() {
     return (
-        <div className="py-6 space-y-8 sm:space-y-12 md:space-y-16">
+        <div className="md:py-6 space-y-8 sm:space-y-12 md:space-y-16">
             <AnimatedSection>
                 <NewsCarousel />
             </AnimatedSection>

@@ -28,7 +28,7 @@ export default function NewsCarousel() {
     }
 
     return (
-        <div className="relative w-full max-w-6xl mx-auto bg-white rounded-3xl shadow-md overflow-hidden ">
+        <div className="relative w-full max-w-6xl mx-auto bg-white md:rounded-3xl shadow-md overflow-hidden ">
             <Carousel
                 ref={carouselRef}
                 autoplay

@@ -1,4 +1,3 @@
-// src/components/CompetitionMatches/CompetitionMatches.jsx
 import React from 'react';
 import { List, Typography, Divider, Spin, Alert } from 'antd';
 import MatchItem from './MatchItem';
@@ -6,8 +5,6 @@ import useGetAllCompetitionMatches from '../hooks/useGetAllCompetitionMatches';
 
 const CompetitionMatches = ({ competitionId }) => {
     const { data, error, isLoading } = useGetAllCompetitionMatches(competitionId);
-
-
 
     const groupMatchesByMonth = (matches) => {
         return matches.reduce((acc, match) => {
@@ -33,8 +30,8 @@ const CompetitionMatches = ({ competitionId }) => {
         });
     };
 
-    if (isLoading) return <Spin size="large" />;
-    if (error) return <Alert message="Error fetching matches" type="error" />;
+    if (isLoading) return <Spin size="large" className="flex justify-center items-center h-64" />;
+    if (error) return <Alert message="Error fetching matches" type="error" className="mx-4" />;
 
     const matchesByMonth = groupMatchesByMonth(data);
 
@@ -45,13 +42,13 @@ const CompetitionMatches = ({ competitionId }) => {
     const sortedMonths = sortMonthsAscending(matchesByMonth);
 
     return (
-        <div className="max-w-full mx-auto p-4  shadow-md rounded-3xl md:max-w-[75%]">
+        <div className="max-w-full mx-auto p-4 shadow-md rounded-3xl md:max-w-[75%]">
             {sortedMonths.map((month) => (
                 <div key={month} className="mb-6">
-                    <Typography.Title level={4} className="text-lg font-bold text-gray-800 uppercase">
+                    <Typography.Title level={4} className="text-base sm:text-lg font-bold text-gray-800 uppercase">
                         {new Date(month + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}
                     </Typography.Title>
-                    <Divider />
+                    <Divider className="my-2 sm:my-4" />
                     <List
                         itemLayout="horizontal"
                         dataSource={matchesByMonth[month]}
@@ -64,3 +61,4 @@ const CompetitionMatches = ({ competitionId }) => {
 };
 
 export default CompetitionMatches;
+

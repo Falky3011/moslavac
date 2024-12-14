@@ -36,11 +36,11 @@ const UpcomingMatches = () => {
     };
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-64">Loading...</div>;
+        return <div className="flex justify-center items-center h-48 sm:h-64">Loading...</div>;
     }
 
     if (error) {
-        return <div className="text-red-500">Error loading matches</div>;
+        return <div className="text-red-500 text-center p-4">Error loading matches</div>;
     }
 
     if (!matches || matches.length === 0) {
@@ -49,15 +49,15 @@ const UpcomingMatches = () => {
 
     return (
         <div className="relative max-w-full mx-auto px-2 sm:px-4 py-6 sm:py-12 bg-gray-100">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-4 sm:mb-8">Sljedeće utakmice</h2>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 text-center mb-4 sm:mb-8">Sljedeće utakmice</h2>
             <div className="relative overflow-hidden">
                 <motion.div
                     ref={sliderRef}
-                    className="flex space-x-4 sm:space-x-6 overflow-x-auto snap-x snap-mandatory pb-4"
+                    className="flex space-x-3 sm:space-x-4 md:space-x-6 overflow-x-auto snap-x snap-mandatory pb-4"
                     style={{
                         scrollSnapType: 'x mandatory',
-                        scrollbarWidth: 'none', // Firefox
-                        msOverflowStyle: 'none', // IE 10+
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none',
                     }}
                     onScroll={checkScroll}
                     whileTap={{ cursor: "grabbing" }}
@@ -65,7 +65,7 @@ const UpcomingMatches = () => {
                     {matches.map((match) => (
                         <motion.div
                             key={match.id}
-                            className="flex-shrink-0 w-full sm:w-[340px] snap-start"
+                            className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[340px] snap-start"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -74,9 +74,8 @@ const UpcomingMatches = () => {
                     ))}
                 </motion.div>
 
-                {/* Fade effect */}
                 {canScrollRight && (
-                    <div className="absolute top-0 right-0 w-12 h-full bg-gradient-to-l from-gray-100 to-transparent pointer-events-none"></div>
+                    <div className="absolute top-0 right-0 w-12 h-full bg-gradient-to-l from-gray-100 to-transparent pointer-events-none hidden lg:block"></div>
                 )}
             </div>
         </div>
@@ -84,3 +83,4 @@ const UpcomingMatches = () => {
 };
 
 export default UpcomingMatches;
+
