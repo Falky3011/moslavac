@@ -1,14 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { List, Card, Pagination, Typography, Spin, Alert, Modal, Input, Button } from 'antd';
+import { List, Card, Pagination, Typography, Spin, Alert } from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { CalendarIcon, ChevronRightIcon } from 'lucide-react';
 import grb from '../assets/grb.png';
-import useValidatePassword from '../hooks/useValidatePassword';
-import useValidateToken from '../hooks/useValidateToken';
-import useFetchNewsPaginated from '../hooks/useFetchNewsPaginated';
-
+import { useAdminAuth } from '../utils/adminUtils';
+import useGetNewsPaginated from '../hooks/useGetNewsPaginated';
 const { Title, Paragraph } = Typography;
 
 export default function NewsList() {
@@ -16,26 +14,9 @@ export default function NewsList() {
     const pageSize = 10;
     const location = useLocation();
     const navigate = useNavigate();
-    const isAdminRoute = location.pathname.endsWith('/admin');
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [password, setPassword] = useState('');
 
-    const { refetch: validateToken, isAdmin } = useValidateToken(navigate);
-    const { mutate: validatePassword } = useValidatePassword(validateToken, setIsModalVisible);
-    const { data, error, isLoading } = useFetchNewsPaginated(currentPage, pageSize);
-
-    useEffect(() => {
-        const token = localStorage.getItem('adminToken');
-        if (token) {
-            validateToken();
-        } else if (isAdminRoute) {
-            setIsModalVisible(true);
-        }
-    }, [isAdminRoute, validateToken]);
-
-    const handlePasswordSubmit = () => {
-        validatePassword(password);
-    };
+    const { isAdmin, AdminAuthModal, setIsModalVisible } = useAdminAuth();
+    const { data, error, isLoading } = useGetNewsPaginated(currentPage, pageSize);
 
     const handlePageChange = (page) => {
         setCurrentPage(page);
@@ -63,26 +44,7 @@ export default function NewsList() {
 
     return (
         <div className="max-w-4xl mx-auto p-4">
-            <Modal
-                title="Administratorska autentifikacija"
-                visible={isModalVisible}
-                onCancel={() => setIsModalVisible(false)}
-                footer={[
-                    <Button key="cancel" onClick={() => setIsModalVisible(false)}>
-                        Odustani
-                    </Button>,
-                    <Button key="submit" type="primary" onClick={handlePasswordSubmit}>
-                        Potvrdi
-                    </Button>,
-                ]}
-            >
-                <p>Molimo unesite administratorsku šifru za pristup.</p>
-                <Input.Password
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Unesite šifru"
-                />
-            </Modal>
+            <AdminAuthModal />
 
             {isAdmin && (
                 <div className="mb-6 flex justify-end">
@@ -104,31 +66,38 @@ export default function NewsList() {
                     <List.Item className="p-0 mb-4 bg-white">
                         <Card
                             hoverable
-                            className="w-full overflow-hidden rounded-3xl"
+                            className="w-full h-56 overflow-hidden rounded-3xl flex"
                             bodyStyle={{ padding: 0 }}
                         >
-                            <div className="flex flex-col sm:flex-row">
-                                <div className="sm:w-1/3">
+                            <div className="flex flex-col sm:flex-row h-full w-full">
+                                {/* Slika - fiksirana visina */}
+                                <div className="sm:w-1/3 h-full">
                                     <img
                                         alt={item.title}
                                         src={item.thumbnailPath ? item.thumbnailPath : grb}
-                                        className="object-cover w-full h-48 sm:h-full"
+                                        className={`w-full ${item.thumbnailPath ? 'object-cover' : 'object-contain'}`}
                                     />
                                 </div>
 
-                                <div className="p-4 sm:w-2/3">
-                                    <Title level={4} className="mb-2 text-lg font-semibold">
-                                        {item.title}
-                                    </Title>
-                                    <div className="flex items-center text-sm text-gray-500 mb-2">
-                                        <CalendarIcon className="w-4 h-4 mr-1" />
-                                        {new Date(item.date).toLocaleDateString()}
+                                {/* Sadržaj - fiksirana visina i padding */}
+                                <div className="p-4 sm:w-2/3 flex flex-col justify-between h-full">
+                                    <div>
+                                        <Title level={4} className="mb-2 text-lg font-semibold">
+                                            {item.title}
+                                        </Title>
+                                        <div className="flex items-center text-sm text-gray-500 mb-2">
+                                            <CalendarIcon className="w-4 h-4 mr-1" />
+                                            {new Date(item.date).toLocaleDateString()}
+                                        </div>
+                                        <Paragraph
+                                            ellipsis={{ rows: 3 }}
+                                            className="text-sm text-gray-600"
+                                        >
+                                            {item.content}
+                                        </Paragraph>
                                     </div>
-                                    <Paragraph ellipsis={{ rows: 2 }} className="text-sm text-gray-600">
-                                        {item.content}
-                                    </Paragraph>
                                     <Link
-                                        to={`/news/${item.newsID}`}
+                                        to={`/news/${item.id}`}
                                         className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm mt-2"
                                     >
                                         Pročitaj više
@@ -140,6 +109,7 @@ export default function NewsList() {
                     </List.Item>
                 )}
             />
+
             <div className="mt-6 flex justify-center">
                 <Pagination
                     current={currentPage}
@@ -153,3 +123,4 @@ export default function NewsList() {
         </div>
     );
 }
+

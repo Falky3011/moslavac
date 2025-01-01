@@ -2,6 +2,9 @@ package com.af.moslavac.controllers;
 
 import com.af.moslavac.services.HnsApiService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,9 +36,18 @@ public class HnsApiController {
     }
 
     @GetMapping("/api/comet/image/{uuid}")
-    public Map<String, Object> getCometImage(@PathVariable String uuid) {
-        return hnsApiService.fetchCometImage(uuid);
+    public ResponseEntity<byte[]> getCometImageRaw(@PathVariable String uuid) {
+        byte[] imageData = hnsApiService.fetchCometImageRaw(uuid);
+
+        if (imageData != null) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_JPEG); // Pretpostavka da su slike JPEG formata
+            return new ResponseEntity<>(imageData, headers, HttpStatus.OK);
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+
 
     @GetMapping("/api/current-season-competitions")
     public List<Map<String, Object>> getCurrentSeasonCompetitions() {

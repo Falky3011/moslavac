@@ -22,17 +22,6 @@ spring:
       enabled: true
       max-file-size: 1000MB
       max-request-size: 1000MB
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    password: gnoj imwz xxvj xhmm
-    username: adrianofaletar@gmail.com
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
   api:
     hns:
       key: bd993d1e4919fd190ef3822902f81fa7a2a9f30f90a7b998f560b8ac21d4acabb62206f59cd09cac7089dbb7df709793c1b4b3a8ddf1596729eb6d5ae61d7f97

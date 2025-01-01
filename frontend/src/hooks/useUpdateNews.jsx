@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 
 const useUpdateNews = () => {
     const queryClient = useQueryClient();
@@ -18,11 +18,10 @@ const useUpdateNews = () => {
                 updatedNews.files.forEach((file) => formData.append('files', file));
             }
 
-            const response = await axios.put(
-                `http://localhost:8080/api/news/${updatedNews.newsID}`,
-                formData,
-                { headers: { 'Content-Type': 'multipart/form-data' } }
-            );
+            const response = await apiClient.put(`/api/news/${updatedNews.id}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+
             return response.data;
         },
         onSuccess: () => {

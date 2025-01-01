@@ -1,22 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import apiClient from '../utils/apiClient';
 
 export function useGetNextMatch() {
     return useQuery({
         queryKey: ['nextMatch'],
         queryFn: async () => {
-            const response = await fetch(`http://localhost:8080/api/senior-competition/next-match`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch next match');
-            }
-
-            return await response.json();
-
+            const response = await apiClient.get('/api/senior-competition/next-match');
+            return response.data;
         },
     });
 }

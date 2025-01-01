@@ -36,44 +36,33 @@ const messages = {
 
 function MatchCalendar() {
     const navigate = useNavigate();
-    const { data, error, isLoading } = useGetAllMatches();
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    const [calendarView, setCalendarView] = useState(Views.MONTH);
+    const { data: matches, error, isLoading } = useGetAllMatches();
+    const [calendarView, setCalendarView] = useState(window.innerWidth < 768 ? Views.DAY : Views.MONTH);
 
     useEffect(() => {
-        const handleResize = () => setWindowWidth(window.innerWidth);
+        const handleResize = () => {
+            const newView = window.innerWidth < 768 ? Views.DAY : Views.MONTH;
+            setCalendarView(newView);
+        };
+
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    useEffect(() => {
-        if (windowWidth < 768) {
-            setCalendarView(Views.DAY);
-        } else {
-            setCalendarView(Views.MONTH);
-        }
-    }, [windowWidth]);
-
     if (isLoading) return <div>Učitavanje...</div>;
     if (error) return <div>Greška pri učitavanju utakmica</div>;
 
-    const events = data?.map(match => {
-        const start = new Date(match.dateTimeUTC);
-        const end = addHours(start, 2);
-        const categoryName = match.competition.name;
-
-        return {
-            title: `${categoryName} - ${match.homeTeam.name} vs ${match.awayTeam.name}`,
-            start: start,
-            end: end,
-            allDay: false,
-            description: `${match.homeTeam.name} vs ${match.awayTeam.name} u ${match.competition.name}`,
-            id: match.id
-        };
-    });
+    const events = matches?.map(match => ({
+        title: `${match.competition.name} - ${match.homeTeam.name} vs ${match.awayTeam.name}`,
+        start: new Date(match.dateTimeUTC),
+        end: addHours(new Date(match.dateTimeUTC), 2),
+        allDay: false,
+        description: `${match.homeTeam.name} vs ${match.awayTeam.name} u ${match.competition.name}`,
+        id: match.id
+    }));
 
     return (
-        <div className='my-5 w-full px-4 md:w-10/12 md:mx-auto  '>
+        <div className="my-5 w-full px-4 md:w-10/12 md:mx-auto">
             <Calendar
                 localizer={localizer}
                 events={events}
@@ -88,7 +77,7 @@ function MatchCalendar() {
                 selectable
                 onSelectEvent={event => navigate(`/matches/${event.id}`)}
                 min={moment().set({ hour: 7, minute: 0 }).toDate()}
-                className="rbc-calendar min-h-[700px] h-auto pb-[20px] rounded-3xl shadow-md "
+                className="rbc-calendar min-h-[700px] h-auto pb-[20px] rounded-3xl shadow-md"
             />
         </div>
     );

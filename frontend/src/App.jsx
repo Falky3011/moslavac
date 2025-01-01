@@ -5,14 +5,13 @@ import CustomHeader from './components/CustomHeader';
 import MatchCalendar from './components/MatchCalendar';
 import NewsList from './components/NewsList';
 import NewsDetail from './components/NewsDetail';
-import NewsManager from './components/NewsManager';
-import CompetitionInfo from './components/CompetitionInfo';
+import NewsManager from './components/NewsManager/NewsManager';
+import CompetitionInfo from './components/CompetitionInfo/CompetitionInfo';
 import PlayersList from './components/PlayersList';
 import PlayerStats from './components/PlayerStats';
-import MatchDetails from './components/MatchDetails';
+import MatchInfo from './components/MatchInfo/MatchInfo';
 import HomePage from './components/HomePage';
-import Newsletter from './components/Newsletter';
-import FirstTeam from './components/FirstTeam';
+import FirstTeam from './components/FirstTeam/FirstTeam';
 import Footer from './components/Footer';
 import SeasonTicketPurchase from './components/SeasonTicketPurchase';
 import { generateToken, messaging } from './config/firebaseConfig';
@@ -64,6 +63,7 @@ function App() {
       <CustomHeader />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/admin" element={<HomePage />} />
         <Route path="/matches" element={<MatchCalendar />} />
         <Route path="/season/:competitionId/:competitionName" element={<CompetitionInfo />}></Route>
         <Route path="/players/:id" element={<PlayersList />}></Route>
@@ -72,17 +72,14 @@ function App() {
         <Route path="/news/admin" element={<NewsList />}></Route>
         <Route path="/news/:id" element={<NewsDetail />}></Route>
         <Route path="/admin/manage-news" element={<NewsManager />}></Route>
-        <Route path="/matches/:matchId" element={<MatchDetails />} />
+        <Route path="/matches/:matchId" element={<MatchInfo />} />
         <Route path="/first-team" element={<FirstTeam />} />
-        <Route path="/first-team/admin  " element={<FirstTeam />} />
+        <Route path="/first-team/admin" element={<FirstTeam />} />
 
         <Route path="/season-ticket-purchase" element={<SeasonTicketPurchase />} />
       </Routes>
 
-      <Newsletter
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+
 
       <Footer />
     </Router>

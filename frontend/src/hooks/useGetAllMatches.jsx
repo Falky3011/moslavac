@@ -1,11 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import apiClient from '../utils/apiClient';
 
 const fetchMatchesFromBackend = async () => {
-    const response = await fetch('http://localhost:8080/api/matches');
-    if (!response.ok) {
-        throw new Error('Error fetching matches from backend');
-    }
-    return response.json();
+    const response = await apiClient.get('/api/matches');
+    return response.data;
 };
 
 const useGetAllMatches = () => {

@@ -2,12 +2,12 @@ import { useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import NewsCarousel from "./NewsCarousel";
-import PreviousAndNextMatch from './PreviousAndNextMatch';
+import PreviousAndNextMatch from './PrevoiusAndNextMatch/PreviousAndNextMatch';
 import WebShop from "./WebShop";
 import SeasonTicketPromo from "./SeasonTicketPromo";
 import UpcomingMatches from "./UpcomingMatches";
 import NewsLatest from "./NewsLatest";
-
+import FootballClubYouTubePromo from './YoutubePromo';
 const AnimatedSection = ({ children, className }) => {
     const controls = useAnimation();
     const [ref, inView] = useInView({
@@ -59,12 +59,17 @@ function HomePage() {
             </AnimatedSection>
 
             <AnimatedSection>
-                <SeasonTicketPromo />
+                <FootballClubYouTubePromo />
+            </AnimatedSection>
+
+            <AnimatedSection className="bg-gray-100 p-6 sm:p-8 md:p-10 rounded-lg border border-gray-200">
+                <WebShop />
             </AnimatedSection>
 
             <AnimatedSection>
-                <WebShop />
+                <SeasonTicketPromo />
             </AnimatedSection>
+
         </div>
     );
 }

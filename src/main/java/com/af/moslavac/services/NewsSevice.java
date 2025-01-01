@@ -46,8 +46,8 @@ public class NewsSevice {
         return newsRepository.save(news);
     }
 
-    public News updateNews(int newsID, String title, String content, MultipartFile thumbnail, List<MultipartFile> files) {
-        Optional<News> oldNews = newsRepository.findById(newsID);
+    public News updateNews(int id, String title, String content, MultipartFile thumbnail, List<MultipartFile> files) {
+        Optional<News> oldNews = newsRepository.findById(id);
 
         if (oldNews.isPresent()) {
             News news = oldNews.get();
@@ -56,27 +56,31 @@ public class NewsSevice {
 
             // Update thumbnail if provided
             if (thumbnail != null && !thumbnail.isEmpty()) {
-                String thumbnailUrl = imageFunction.apply(newsID, thumbnail);
+                String thumbnailUrl = imageFunction.apply(id, thumbnail);
                 news.setThumbnailPath(thumbnailUrl);
+            } else {
+                news.setThumbnailPath(null);
             }
 
             // Update additional images if provided
             if (files != null && !files.isEmpty()) {
                 for (MultipartFile file : files) {
-                    String imageUrl = imageFunction.apply(newsID, file);
+                    String imageUrl = imageFunction.apply(id, file);
                     news.getImagePaths().add(imageUrl);
                 }
+            } else {
+                news.getImagePaths().clear();
             }
 
             return newsRepository.save(news);
         } else {
-            throw new RuntimeException("News with ID " + newsID + " not found");
+            throw new RuntimeException("News with ID " + id + " not found");
         }
     }
 
-    public String uploadThumbnail(Integer newsID, MultipartFile file) {
-        News news = getNewsById(newsID).orElse(null);
-        String thumbnailUrl = imageFunction.apply(newsID, file);
+    public String uploadThumbnail(Integer id, MultipartFile file) {
+        News news = getNewsById(id).orElse(null);
+        String thumbnailUrl = imageFunction.apply(id, file);
 
         news.setThumbnailPath(thumbnailUrl);
         newsRepository.save(news);
@@ -84,9 +88,9 @@ public class NewsSevice {
         return thumbnailUrl;
     }
 
-    public String uploadPhoto(Integer newsID, MultipartFile file) {
-        News news = getNewsById(newsID).orElse(null);
-        String imageUrl = imageFunction.apply(newsID, file);
+    public String uploadPhoto(Integer id, MultipartFile file) {
+        News news = getNewsById(id).orElse(null);
+        String imageUrl = imageFunction.apply(id, file);
 
         news.getImagePaths().add(imageUrl);
         newsRepository.save(news);

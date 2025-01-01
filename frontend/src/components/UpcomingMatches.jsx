@@ -4,9 +4,10 @@ import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import UpcomingMatchItem from './UpcomingMatchItem';
 import useGetAllMatches from '../hooks/useGetAllMatches';
+import { useGetUpcomingMatches } from '../hooks/useGetUpcomingMatches';
 
 const UpcomingMatches = () => {
-    const { data: matches, isLoading, error } = useGetAllMatches();
+    const { data: matches, isLoading, error } = useGetUpcomingMatches();
     const sliderRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
@@ -44,7 +45,7 @@ const UpcomingMatches = () => {
     }
 
     if (!matches || matches.length === 0) {
-        return <div className="text-center text-gray-500 p-4">No upcoming matches</div>;
+        return null;
     }
 
     return (

@@ -1,26 +1,36 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 import { message } from 'antd';
 
 const useValidateToken = (navigate) => {
-    const validateTokenQuery = (token) => async () => {
-        try {
-            const response = await axios.post('http://localhost:8080/api/admin/validate-token', { token });
-            if (!response.data) {
-                throw new Error('Invalid token');
-            }
-            return response.data;
-        } catch (error) {
-            throw new Error('Nemate administratorski pristup');
+    const validateTokenQuery = async () => {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+            throw new Error('No token found');
         }
+
+        const response = await apiClient.post(
+            '/api/admin/validate-token',
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        if (!response.data) {
+            throw new Error('Invalid token');
+        }
+        return response.data;
     };
 
     const { data, error, isLoading, refetch } = useQuery({
         queryKey: ['validateToken'],
-        queryFn: validateTokenQuery(localStorage.getItem('adminToken')),
-        enabled: false, // Disabled by default, manually triggered
+        queryFn: validateTokenQuery,
+        enabled: false,
         onError: () => {
-            message.error('Nemate administratorski pristup. Preusmjeravamo na login...');
+            message.error('Vaša sesija je istekla. Molimo prijavite se ponovno.');
             localStorage.removeItem('adminToken');
             navigate('/admin');
         },

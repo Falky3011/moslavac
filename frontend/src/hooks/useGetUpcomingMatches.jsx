@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 
 export const useGetUpcomingMatches = () => {
     return useQuery({
         queryKey: ['upcomingMatches'],
         queryFn: async () => {
-            const response = await axios.get('http://localhost:8080/api/matches/upcoming');
+            const response = await apiClient.get('/api/matches/upcoming');
             return response.data;
         },
     });

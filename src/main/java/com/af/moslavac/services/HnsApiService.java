@@ -9,10 +9,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class HnsApiService {
@@ -313,9 +310,17 @@ public class HnsApiService {
         return combinedMatches;
     }
 
+    public byte[] fetchCometImageRaw(String uuid) {
+        String endpoint = String.format("/api/live/images/%s?teamIdFilter=1337", uuid);
+        Map<String, Object> response = fetchFromApi(endpoint, Map.class);
 
+        if (response != null && response.containsKey("value")) {
+            String base64Image = (String) response.get("value");
+            return Base64.getDecoder().decode(base64Image);
+        }
 
-
+        return null;
+    }
 
 
 }

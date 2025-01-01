@@ -20,7 +20,7 @@ public class News {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer newsID;
+    private Integer id;
 
     @Column(nullable = false)
     private String title;

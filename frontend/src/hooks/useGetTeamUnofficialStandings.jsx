@@ -1,29 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
+import apiClient from '../utils/apiClient';
 
-function useGetTeamStandingsUnoffical(competitionId) {
+function useGetTeamStandingsUnofficial(competitionId) {
     return useQuery({
-        queryKey: ['teamStandings', competitionId],
+        queryKey: ['teamStandingsUnofficial', competitionId],
         queryFn: async () => {
-            if (!competitionId) return null; // Vrati null ako nema competitionId
-
-            const response = await fetch(
-                `http://localhost:8080/api/competition/${competitionId}/standings/unofficial`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            return await response.json();
+            if (!competitionId) return null;
+            const response = await apiClient.get(`/api/competition/${competitionId}/standings/unofficial`);
+            return response.data;
         },
         enabled: !!competitionId,
     });
 }
 
-export default useGetTeamStandingsUnoffical
+export default useGetTeamStandingsUnofficial;

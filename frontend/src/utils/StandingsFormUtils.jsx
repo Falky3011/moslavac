@@ -16,6 +16,6 @@ export const renderForm = (record) => {
                 </span>
             ))}
         </div>
-    );
+    );  
 };
 

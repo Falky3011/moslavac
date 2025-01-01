@@ -1,19 +1,19 @@
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 
 const sendNotification = async (notificationData) => {
-    const response = await axios.post('http://localhost:8080/api/notifications/send', notificationData); // Ispravan backend URL
+    const response = await apiClient.post('/api/notifications/send', notificationData);
     return response.data;
 };
 
 export default function useSendNotification() {
     return useMutation({
-        mutationFn: sendNotification, // Ispravan način prosljeđivanja funkcije u verziji 4.x
+        mutationFn: sendNotification,
         onSuccess: () => {
             console.log('Notification sent successfully!');
         },
         onError: (error) => {
-            console.error('Failed to send notification:', error);
+            console.error('Failed to send notification:', error.response?.data?.message || error.message);
         },
     });
 }

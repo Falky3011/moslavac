@@ -46,25 +46,25 @@ const NewsLatest = () => {
                     >
                         {data?.slice(0, 6).map((item, index) => (
                             <motion.div
-                                key={item.newsID}
+                                key={item.id}
                                 className="w-72 sm:w-80 md:w-full flex-shrink-0 snap-center md:snap-align-none"
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
                             >
                                 <div className="bg-white rounded-3xl shadow-md transition-shadow duration-300 ease-in-out hover:shadow-xl h-full">
-                                    <div className="relative h-40 sm:h-48">
+                                    <div className="relative h-40 sm:h-48 overflow-hidden rounded-t-3xl group">
                                         <img
                                             src={item.thumbnailPath ? item.thumbnailPath : grb}
                                             alt={item.title}
-                                            className="w-full h-full object-cover rounded-t-3xl"
+                                            className={`w-full h-full transform group-hover:scale-105 transition-transform duration-300 ${item.thumbnailPath ? 'object-cover' : 'object-contain'}`}
                                         />
                                     </div>
                                     <div className="p-4 sm:p-6">
-                                        <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 line-clamp-2 h-12 sm:h-16 text-gray-900">
+                                        <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 line-clamp-2 text-gray-900 overflow-hidden text-ellipsis h-12 sm:h-16">
                                             {item.title}
                                         </h3>
-                                        <Link to={`/news/${item.newsID}`} className="inline-block">
+                                        <Link to={`/news/${item.id}`} className="inline-block">
                                             <span className="text-white bg-blue-600 px-3 sm:px-4 py-2 rounded-md font-medium text-xs sm:text-sm md:text-base hover:bg-blue-700 transition duration-200 ease-in-out shadow-lg hover:shadow-2xl">
                                                 PROČITAJ
                                             </span>
@@ -82,4 +82,3 @@ const NewsLatest = () => {
 };
 
 export default NewsLatest;
-
