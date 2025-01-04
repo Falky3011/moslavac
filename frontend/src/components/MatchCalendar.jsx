@@ -3,9 +3,10 @@ import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import { addHours } from 'date-fns';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { useNavigate } from 'react-router-dom';
+import { Spin, Alert } from 'antd';
 import useGetAllMatches from '../hooks/useGetAllMatches';
 import '../css/calendar.css';
-import { useNavigate } from 'react-router-dom';
 
 const localizer = momentLocalizer(moment);
 
@@ -49,8 +50,30 @@ function MatchCalendar() {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    if (isLoading) return <div>Učitavanje...</div>;
-    if (error) return <div>Greška pri učitavanju utakmica</div>;
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-[300px]">
+                <Spin size="small" />
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="max-w-4xl mx-auto mt-4">
+                <Alert
+                    message="Greška"
+                    description={
+                        error instanceof Error
+                            ? error.message
+                            : 'Greška pri učitavanju utakmica. Pokušajte ponovno kasnije.'
+                    }
+                    type="error"
+                    showIcon
+                />
+            </div>
+        );
+    }
 
     const events = matches?.map(match => ({
         title: `${match.competition.name} - ${match.homeTeam.name} vs ${match.awayTeam.name}`,

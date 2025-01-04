@@ -10,8 +10,6 @@ public class AdminService {
     private  String admin_password;
 
     public boolean validatePassword(String password) {
-        System.out.println("Expected password: " + admin_password);
-        System.out.println("Received password: " + password);
         return admin_password.equals(password.trim());
     }
 

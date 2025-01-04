@@ -1,78 +1,99 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Modal, Input, Button, message } from 'antd';
-import { useLocation, useNavigate } from 'react-router-dom';
-import useValidatePassword from '../hooks/useValidatePassword';
-import useValidateToken from '../hooks/useValidateToken';
+import React, { useState, useEffect } from "react";
+import { Modal, Input, Button, message } from "antd";
+import Cookies from "js-cookie";
+import { useValidateAdminPassword } from "../hooks/useValidateAdminPassword";
 
-export const useAdminAuth = () => {
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [password, setPassword] = useState('');
-    const location = useLocation();
-    const navigate = useNavigate();
+const COOKIE_NAME = "isAdmin";
+const COOKIE_EXPIRATION_DAYS = 3;
 
-    const { refetch: validateToken, isAdmin } = useValidateToken(navigate);
-    const { mutate: validatePassword } = useValidatePassword(validateToken, setIsModalVisible);
-
-    const checkAdminStatus = useCallback(() => {
-        const token = localStorage.getItem('adminToken');
-        if (location.pathname.endsWith('/admin')) {
-            if (!token) {
-                setIsModalVisible(true);
-            } else {
-                validateToken();
-            }
-        }
-    }, [location.pathname, validateToken]);
-
-    useEffect(() => {
-        checkAdminStatus();
-    }, [checkAdminStatus]);
-
-    const handlePasswordSubmit = () => {
-        validatePassword(password, {
-            onSuccess: () => {
-                message.success('Authenticated as admin');
-                setIsModalVisible(false);
-                setPassword('');
-            },
-            onError: () => {
-                message.error('Invalid password');
-                setPassword('');
-            },
-        });
-    };
-
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-    };
-
-    const AdminAuthModal = () => (
-        <Modal
-            title="Administratorska autentifikacija"
-            open={isModalVisible}
-            onCancel={() => navigate('/')}
-            maskClosable={false}
-            closable={false}
-            keyboard={false}
-            footer={[
-                <Button key="cancel" onClick={() => navigate('/')}>
-                    Odustani
-                </Button>,
-                <Button key="submit" type="primary" onClick={handlePasswordSubmit}>
-                    Potvrdi
-                </Button>,
-            ]}
-        >
-            <p>Molimo unesite administratorsku šifru za pristup.</p>
-            <Input.Password
-                value={password}
-                onChange={handlePasswordChange}
-                onPressEnter={handlePasswordSubmit}
-                placeholder="Unesite šifru"
-            />
-        </Modal>
-    );
-
-    return { isAdmin, AdminAuthModal, setIsModalVisible };
+export const setAdminAuth = () => {
+  Cookies.set(COOKIE_NAME, "true", {
+    expires: COOKIE_EXPIRATION_DAYS,
+    path: "/",
+  });
 };
 
+export const isAdmin = () => {
+  const adminStatus = Cookies.get("isAdmin") === "true";
+  return adminStatus;
+};
+
+export const clearAdminAuth = () => {
+  Cookies.remove(COOKIE_NAME, { path: "/" });
+};
+
+const AdminModal = React.memo(({ isVisible, onClose, onSuccess }) => {
+  const [adminPassword, setAdminPassword] = useState("");
+
+  const { mutate: validatePassword, isLoading } = useValidateAdminPassword();
+
+  const handleLogin = () => {
+    validatePassword(adminPassword, {
+      onSuccess: (data) => {
+        if (data.isValid) {
+          setAdminAuth();
+          onClose();
+          message.success("Prijavljeni ste kao admin!");
+          onSuccess(); // Callback nakon uspješne prijave
+        } else {
+          message.error("Neispravna administratorska šifra.");
+        }
+      },
+      onError: () => {
+        message.error("Došlo je do greške prilikom provjere šifre.");
+      },
+    });
+  };
+
+  return (
+    <Modal
+      title="Admin Prijava"
+      visible={isVisible}
+      onCancel={onClose}
+      footer={[
+        <Button key="cancel" onClick={onClose}>
+          Zatvori
+        </Button>,
+        <Button
+          key="submit"
+          type="primary"
+          onClick={handleLogin}
+          loading={isLoading} // Prikazuje loader dok se provjerava šifra
+        >
+          Prijavi se
+        </Button>,
+      ]}
+    >
+      <Input.Password
+        value={adminPassword}
+        onChange={(e) => setAdminPassword(e.target.value)}
+        placeholder="Unesite administratorsku šifru"
+      />
+    </Modal>
+  );
+});
+
+export const useAdminModal = (onSuccess = () => {}) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    const isAdminRoute = window.location.pathname.endsWith("/admin");
+    if (isAdminRoute && !isAdmin()) {
+      setIsModalVisible(true);
+    }
+  }, []);
+
+  const showModal = () => setIsModalVisible(true);
+  const closeModal = () => setIsModalVisible(false);
+
+  return {
+    AdminModal: () => (
+      <AdminModal
+        isVisible={isModalVisible}
+        onClose={closeModal}
+        onSuccess={onSuccess}
+      />
+    ),
+    isAdmin: isAdmin(),
+  };
+};

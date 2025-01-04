@@ -29,4 +29,4 @@ spring:
     team:
       id: 1337
   admin:
-    password: 123
+    password: Moslavac33

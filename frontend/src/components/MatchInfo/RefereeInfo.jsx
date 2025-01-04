@@ -4,7 +4,7 @@ const RefereeInfo = ({ referees }) => {
     if (!referees?.length) return null;
 
     return (
-        <div className="mt-4 bg-white rounded-3xl shadow-lg p-6 border border-gray-200">
+        <div className="mt-4 bg-white rounded-3xl shadow-md p-6 border border-gray-200">
             <h3 className="text-xl text-gray-900 font-bold mb-4">Službene osobe</h3>
             <div className="divide-y divide-gray-200">
                 {referees

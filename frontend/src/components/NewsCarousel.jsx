@@ -9,15 +9,41 @@ export default function NewsCarousel() {
     const { data: newsData, error, isLoading } = useGetLatestNews();
 
     if (isLoading) {
-        return <Spin tip="Loading..." className="flex justify-center items-center h-64" />;
+        return (
+            <div className="flex justify-center items-center h-64">
+                <Spin size="small" tip="Loading..." />
+            </div>
+        );
     }
 
     if (error) {
-        return <Alert message="Error" description={error.message} type="error" className="max-w-6xl mx-auto mt-8" />;
+        return (
+            <div className="max-w-6xl mx-auto mt-8">
+                <Alert
+                    message="Greška"
+                    description={
+                        error instanceof Error
+                            ? error.message
+                            : 'Greška pri učitavanju vijesti. Pokušajte ponovno kasnije.'
+                    }
+                    type="error"
+                    showIcon
+                />
+            </div>
+        );
     }
 
     if (!newsData || newsData.length === 0) {
-        return <Alert message="No News Available" type="info" className="max-w-6xl mx-auto mt-8" />;
+        return (
+            <div className="max-w-6xl mx-auto mt-8">
+                <Alert
+                    message="Nema dostupnih vijesti"
+                    description="Trenutno nema dostupnih vijesti. Posjetite kasnije."
+                    type="info"
+                    showIcon
+                />
+            </div>
+        );
     }
 
     return (

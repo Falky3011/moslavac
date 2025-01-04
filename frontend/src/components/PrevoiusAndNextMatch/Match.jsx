@@ -28,17 +28,19 @@ export default function Match({
     const matchDateAndTime = formatDate(date);
 
     const TeamCard = ({ team, teamImage }) => (
-        <div className="flex flex-col items-center w-2/5">
-            <div className="bg-white p-2 rounded-full shadow-md mb-2">
+        <div className="flex flex-col items-center w-2/5 h-32">
+            <div className="bg-white p-2 rounded-full shadow-md mb-2 flex-shrink-0">
                 <img
                     src={teamImage}
                     alt={`${team.name} logo`}
                     className="h-12 w-12 sm:h-16 sm:w-16"
                 />
             </div>
-            <span className="font-semibold text-gray-800 text-xs sm:text-sm text-center line-clamp-2">
-                {team.name}
-            </span>
+            <div className="flex-grow flex items-center">
+                <span className="font-semibold text-gray-800 text-xs sm:text-sm text-center line-clamp-2">
+                    {team.name}
+                </span>
+            </div>
         </div>
     );
 
@@ -53,9 +55,9 @@ export default function Match({
             </h2>
 
             {/* Teams */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-start justify-between mb-4">
                 <TeamCard team={homeTeam} teamImage={homeTeamImage} />
-                <div className="flex-shrink-0 text-gray-400 font-bold text-xl sm:text-2xl">VS</div>
+                <div className="flex-shrink-0 text-gray-400 font-bold text-xl sm:text-2xl mt-4">VS</div>
                 <TeamCard team={awayTeam} teamImage={awayTeamImage} />
             </div>
 

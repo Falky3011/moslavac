@@ -29,9 +29,8 @@ public class NewsSevice {
     @Autowired
     private NewsRepository newsRepository;
 
-
     public Page<News> getAllNews(int page, int size) {
-        return newsRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"date")));
+        return newsRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
     }
 
     public Optional<News> getNewsById(int id) {
@@ -98,7 +97,8 @@ public class NewsSevice {
         return imageUrl;
     }
 
-    private final Function<String, String> fileExstension = filename -> Optional.of(filename).filter(name -> name.contains("."))
+    private final Function<String, String> fileExstension = filename -> Optional.of(filename)
+            .filter(name -> name.contains("."))
             .map(name -> "." + name.substring(filename.lastIndexOf(".") + 1)).orElse(".png");
 
     private final BiFunction<Integer, MultipartFile, String> imageFunction = (id, image) -> {
@@ -107,11 +107,12 @@ public class NewsSevice {
             Path fileStorageLocation = Paths.get(NEWS_PHOTO_DIRECTORY).toAbsolutePath().normalize();
 
             if (!Files.exists(fileStorageLocation))
-                Files.createDirectory(fileStorageLocation);
+                Files.createDirectories(fileStorageLocation);
 
             Files.copy(image.getInputStream(), fileStorageLocation.resolve(filename), REPLACE_EXISTING);
 
-            return ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/news/image/" + filename).toUriString();
+            return ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/news/image/" + filename)
+                    .toUriString();
         } catch (Exception e) {
             throw new RuntimeException("Unable to save image");
         }

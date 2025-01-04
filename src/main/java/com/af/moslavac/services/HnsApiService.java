@@ -34,7 +34,6 @@ public class HnsApiService {
         return new HttpEntity<>(headers);
     }
 
-
     private <T> T fetchFromApi(String endpoint, Class<T> responseType) {
         try {
             String url = baseUrl + endpoint;
@@ -47,13 +46,17 @@ public class HnsApiService {
     }
 
     public List<Object> fetchPastCompetitionMatches(Integer competitionId) {
-        String endpoint = String.format("/api/live/competition/%d/matches/paginated/past/2/1337?page=1&pageSize=75&teamIdFilter=1337", competitionId);
+        String endpoint = String.format(
+                "/api/live/competition/%d/matches/paginated/past/2/1337?page=1&pageSize=75&teamIdFilter=1337",
+                competitionId);
         Map<String, Object> response = fetchFromApi(endpoint, Map.class);
         return response != null ? (List<Object>) response.get("result") : new ArrayList<>();
     }
 
     public List<Object> fetchFutureCompetitionMatches(Integer competitionId) {
-        String endpoint = String.format("/api/live/competition/%d/matches/paginated/future/2?page=1&pageSize=75&teamIdFilter=1337", competitionId);
+        String endpoint = String.format(
+                "/api/live/competition/%d/matches/paginated/future/2?page=1&pageSize=75&teamIdFilter=1337",
+                competitionId);
         Map<String, Object> response = fetchFromApi(endpoint, Map.class);
         return response != null ? (List<Object>) response.get("result") : new ArrayList<>();
     }
@@ -129,17 +132,17 @@ public class HnsApiService {
 
         String endpoint = String.format(
                 "/api/live/player/%s/stats/1337?teamIdFilter=1337",
-                personId
-        );
+                personId);
 
         List<Map<String, Object>> stats = fetchFromApi(endpoint, List.class);
-        if (stats == null) return null;
-
+        if (stats == null)
+            return null;
 
         return stats.stream()
                 .filter(stat -> {
                     Map<String, Object> competition = (Map<String, Object>) stat.get("competition");
-                    return competition != null && String.valueOf(competition.get("id")).equals(String.valueOf(competitionId));
+                    return competition != null
+                            && String.valueOf(competition.get("id")).equals(String.valueOf(competitionId));
                 })
                 .findFirst()
                 .orElse(null);
@@ -152,8 +155,7 @@ public class HnsApiService {
 
         String endpoint = String.format(
                 "/api/live/competition/%d/standings/official?teamIdFilter=1337",
-                competitionId
-        );
+                competitionId);
 
         return fetchFromApi(endpoint, Object.class);
     }
@@ -165,8 +167,7 @@ public class HnsApiService {
 
         String endpoint = String.format(
                 "/api/live/competition/%d/standings/unofficial?teamIdFilter=1337",
-                competitionId
-        );
+                competitionId);
 
         return fetchFromApi(endpoint, Object.class);
     }
@@ -178,8 +179,7 @@ public class HnsApiService {
 
         String endpoint = String.format(
                 "/api/live/player/search?keyword=%s&page=0&pageSize=100&teamIdFilter=1337",
-                keyword
-        );
+                keyword);
 
         return fetchFromApi(endpoint, Object.class);
     }
@@ -188,7 +188,8 @@ public class HnsApiService {
         String endpoint = "/api/live/competition/list/active/1337?teamIdFilter=1337";
         List<Map<String, Object>> competitions = fetchFromApi(endpoint, List.class);
 
-        if (competitions == null) return null;
+        if (competitions == null)
+            return null;
 
         return competitions.stream()
                 .filter(comp -> ((String) comp.get("name")).contains("4. NL SREDIŠTE PODSKUPINA B"))
@@ -207,8 +208,7 @@ public class HnsApiService {
 
         String matchesEndpoint = String.format(
                 "/api/live/competition/%d/matches/paginated/future/2/1337?page=1&pageSize=1&teamIdFilter=1337",
-                competitionId
-        );
+                competitionId);
 
         Map<String, Object> matchesResponse = fetchFromApi(matchesEndpoint, Map.class);
 
@@ -231,8 +231,7 @@ public class HnsApiService {
 
         String matchesEndpoint = String.format(
                 "/api/live/competition/%d/matches/paginated/past/2/1337?page=1&pageSize=1&teamIdFilter=1337",
-                competitionId
-        );
+                competitionId);
 
         Map<String, Object> matchesResponse = fetchFromApi(matchesEndpoint, Map.class);
 
@@ -243,8 +242,6 @@ public class HnsApiService {
         List<Object> matches = (List<Object>) matchesResponse.get("result");
         return matches != null && !matches.isEmpty() ? matches.get(0) : new HashMap<>();
     }
-
-
 
     public List<Object> fetchUpcomingMatches(Integer seniorCompetitionId) {
         String futureMatchesUrl = "/api/live/team/1337/matches/paginated/future/2?page=1&pageSize=7&teamIdFilter=1337";
@@ -259,12 +256,12 @@ public class HnsApiService {
         // Filtriraj utakmice koje ne pripadaju seniorCompetition
         return matches.stream()
                 .filter(match -> {
-                    Map<String, Object> competition = (Map<String, Object>) ((Map<String, Object>) match).get("competition");
+                    Map<String, Object> competition = (Map<String, Object>) ((Map<String, Object>) match)
+                            .get("competition");
                     return competition != null && !competition.get("id").equals(seniorCompetitionId);
                 })
                 .toList();
     }
-
 
     public List<Object> fetchTodayMatches(Integer seniorCompetitionId) {
         String pastMatchesUrl = "/api/live/team/1337/matches/paginated/past/2?page=1&pageSize=10&teamIdFilter=1337";
@@ -283,9 +280,11 @@ public class HnsApiService {
         return matches.stream()
                 .filter(match -> {
                     Long dateTimeUTC = (Long) ((Map<String, Object>) match).get("dateTimeUTC");
-                    if (dateTimeUTC == null) return false;
+                    if (dateTimeUTC == null)
+                        return false;
 
-                    LocalDateTime matchDateTime = Instant.ofEpochMilli(dateTimeUTC).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    LocalDateTime matchDateTime = Instant.ofEpochMilli(dateTimeUTC).atZone(ZoneId.systemDefault())
+                            .toLocalDateTime();
 
                     return matchDateTime.toLocalDate().isEqual(today) && matchDateTime.isAfter(now);
                 })
@@ -321,6 +320,5 @@ public class HnsApiService {
 
         return null;
     }
-
 
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography, Spin, Avatar } from 'antd';
+import { Card, Typography, Spin, Avatar, Alert } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useGetPlayerDetails } from '../hooks/useGetPlayerDetails';
 import { useGetCometImage } from '../hooks/useGetCometImage';
@@ -13,8 +13,8 @@ export default function PlayerItem({ playerId, competitionId }) {
 
     if (isLoading || imageLoading) {
         return (
-            <Card className="w-full">
-                <Spin />
+            <Card className="w-full flex justify-center items-center h-24">
+                <Spin size="small" tip="Učitavanje..." />
             </Card>
         );
     }
@@ -22,25 +22,33 @@ export default function PlayerItem({ playerId, competitionId }) {
     if (isError) {
         return (
             <Card className="w-full">
-                <Text type="danger">Došlo je do pogreške prilikom dohvaćanja detalja o igraču.</Text>
+                <Alert
+                    message="Greška"
+                    description="Došlo je do pogreške prilikom dohvaćanja detalja o igraču."
+                    type="error"
+                    showIcon
+                    className="rounded-lg shadow-md"
+                />
             </Card>
         );
     }
 
     return (
-        <Card className="w-full hover:shadow-md transition-shadow duration-300">
+        <Card className="w-full hover:shadow-lg transition-shadow duration-300">
             <Link to={`/players/${playerId}/stats/${competitionId}`} className="flex items-center space-x-4">
                 <Avatar
                     size={64}
-                    src={playerImage.image}
-                    icon={<UserOutlined />}
-                    alt={playerDetails.name}
+                    src={playerImage?.image || null}
+                    icon={!playerImage?.image && <UserOutlined />}
+                    alt={playerDetails?.name || 'Avatar'}
                 />
                 <div>
                     <Title level={5} className="m-0">
-                        {playerDetails.name}
+                        {playerDetails?.name || 'Nepoznat igrač'}
                     </Title>
-                    <Text type="secondary">Godine: {playerDetails.age}</Text>
+                    <Text type="secondary">
+                        Godine: {playerDetails?.age || 'Nepoznato'}
+                    </Text>
                 </div>
             </Link>
         </Card>
