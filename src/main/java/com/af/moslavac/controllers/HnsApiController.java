@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
-
 public class HnsApiController {
 
     @Autowired
@@ -47,7 +46,6 @@ public class HnsApiController {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
-
 
     @GetMapping("/api/current-season-competitions")
     public List<Map<String, Object>> getCurrentSeasonCompetitions() {
@@ -82,8 +80,7 @@ public class HnsApiController {
     @GetMapping("/api/player/{personId}/stats/{competitionId}")
     public Object getPlayerStats(
             @PathVariable String personId,
-            @PathVariable Integer competitionId
-    ) {
+            @PathVariable Integer competitionId) {
         return hnsApiService.fetchPlayerStats(personId, competitionId);
     }
 
@@ -125,11 +122,23 @@ public class HnsApiController {
         return ResponseEntity.ok(previousMatch);
     }
 
-
     @GetMapping("/api/matches/upcoming")
     public List<Object> getUpcomingAndTodayMatches() {
         return hnsApiService.getCombinedUpcomingAndTodayMatches();
     }
 
+    @GetMapping("/api/competition/{competitionId}/stats/goals")
+    public Object getCompetitionGoalsStats(@PathVariable Integer competitionId) {
+        return hnsApiService.fetchCompetitionGoalsStats(competitionId);
+    }
 
+    @GetMapping("/api/competition/{competitionId}/stats/redCards")
+    public Object getCompetitionRedCardsStats(@PathVariable Integer competitionId) {
+        return hnsApiService.fetchCompetitionRedCardsStats(competitionId);
+    }
+
+    @GetMapping("/api/competition/{competitionId}/stats/yellowCards")
+    public Object getCompetitionYellowCardsStats(@PathVariable Integer competitionId) {
+        return hnsApiService.fetchCompetitionYellowCardsStats(competitionId);
+    }
 }

@@ -26,7 +26,6 @@ spring:
     hns:
       key: bd993d1e4919fd190ef3822902f81fa7a2a9f30f90a7b998f560b8ac21d4acabb62206f59cd09cac7089dbb7df709793c1b4b3a8ddf1596729eb6d5ae61d7f97
       base-url: https://api-hns.analyticom.de
-    team:
-      id: 1337
+      team-id: 1337
   admin:
     password: Moslavac33

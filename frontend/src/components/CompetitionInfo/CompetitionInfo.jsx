@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import CompetitionMatches from "../CompetitionMatches/CompetitionMatches";
 import Standings from "../Standings/Standings";
 import TabNavigation from "../TabNavigation";
+import Statistics from "./Statistics";
 
 const CompetitionInfo = () => {
   const { competitionId, competitionName } = useParams();
@@ -11,6 +12,7 @@ const CompetitionInfo = () => {
   const tabs = [
     { key: "matches", label: "Utakmice" },
     { key: "standings", label: "Tablica" },
+    { key: "statistics", label: "Statistika" }, // Add new tab
   ];
 
   const renderTabContent = () => {
@@ -19,6 +21,8 @@ const CompetitionInfo = () => {
         return <CompetitionMatches competitionId={competitionId} />;
       case "standings":
         return <Standings competitionId={competitionId} />;
+      case "statistics":
+        return <Statistics competitionId={competitionId} />; // Add new tab content
       default:
         return null;
     }

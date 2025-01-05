@@ -22,6 +22,9 @@ public class HnsApiService {
     @Value("${spring.api.hns.base-url}")
     private String baseUrl;
 
+    @Value("${spring.api.hns.team-id}")
+    private String teamId;
+
     public HnsApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
@@ -30,7 +33,7 @@ public class HnsApiService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("accept", "application/json");
         headers.set("API_KEY", apiKey);
-        headers.set("Accept-Language", "hr"); // Postavite hrvatski kao podrazumevani jezik
+        headers.set("Accept-Language", "hr");
         return new HttpEntity<>(headers);
     }
 
@@ -47,16 +50,16 @@ public class HnsApiService {
 
     public List<Object> fetchPastCompetitionMatches(Integer competitionId) {
         String endpoint = String.format(
-                "/api/live/competition/%d/matches/paginated/past/2/1337?page=1&pageSize=75&teamIdFilter=1337",
-                competitionId);
+                "/api/live/competition/%d/matches/paginated/past/2/%s?page=1&pageSize=75&teamIdFilter=%s",
+                competitionId, teamId, teamId);
         Map<String, Object> response = fetchFromApi(endpoint, Map.class);
         return response != null ? (List<Object>) response.get("result") : new ArrayList<>();
     }
 
     public List<Object> fetchFutureCompetitionMatches(Integer competitionId) {
         String endpoint = String.format(
-                "/api/live/competition/%d/matches/paginated/future/2?page=1&pageSize=75&teamIdFilter=1337",
-                competitionId);
+                "/api/live/competition/%d/matches/paginated/future/2?page=1&pageSize=75&teamIdFilter=%s",
+                competitionId, teamId);
         Map<String, Object> response = fetchFromApi(endpoint, Map.class);
         return response != null ? (List<Object>) response.get("result") : new ArrayList<>();
     }
@@ -69,13 +72,15 @@ public class HnsApiService {
     }
 
     public List<Object> fetchPastMatches() {
-        String endpoint = "/api/live/team/1337/matches/paginated/past/2?page=1&pageSize=75&teamIdFilter=1337";
+        String endpoint = String.format("/api/live/team/%s/matches/paginated/past/2?page=1&pageSize=75&teamIdFilter=%s",
+                teamId, teamId);
         Map<String, Object> response = fetchFromApi(endpoint, Map.class);
         return response != null ? (List<Object>) response.get("result") : new ArrayList<>();
     }
 
     public List<Object> fetchFutureMatches() {
-        String endpoint = "/api/live/team/1337/matches/paginated/future/2?page=1&pageSize=75&teamIdFilter=1337";
+        String endpoint = String.format(
+                "/api/live/team/%s/matches/paginated/future/2?page=1&pageSize=75&teamIdFilter=%s", teamId, teamId);
         Map<String, Object> response = fetchFromApi(endpoint, Map.class);
         return response != null ? (List<Object>) response.get("result") : new ArrayList<>();
     }
@@ -88,32 +93,32 @@ public class HnsApiService {
     }
 
     public Map<String, Object> fetchCometImage(String uuid) {
-        String endpoint = String.format("/api/live/images/%s?teamIdFilter=1337", uuid);
+        String endpoint = String.format("/api/live/images/%s?teamIdFilter=%s", uuid, teamId);
         return fetchFromApi(endpoint, Map.class);
     }
 
     public List<Map<String, Object>> getCurrentSeasonCompetitions() {
-        String endpoint = "/api/live/competition/list/active/1337?teamIdFilter=1337";
+        String endpoint = String.format("/api/live/competition/list/active/%s?teamIdFilter=%s", teamId, teamId);
         return fetchFromApi(endpoint, List.class);
     }
 
     public List<Object> getMatchEvents(Long matchId) {
-        String endpoint = String.format("/api/live/match/%d/events?teamIdFilter=1337&showComments=true", matchId);
+        String endpoint = String.format("/api/live/match/%d/events?teamIdFilter=%s&showComments=true", matchId, teamId);
         return fetchFromApi(endpoint, List.class);
     }
 
     public Object fetchMatchInfo(Long matchId) {
-        String endpoint = String.format("/api/live/match/%d?teamIdFilter=1337", matchId);
+        String endpoint = String.format("/api/live/match/%d?teamIdFilter=%s", matchId, teamId);
         return fetchFromApi(endpoint, Object.class);
     }
 
     public Object fetchMatchLineups(Long matchId) {
-        String endpoint = String.format("/api/live/match/%d/lineups?teamIdFilter=1337", matchId);
+        String endpoint = String.format("/api/live/match/%d/lineups?teamIdFilter=%s", matchId, teamId);
         return fetchFromApi(endpoint, Object.class);
     }
 
     public Object fetchMatchReferees(Long matchId) {
-        String endpoint = String.format("/api/live/match/%d/info?teamIdFilter=1337", matchId);
+        String endpoint = String.format("/api/live/match/%d/info?teamIdFilter=%s", matchId, teamId);
         return fetchFromApi(endpoint, Object.class);
     }
 
@@ -121,7 +126,7 @@ public class HnsApiService {
         if (personId == null || personId.isEmpty()) {
             throw new IllegalArgumentException("Invalid personId");
         }
-        String endpoint = String.format("/api/live/player/%s?teamIdFilter=1337", personId);
+        String endpoint = String.format("/api/live/player/%s?teamIdFilter=%s", personId, teamId);
         return fetchFromApi(endpoint, Object.class);
     }
 
@@ -129,11 +134,7 @@ public class HnsApiService {
         if (personId == null || personId.isEmpty() || competitionId == null) {
             throw new IllegalArgumentException("Invalid personId or competitionId");
         }
-
-        String endpoint = String.format(
-                "/api/live/player/%s/stats/1337?teamIdFilter=1337",
-                personId);
-
+        String endpoint = String.format("/api/live/player/%s/stats/%s?teamIdFilter=%s", personId, teamId, teamId);
         List<Map<String, Object>> stats = fetchFromApi(endpoint, List.class);
         if (stats == null)
             return null;
@@ -149,26 +150,14 @@ public class HnsApiService {
     }
 
     public Object fetchTeamStandings(Integer competitionId) {
-        if (competitionId == null) {
-            throw new IllegalArgumentException("Invalid competitionId");
-        }
-
-        String endpoint = String.format(
-                "/api/live/competition/%d/standings/official?teamIdFilter=1337",
-                competitionId);
-
+        String endpoint = String.format("/api/live/competition/%d/standings/official?teamIdFilter=%s", competitionId,
+                teamId);
         return fetchFromApi(endpoint, Object.class);
     }
 
     public Object fetchTeamStandingsUnofficial(Integer competitionId) {
-        if (competitionId == null) {
-            throw new IllegalArgumentException("Invalid competitionId");
-        }
-
-        String endpoint = String.format(
-                "/api/live/competition/%d/standings/unofficial?teamIdFilter=1337",
-                competitionId);
-
+        String endpoint = String.format("/api/live/competition/%d/standings/unofficial?teamIdFilter=%s", competitionId,
+                teamId);
         return fetchFromApi(endpoint, Object.class);
     }
 
@@ -176,18 +165,14 @@ public class HnsApiService {
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new IllegalArgumentException("Keyword cannot be null or empty");
         }
-
-        String endpoint = String.format(
-                "/api/live/player/search?keyword=%s&page=0&pageSize=100&teamIdFilter=1337",
-                keyword);
-
+        String endpoint = String.format("/api/live/player/search?keyword=%s&page=0&pageSize=100&teamIdFilter=%s",
+                keyword, teamId);
         return fetchFromApi(endpoint, Object.class);
     }
 
     public Object getSeniorCompetition() {
-        String endpoint = "/api/live/competition/list/active/1337?teamIdFilter=1337";
+        String endpoint = String.format("/api/live/competition/list/active/%s?teamIdFilter=%s", teamId, teamId);
         List<Map<String, Object>> competitions = fetchFromApi(endpoint, List.class);
-
         if (competitions == null)
             return null;
 
@@ -199,61 +184,46 @@ public class HnsApiService {
 
     public Object fetchNextMatchForSeniorCompetition() {
         Map<String, Object> seniorCompetition = (Map<String, Object>) getSeniorCompetition();
-
         if (seniorCompetition == null) {
             throw new IllegalArgumentException("Senior competition not found");
         }
-
         Integer competitionId = (Integer) seniorCompetition.get("id");
-
         String matchesEndpoint = String.format(
-                "/api/live/competition/%d/matches/paginated/future/2/1337?page=1&pageSize=1&teamIdFilter=1337",
-                competitionId);
-
+                "/api/live/competition/%d/matches/paginated/future/2/%s?page=1&pageSize=1&teamIdFilter=%s",
+                competitionId, teamId, teamId);
         Map<String, Object> matchesResponse = fetchFromApi(matchesEndpoint, Map.class);
-
         if (matchesResponse == null || matchesResponse.get("result") == null) {
-            return new HashMap<>(); // Prazan JSON
+            return new HashMap<>();
         }
-
         List<Object> matches = (List<Object>) matchesResponse.get("result");
         return matches != null && !matches.isEmpty() ? matches.get(0) : new HashMap<>();
     }
 
     public Object fetchPreviousMatchForSeniorCompetition() {
         Map<String, Object> seniorCompetition = (Map<String, Object>) getSeniorCompetition();
-
         if (seniorCompetition == null) {
             throw new IllegalArgumentException("Senior competition not found");
         }
-
         Integer competitionId = (Integer) seniorCompetition.get("id");
-
         String matchesEndpoint = String.format(
-                "/api/live/competition/%d/matches/paginated/past/2/1337?page=1&pageSize=1&teamIdFilter=1337",
-                competitionId);
-
+                "/api/live/competition/%d/matches/paginated/past/2/%s?page=1&pageSize=1&teamIdFilter=%s", competitionId,
+                teamId, teamId);
         Map<String, Object> matchesResponse = fetchFromApi(matchesEndpoint, Map.class);
-
         if (matchesResponse == null || matchesResponse.get("result") == null) {
-            return new HashMap<>(); // Prazan JSON
+            return new HashMap<>();
         }
-
         List<Object> matches = (List<Object>) matchesResponse.get("result");
         return matches != null && !matches.isEmpty() ? matches.get(0) : new HashMap<>();
     }
 
     public List<Object> fetchUpcomingMatches(Integer seniorCompetitionId) {
-        String futureMatchesUrl = "/api/live/team/1337/matches/paginated/future/2?page=1&pageSize=7&teamIdFilter=1337";
-
+        String futureMatchesUrl = String.format(
+                "/api/live/team/%s/matches/paginated/future/2?page=1&pageSize=7&teamIdFilter=%s", teamId, teamId);
         Map<String, Object> response = fetchFromApi(futureMatchesUrl, Map.class);
         if (response == null || response.get("result") == null) {
             return new ArrayList<>();
         }
-
         List<Object> matches = (List<Object>) response.get("result");
-
-        // Filtriraj utakmice koje ne pripadaju seniorCompetition
         return matches.stream()
                 .filter(match -> {
                     Map<String, Object> competition = (Map<String, Object>) ((Map<String, Object>) match)
@@ -264,28 +234,22 @@ public class HnsApiService {
     }
 
     public List<Object> fetchTodayMatches(Integer seniorCompetitionId) {
-        String pastMatchesUrl = "/api/live/team/1337/matches/paginated/past/2?page=1&pageSize=10&teamIdFilter=1337";
-
+        String pastMatchesUrl = String.format(
+                "/api/live/team/%s/matches/paginated/past/2?page=1&pageSize=10&teamIdFilter=%s", teamId, teamId);
         Map<String, Object> response = fetchFromApi(pastMatchesUrl, Map.class);
         if (response == null || response.get("result") == null) {
             return new ArrayList<>();
         }
-
         List<Object> matches = (List<Object>) response.get("result");
-
-        // Filtriraj utakmice s današnjim datumom i budućim vremenom
         LocalDate today = LocalDate.now();
         LocalDateTime now = LocalDateTime.now();
-
         return matches.stream()
                 .filter(match -> {
                     Long dateTimeUTC = (Long) ((Map<String, Object>) match).get("dateTimeUTC");
                     if (dateTimeUTC == null)
                         return false;
-
                     LocalDateTime matchDateTime = Instant.ofEpochMilli(dateTimeUTC).atZone(ZoneId.systemDefault())
                             .toLocalDateTime();
-
                     return matchDateTime.toLocalDate().isEqual(today) && matchDateTime.isAfter(now);
                 })
                 .toList();
@@ -296,29 +260,58 @@ public class HnsApiService {
         if (seniorCompetition == null) {
             throw new IllegalArgumentException("Senior competition not found");
         }
-
         Integer seniorCompetitionId = (Integer) seniorCompetition.get("id");
-
         List<Object> upcomingMatches = fetchUpcomingMatches(seniorCompetitionId);
         List<Object> todayMatches = fetchTodayMatches(seniorCompetitionId);
-
         List<Object> combinedMatches = new ArrayList<>();
         combinedMatches.addAll(todayMatches);
         combinedMatches.addAll(upcomingMatches);
-
         return combinedMatches;
     }
 
     public byte[] fetchCometImageRaw(String uuid) {
-        String endpoint = String.format("/api/live/images/%s?teamIdFilter=1337", uuid);
+        String endpoint = String.format("/api/live/images/%s?teamIdFilter=%s", uuid, teamId);
         Map<String, Object> response = fetchFromApi(endpoint, Map.class);
-
         if (response != null && response.containsKey("value")) {
             String base64Image = (String) response.get("value");
             return Base64.getDecoder().decode(base64Image);
         }
-
         return null;
     }
 
+    public Object fetchCompetitionGoalsStats(Integer competitionId) {
+        if (competitionId == null) {
+            throw new IllegalArgumentException("Invalid competitionId");
+        }
+
+        String endpoint = String.format(
+                "/api/live/competition/%d/stats/goals/%s?teamIdFilter=%s",
+                competitionId, teamId, teamId);
+
+        return fetchFromApi(endpoint, Object.class);
+    }
+
+    public Object fetchCompetitionRedCardsStats(Integer competitionId) {
+        if (competitionId == null) {
+            throw new IllegalArgumentException("Invalid competitionId");
+        }
+
+        String endpoint = String.format(
+                "/api/live/competition/%d/stats/redCards/%s?teamIdFilter=%s",
+                competitionId, teamId, teamId);
+
+        return fetchFromApi(endpoint, Object.class);
+    }
+
+    public Object fetchCompetitionYellowCardsStats(Integer competitionId) {
+        if (competitionId == null) {
+            throw new IllegalArgumentException("Invalid competitionId");
+        }
+
+        String endpoint = String.format(
+                "/api/live/competition/%d/stats/yellowCards/%s?teamIdFilter=%s",
+                competitionId, teamId, teamId);
+
+        return fetchFromApi(endpoint, Object.class);
+    }
 }
