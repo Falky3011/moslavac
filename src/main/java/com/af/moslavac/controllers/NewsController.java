@@ -28,7 +28,7 @@ public class NewsController {
 
     @GetMapping()
     public Page<News> getAllNews(@RequestParam(value = "page", defaultValue = "0") int page,
-                              @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         return newsSevice.getAllNews(page, size);
     }
 
@@ -40,7 +40,7 @@ public class NewsController {
     @PostMapping()
     public ResponseEntity<News> addNews(@RequestBody News news) {
         News createdNews = newsSevice.save(news);
-        //subscriberService.sendNewsletter(news.getTitle(), news.getContent());
+        // subscriberService.sendNewsletter(news.getTitle(), news.getContent());
         return ResponseEntity.ok(createdNews);
     }
 
@@ -62,23 +62,21 @@ public class NewsController {
         return ResponseEntity.ok(updatedNews);
     }
 
-
     @PutMapping("/thumbnail/{id}")
     public ResponseEntity<String> uploadThumbnail(@PathVariable("id") Integer id,
-                                                       @RequestParam("thumbnail") MultipartFile file) {
-        System.out.println(file.getOriginalFilename());
+            @RequestParam("thumbnail") MultipartFile file) {
         try {
-            newsSevice.uploadThumbnail(id, file);
+            String thumbnailUrl = newsSevice.uploadThumbnail(id, file);
+
+            return ResponseEntity.ok(thumbnailUrl);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error uploading thumbnail: " + e.getMessage());
         }
-
-        return ResponseEntity.ok("Thumbnail uploaded successfully");
     }
 
     @PutMapping("/photos/{id}")
     public ResponseEntity<String> uploadMultiplePhotos(@PathVariable("id") Integer id,
-                                                       @RequestParam("files") List<MultipartFile> files) {
+            @RequestParam("files") List<MultipartFile> files) {
 
         StringBuilder responseMessage = new StringBuilder();
         for (MultipartFile file : files) {
@@ -91,7 +89,6 @@ public class NewsController {
         }
         return ResponseEntity.ok("All files uploaded successfully: \n" + responseMessage.toString());
     }
-
 
     @GetMapping("/latest")
     public ResponseEntity<List<News>> getLatestNews() {
@@ -116,4 +113,3 @@ public class NewsController {
         }
     }
 }
-

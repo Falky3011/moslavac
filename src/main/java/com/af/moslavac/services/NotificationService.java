@@ -9,15 +9,20 @@ import org.springframework.stereotype.Service;
 public class NotificationService {
 
     public void sendNotification(NotificationRequest notification) {
-        Message message = Message.builder()
+        Message.Builder messageBuilder = Message.builder()
                 .putData("title", notification.getTitle())
                 .putData("body", notification.getBody())
-                .setToken(notification.getToken())
-                .build();
+                .setToken(notification.getToken());
+
+        // Ako je URL slike dostupan, dodajte ga
+        if (notification.getIcon() != null) {
+            messageBuilder.putData("icon", notification.getIcon());
+        }
+
+        Message message = messageBuilder.build();
 
         try {
-            String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("Successfully sent message: " + response);
+            FirebaseMessaging.getInstance().send(message);
         } catch (Exception e) {
             e.printStackTrace();
         }

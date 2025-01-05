@@ -53,21 +53,19 @@ function App() {
       const token = await generateToken();
       if (token) {
         localStorage.setItem("firebaseToken", token);
-        console.log("Firebase token saved:", token);
       } else {
-        console.error("Failed to retrieve Firebase token");
       }
     };
 
     fetchToken(); // Poziv asinkrone funkcije
 
     onMessage(messaging, (payload) => {
-      console.log("Notification received:", payload);
-      const { title, body } = payload.data;
+      const { title, body, icon } = payload.data;
 
       // Display notification using the Notification API
       new Notification(title, {
         body,
+        icon,
       });
     });
   }, []);

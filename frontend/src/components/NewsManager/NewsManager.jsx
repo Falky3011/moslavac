@@ -53,7 +53,7 @@ export default function NewsManager() {
 
     if (modalState.mode === "add") {
       addNews.mutate(newsData, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           closeModal();
           message.success("News added successfully!");
           const token = localStorage.getItem("firebaseToken");
@@ -63,10 +63,12 @@ export default function NewsManager() {
             );
             return;
           }
+
           sendNotification.mutate({
             token,
             title: values.title,
             body: values.content.slice(0, 100),
+            icon: data.thumbnailUrl,
           });
         },
         onError: () => {
@@ -108,7 +110,7 @@ export default function NewsManager() {
         onClick={() => showModal("add")}
         className="mb-4 w-full sm:w-auto"
       >
-        Add News
+        Dodaj
       </Button>
 
       {isLoading ? (
