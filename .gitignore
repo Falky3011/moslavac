@@ -32,5 +32,10 @@ build/
 
 ### VS Code ###
 .vscode/
-node_modulessrc/main/resources/moslavac-9d4c8-firebase-adminsdk-jgmzm-f2fb4aecb9.json
+
+### Application Configuration ###
+application.yml
+src/main/resources/application.yml
+
+### Firebase Configuration ###
 src/main/resources/moslavac-9d4c8-firebase-adminsdk-jgmzm-f2fb4aecb9.json
