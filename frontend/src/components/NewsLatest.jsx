@@ -1,26 +1,16 @@
 "use client";
 
 import React, { useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Typography, Spin, Alert } from "antd";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import grb from "../assets/grb.png";
+import { useGetLatestNews } from "../hooks/useGetLatestNews";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const NewsLatest = () => {
-  const { data, error, isLoading } = useQuery({
-    queryKey: ["latestNews"],
-    queryFn: async () => {
-      const response = await fetch("http://localhost:8080/api/news/latest");
-      if (!response.ok) {
-        throw new Error("Failed to fetch news");
-      }
-      return response.json();
-    },
-  });
-
+  const { data, error, isLoading } = useGetLatestNews();
   const scrollRef = useRef(null);
 
   if (isLoading) {

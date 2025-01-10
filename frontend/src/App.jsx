@@ -36,7 +36,6 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    // Provjerava da li je modal već prikazan
     const isModalShown = sessionStorage.getItem("isModalShown");
 
     if (!isModalShown) {
@@ -48,7 +47,6 @@ function App() {
       return () => clearTimeout(timer);
     }
 
-    // Dohvati i spremi token u localStorage
     const fetchToken = async () => {
       const token = await generateToken();
       if (token) {
@@ -57,12 +55,11 @@ function App() {
       }
     };
 
-    fetchToken(); // Poziv asinkrone funkcije
+    fetchToken();
 
     onMessage(messaging, (payload) => {
       const { title, body, icon } = payload.data;
 
-      // Display notification using the Notification API
       new Notification(title, {
         body,
         icon,

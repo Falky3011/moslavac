@@ -7,6 +7,9 @@ import MatchItem from "./MatchItem/MatchItem";
 const CompetitionMatches = ({ competitionId }) => {
   const { data, error, isLoading } = useGetAllCompetitionMatches(competitionId);
 
+  console.log(competitionId);
+  console.log(data);
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">

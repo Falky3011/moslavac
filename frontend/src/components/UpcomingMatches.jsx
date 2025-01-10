@@ -58,7 +58,7 @@ const UpcomingMatches = () => {
   }
 
   if (!matches || matches.length === 0) {
-    return null
+    return null;
   }
 
   return (
@@ -68,15 +68,6 @@ const UpcomingMatches = () => {
       </h2>
 
       <div className="relative">
-        {canScrollLeft && (
-          <button
-            onClick={() => scroll("left")}
-            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white text-gray-700 rounded-full shadow-md p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 z-10"
-          >
-            {"<"}
-          </button>
-        )}
-
         <motion.div
           ref={sliderRef}
           className="flex space-x-3 sm:space-x-4 md:space-x-6 overflow-x-auto snap-x snap-mandatory pb-4"
@@ -99,15 +90,6 @@ const UpcomingMatches = () => {
             </motion.div>
           ))}
         </motion.div>
-
-        {canScrollRight && (
-          <button
-            onClick={() => scroll("right")}
-            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white text-gray-700 rounded-full shadow-md p-2 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 z-10"
-          >
-            {">"}
-          </button>
-        )}
       </div>
     </div>
   );

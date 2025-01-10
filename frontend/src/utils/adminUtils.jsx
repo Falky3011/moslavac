@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Input, Button, message } from "antd";
 import Cookies from "js-cookie";
 import { useValidateAdminPassword } from "../hooks/useValidateAdminPassword";
+import { useNavigate } from "react-router-dom";
 
 const COOKIE_NAME = "isAdmin";
 const COOKIE_EXPIRATION_DAYS = 3;
@@ -34,7 +35,7 @@ const AdminModal = React.memo(({ isVisible, onClose, onSuccess }) => {
           setAdminAuth();
           onClose();
           message.success("Prijavljeni ste kao admin!");
-          onSuccess(); // Callback nakon uspješne prijave
+          onSuccess(); // Preusmjeravanje nakon prijave
         } else {
           message.error("Neispravna administratorska šifra.");
         }
@@ -58,7 +59,7 @@ const AdminModal = React.memo(({ isVisible, onClose, onSuccess }) => {
           key="submit"
           type="primary"
           onClick={handleLogin}
-          loading={isLoading} // Prikazuje loader dok se provjerava šifra
+          loading={isLoading}
         >
           Prijavi se
         </Button>,
@@ -75,6 +76,7 @@ const AdminModal = React.memo(({ isVisible, onClose, onSuccess }) => {
 
 export const useAdminModal = (onSuccess = () => {}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const isAdminRoute = window.location.pathname.endsWith("/admin");
@@ -86,12 +88,19 @@ export const useAdminModal = (onSuccess = () => {}) => {
   const showModal = () => setIsModalVisible(true);
   const closeModal = () => setIsModalVisible(false);
 
+  const handleSuccess = () => {
+    const currentPath = window.location.pathname;
+    const newPath = currentPath.replace(/\/admin$/, ""); // Uklanja "/admin" s kraja
+    navigate(newPath); // Preusmjerava na novi URL
+    onSuccess();
+  };
+
   return {
     AdminModal: () => (
       <AdminModal
         isVisible={isModalVisible}
         onClose={closeModal}
-        onSuccess={onSuccess}
+        onSuccess={handleSuccess} // Poziv funkcije za preusmjeravanje
       />
     ),
     isAdmin: isAdmin(),

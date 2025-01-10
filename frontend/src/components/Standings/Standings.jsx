@@ -11,7 +11,7 @@ const Standings = ({ competitionId }) => {
   // Loading State
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-48 sm:h-64">
+      <div className="flex justify-center items-center h-64">
         <Spin size="large" />
       </div>
     );
@@ -20,13 +20,13 @@ const Standings = ({ competitionId }) => {
   // Error State
   if (error) {
     return (
-      <div className="w-full max-w-3xl mx-auto px-2 sm:px-4">
+      <div className="max-w-3xl mx-auto p-4">
         <Alert
           message="Error"
           description={`Failed to load standings. ${error.message}`}
           type="error"
           showIcon
-          className="rounded-lg shadow-md text-sm sm:text-base"
+          className="rounded-lg shadow-md"
         />
       </div>
     );
@@ -35,13 +35,13 @@ const Standings = ({ competitionId }) => {
   // No Data State
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <div className="w-full max-w-3xl mx-auto px-2 sm:px-4">
+      <div className="max-w-3xl mx-auto p-4">
         <Alert
           message="No Data"
           description="No standings data available."
           type="info"
           showIcon
-          className="rounded-lg shadow-md text-sm sm:text-base"
+          className="rounded-lg shadow-md"
         />
       </div>
     );
@@ -57,7 +57,7 @@ const Standings = ({ competitionId }) => {
       columns={columns}
       rowKey={(record) => record.team.id}
       pagination={false}
-      className="w-full text-xs sm:text-sm md:text-base"
+      className="w-full text-sm md:text-base lg:text-lg"
       rowClassName={(record) =>
         `${
           record.team.name === "SNK Moslavac"
@@ -67,13 +67,12 @@ const Standings = ({ competitionId }) => {
             : "bg-white"
         }`
       }
-      size="small"
-      scroll={{ x: "max-content" }}
+      size="middle"
     />
   );
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8 rounded-xl sm:rounded-3xl shadow-md bg-white">
+    <div className="max-w-6xl mx-auto px-4 py-8 rounded-3xl shadow-md bg-white">
       {/* Desktop View */}
       <div className="hidden sm:block overflow-x-auto">
         {renderTable(columns.desktopColumns)}
@@ -81,12 +80,7 @@ const Standings = ({ competitionId }) => {
 
       {/* Mobile View */}
       <div className="sm:hidden">
-        <Tabs
-          defaultActiveKey="main"
-          centered
-          size="small"
-          tabBarStyle={{ marginBottom: "0.5rem" }}
-        >
+        <Tabs defaultActiveKey="main" centered>
           <TabPane tab="Bodovi" key="main">
             {renderTable(columns.mainColumns)}
           </TabPane>
