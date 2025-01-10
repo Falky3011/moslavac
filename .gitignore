@@ -45,3 +45,13 @@ src/main/resources/application.yml
 
 # Ignore build output
 target/
+
+# Ignore all files in src/main/resources/static/assets/
+src/main/resources/static/assets/*
+
+# Do not ignore folders in case they're needed
+!src/main/resources/static/assets/.keep
+
+# Ignore service worker files
+src/main/resources/static/firebase-messaging-sw.js
+

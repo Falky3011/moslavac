@@ -108,7 +108,7 @@ public class HnsApiController {
     public ResponseEntity<Object> getNextMatchForSeniorCompetition() {
         Object nextMatch = hnsApiService.fetchNextMatchForSeniorCompetition();
         if (nextMatch == null) {
-            return ResponseEntity.ok(new HashMap<>()); // Vraća prazan JSON
+            return ResponseEntity.ok(new HashMap<>());
         }
         return ResponseEntity.ok(nextMatch);
     }
@@ -117,7 +117,7 @@ public class HnsApiController {
     public ResponseEntity<Object> getPreviousMatchForSeniorCompetition() {
         Object previousMatch = hnsApiService.fetchPreviousMatchForSeniorCompetition();
         if (previousMatch == null) {
-            return ResponseEntity.ok(new HashMap<>()); // Vraća prazan JSON
+            return ResponseEntity.ok(new HashMap<>());
         }
         return ResponseEntity.ok(previousMatch);
     }

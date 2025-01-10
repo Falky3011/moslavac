@@ -58,8 +58,8 @@ public class HnsApiService {
 
     public List<Object> fetchFutureCompetitionMatches(Integer competitionId) {
         String endpoint = String.format(
-                "/api/live/competition/%d/matches/paginated/future/2?page=1&pageSize=75&teamIdFilter=%s",
-                competitionId, teamId);
+                "/api/live/competition/%d/matches/paginated/future/2/%s?page=1&pageSize=75&teamIdFilter=%s",
+                competitionId, teamId, teamId);
         Map<String, Object> response = fetchFromApi(endpoint, Map.class);
         return response != null ? (List<Object>) response.get("result") : new ArrayList<>();
     }
