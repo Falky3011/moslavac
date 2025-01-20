@@ -2,12 +2,12 @@ import React from "react";
 import { Carousel } from "antd";
 import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
-import jakna from "../assets/webshop/Jakna.jpg";
-import hoody from "../assets/webshop/Hoody.jpg";
-import polo from "../assets/webshop/Polo-majica.jpg";
-import trenirka from "../assets/webshop/Calcio-trenirka-1.jpg";
-import dresPlavi from "../assets/webshop/Screenshot_2.png";
-import dresBijeli from "../assets/webshop/Screenshot_1.png";
+import jakna from "../../public/webshop/Jakna.jpg";
+import hoody from "../../public/webshop/Hoody.jpg";
+import polo from "../../public/webshop/Polo-majica.jpg";
+import trenirka from "../../public/webshop/Calcio-trenirka-1.jpg";
+import dresPlavi from "../../public/webshop/Screenshot_2.png";
+import dresBijeli from "../../public/webshop/Screenshot_1.png";
 
 const items = [
   { id: 1, image: dresBijeli, text: "Domaći dres" },

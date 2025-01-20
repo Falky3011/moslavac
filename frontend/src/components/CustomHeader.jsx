@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import { useGetCurrentSeasonCompetitions } from "../hooks/useGetCurrentSeasonCompetitions";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
-import logo from "../assets/grb.png";
+import logo from "../../public/grb.png";
 
 const { Header } = Layout;
 

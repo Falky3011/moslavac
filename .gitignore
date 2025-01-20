@@ -55,3 +55,4 @@ src/main/resources/static/assets/*
 # Ignore service worker files
 src/main/resources/static/firebase-messaging-sw.js
 
+.env

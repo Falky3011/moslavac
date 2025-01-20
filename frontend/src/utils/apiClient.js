@@ -1,10 +1,12 @@
-import axios from 'axios';
+import axios from "axios";
+
+const baseUrl = window.location.origin;
 
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8080',
-    headers: {
-        'Content-Type': 'application/json',
-    },
+  baseURL: baseUrl,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export default apiClient;

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { List, Pagination, Typography, Spin, Alert } from "antd";
 import { Link } from "react-router-dom";
 import NewsItem from "./NewsItem";
-import grb from "../../assets/grb.png";
+import grb from "../../../public/grb.png";
 import useGetNewsPaginated from "../../hooks/useGetNewsPaginated";
 import { isAdmin } from "../../utils/adminUtils";
 

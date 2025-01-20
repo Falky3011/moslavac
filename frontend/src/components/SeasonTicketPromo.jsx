@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { RightOutlined } from "@ant-design/icons";
-import fans from "../assets/fans.jpg";
+import fans from "../../public/fans.jpg";
 import { Link } from "react-router-dom";
 
 export default function SeasonTicketPromo() {

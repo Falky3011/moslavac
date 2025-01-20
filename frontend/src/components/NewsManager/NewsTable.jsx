@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Popconfirm } from "antd";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
-import grb from "../../assets/grb.png";
+import grb from "../../../public/grb.png";
 
 const NewsTable = ({ news, onView, onEdit, onDelete }) => (
   <div className="overflow-x-auto">

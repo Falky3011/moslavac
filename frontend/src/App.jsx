@@ -77,18 +77,32 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/admin" element={<HomePage />} />
         <Route path="/matches" element={<MatchCalendar />} />
+        <Route path="/matches/admin" element={<MatchCalendar />} />
         <Route
           path="/season/:competitionId/:competitionName"
           element={<CompetitionInfo />}
-        ></Route>
+        />
+        <Route
+          path="/season/:competitionId/:competitionName/admin"
+          element={<CompetitionInfo />}
+        />
         <Route path="/stats/:playerId" element={<PlayerStats />} />
-        <Route path="/news" element={<NewsList />}></Route>
-        <Route path="/news/:id" element={<NewsDetail />}></Route>
-        <Route path="/admin/manage-news" element={<NewsManager />}></Route>
+        <Route path="/stats/:playerId/admin" element={<PlayerStats />} />
+        <Route path="/news" element={<NewsList />} />
+        <Route path="/news/admin" element={<NewsList />} />
+        <Route path="/news/:id" element={<NewsDetail />} />
+        <Route path="/news/:id/admin" element={<NewsDetail />} />
+        <Route path="/admin/manage-news" element={<NewsManager />} />
         <Route path="/matches/:matchId" element={<MatchInfo />} />
+        <Route path="/matches/:matchId/admin" element={<MatchInfo />} />
         <Route path="/first-team" element={<FirstTeam />} />
+        <Route path="/first-team/admin" element={<FirstTeam />} />
         <Route
           path="/season-ticket-purchase"
+          element={<SeasonTicketPurchase />}
+        />
+        <Route
+          path="/season-ticket-purchase/admin"
           element={<SeasonTicketPurchase />}
         />
       </Routes>

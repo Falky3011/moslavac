@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import { Typography, Spin, Alert } from "antd";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import grb from "../assets/grb.png";
+import grb from "../../public/grb.png";
 import { useGetLatestNews } from "../hooks/useGetLatestNews";
 
 const { Title } = Typography;
