@@ -13,5 +13,5 @@ WORKDIR /app
 
 COPY --from=backend /app/target/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app1.jar"]
 EXPOSE 8080
