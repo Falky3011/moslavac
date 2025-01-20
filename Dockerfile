@@ -5,7 +5,7 @@ COPY src src
 COPY mvnw .
 COPY .mvn .mvn
 RUN chmod +x ./mvnw
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 
 FROM openjdk:23-jdk
