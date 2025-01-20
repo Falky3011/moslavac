@@ -1,14 +1,14 @@
-FROM openjdk:23-jdk AS backend
+FROM openjdk:21-jdk AS backend
 WORKDIR /app
 COPY pom.xml .
 COPY src src
 COPY mvnw .
 COPY .mvn .mvn
 RUN chmod +x ./mvnw
-RUN mvn clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 
-FROM openjdk:23-jdk
+FROM openjdk:21-jdk
 WORKDIR /app
 
 COPY --from=backend /app/target/*.jar app.jar
