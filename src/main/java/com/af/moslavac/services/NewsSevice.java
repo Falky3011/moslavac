@@ -27,7 +27,11 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class NewsSevice {
 
     @Autowired
-    private NewsRepository newsRepository;
+    private final NewsRepository newsRepository;
+
+    public NewsSevice(NewsRepository newsRepository) {
+        this.newsRepository = newsRepository;
+    }
 
     public Page<News> getAllNews(int page, int size) {
         return newsRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")));
