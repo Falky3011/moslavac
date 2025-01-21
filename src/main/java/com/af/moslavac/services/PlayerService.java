@@ -2,6 +2,8 @@ package com.af.moslavac.services;
 
 import com.af.moslavac.entities.Player;
 import com.af.moslavac.repositories.PlayerRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Optional;
 @Service
 public class PlayerService {
 
+    @Autowired
     private final PlayerRepository playerRepository;
 
     public PlayerService(PlayerRepository playerRepository) {
