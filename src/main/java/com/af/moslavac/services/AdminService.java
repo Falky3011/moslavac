@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 public class AdminService {
 
     @Value("${spring.admin.password}")
-    private  String admin_password;
+    private String admin_password;
 
     public boolean validatePassword(String password) {
         return admin_password.equals(password.trim());
