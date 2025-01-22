@@ -16,8 +16,6 @@ moment.updateLocale("hr", {
 
 const localizer = momentLocalizer(moment);
 
-console.log(moment.locale());
-
 const messages = {
   date: "Datum",
   time: "Vrijeme",

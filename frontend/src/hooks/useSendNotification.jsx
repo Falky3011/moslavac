@@ -12,9 +12,7 @@ const sendNotification = async (notificationData) => {
 export default function useSendNotification() {
   return useMutation({
     mutationFn: sendNotification,
-    onSuccess: () => {
-      console.log("Notification sent successfully!");
-    },
+    onSuccess: () => {},
     onError: (error) => {
       console.error(
         "Failed to send notification:",

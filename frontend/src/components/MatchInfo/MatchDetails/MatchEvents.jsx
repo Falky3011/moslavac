@@ -139,14 +139,17 @@ const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
   return (
     <div className="mb-8 w-full max-w-3xl mx-auto bg-white rounded-3xl shadow-md border border-gray-200 overflow-hidden">
       <div className="divide-y divide-gray-200">
-        {matchEvents.map((event, index) => (
-          <div
-            key={index}
-            className="p-4 hover:bg-gray-50 transition-colors duration-150"
-          >
-            {renderEvent(event)}
-          </div>
-        ))}
+        {matchEvents.map((event, index) => {
+          const renderedEvent = renderEvent(event);
+          return renderedEvent ? (
+            <div
+              key={index}
+              className="p-4 hover:bg-gray-50 transition-colors duration-150"
+            >
+              {renderedEvent}
+            </div>
+          ) : null;
+        })}
       </div>
     </div>
   );
