@@ -2,35 +2,35 @@ package com.af.moslavac.services;
 
 import com.af.moslavac.entities.News;
 import com.af.moslavac.repositories.NewsRepository;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import static com.af.moslavac.constants.Constant.NEWS_PHOTO_DIRECTORY;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service
 @Transactional(rollbackOn = Exception.class)
-public class NewsSevice {
+public class NewsService {
 
     @Autowired
     private final NewsRepository newsRepository;
 
-    public NewsSevice(NewsRepository newsRepository) {
+    private final Cloudinary cloudinary;
+
+    @Autowired
+    public NewsService(NewsRepository newsRepository, Cloudinary cloudinary) {
         this.newsRepository = newsRepository;
+        this.cloudinary = cloudinary;
     }
 
     public Page<News> getAllNews(int page, int size) {
@@ -51,24 +51,23 @@ public class NewsSevice {
 
     public News updateNews(int id, String title, String content, MultipartFile thumbnail, List<MultipartFile> files) {
         Optional<News> oldNews = newsRepository.findById(id);
-
         if (oldNews.isPresent()) {
             News news = oldNews.get();
             news.setTitle(title);
             news.setContent(content);
 
-            // Update thumbnail if provided
+            // Upload thumbnail if provided
             if (thumbnail != null && !thumbnail.isEmpty()) {
-                String thumbnailUrl = imageFunction.apply(id, thumbnail);
+                String thumbnailUrl = uploadImageToCloudinary(thumbnail);
                 news.setThumbnailPath(thumbnailUrl);
             } else {
                 news.setThumbnailPath(null);
             }
 
-            // Update additional images if provided
+            // Upload additional images if provided
             if (files != null && !files.isEmpty()) {
                 for (MultipartFile file : files) {
-                    String imageUrl = imageFunction.apply(id, file);
+                    String imageUrl = uploadImageToCloudinary(file);
                     news.getImagePaths().add(imageUrl);
                 }
             } else {
@@ -82,45 +81,29 @@ public class NewsSevice {
     }
 
     public String uploadThumbnail(Integer id, MultipartFile file) {
-        News news = getNewsById(id).orElse(null);
-        String thumbnailUrl = imageFunction.apply(id, file);
-
+        News news = getNewsById(id).orElseThrow(() -> new RuntimeException("News not found"));
+        String thumbnailUrl = uploadImageToCloudinary(file);
         news.setThumbnailPath(thumbnailUrl);
         newsRepository.save(news);
-
         return thumbnailUrl;
     }
 
     public String uploadPhoto(Integer id, MultipartFile file) {
-        News news = getNewsById(id).orElse(null);
-        String imageUrl = imageFunction.apply(id, file);
-
+        News news = getNewsById(id).orElseThrow(() -> new RuntimeException("News not found"));
+        String imageUrl = uploadImageToCloudinary(file);
         news.getImagePaths().add(imageUrl);
         newsRepository.save(news);
-
         return imageUrl;
     }
 
-    private final Function<String, String> fileExstension = filename -> Optional.of(filename)
-            .filter(name -> name.contains("."))
-            .map(name -> "." + name.substring(filename.lastIndexOf(".") + 1)).orElse(".png");
-
-    private final BiFunction<Integer, MultipartFile, String> imageFunction = (id, image) -> {
-        String filename = id + "_" + System.currentTimeMillis() + fileExstension.apply(image.getOriginalFilename());
+    private String uploadImageToCloudinary(MultipartFile file) {
         try {
-            Path fileStorageLocation = Paths.get(NEWS_PHOTO_DIRECTORY).toAbsolutePath().normalize();
-
-            if (!Files.exists(fileStorageLocation))
-                Files.createDirectories(fileStorageLocation);
-
-            Files.copy(image.getInputStream(), fileStorageLocation.resolve(filename), REPLACE_EXISTING);
-
-            return ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/news/image/" + filename)
-                    .toUriString();
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to save image");
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            return uploadResult.get("secure_url").toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Error uploading image to Cloudinary", e);
         }
-    };
+    }
 
     public List<News> getLatestNews() {
         List<News> allNews = newsRepository.findAll(Sort.by(Sort.Direction.DESC, "date"));

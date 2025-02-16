@@ -1,6 +1,9 @@
 app:
   firebase-configuration-file: moslavac-9d4c8-firebase-adminsdk-jgmzm-f2fb4aecb9.json
-
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME}
+  api-key: ${CLOUDINARY_API_KEY}
+  api-secret: ${CLOUDINARY_API_SECRET}
 spring:
   codec:
     max-in-memory-size: 10MB

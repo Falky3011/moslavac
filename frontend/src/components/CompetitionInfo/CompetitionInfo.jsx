@@ -1,13 +1,18 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import CompetitionMatches from "../CompetitionMatches/CompetitionMatches";
 import Standings from "../Standings/Standings";
 import TabNavigation from "../TabNavigation";
 import Statistics from "./Statistics";
 
 const CompetitionInfo = () => {
-  const { competitionId, competitionName } = useParams();
+  const { competitionId } = useParams();
   const [activeTab, setActiveTab] = useState("matches");
+  const location = useLocation();
+  const competitionName =
+    location.state?.competitionName || "Nepoznato natjecanje";
+
+  console.log(location.state);
 
   const tabs = [
     { key: "matches", label: "Utakmice" },
@@ -30,9 +35,7 @@ const CompetitionInfo = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-center mb-4">
-        {decodeURIComponent(competitionName)}
-      </h1>
+      <h1 className="text-2xl font-bold text-center mb-4">{competitionName}</h1>
       <TabNavigation
         tabs={tabs}
         activeTab={activeTab}

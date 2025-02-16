@@ -54,7 +54,8 @@ export default function CustomHeader() {
         competitions?.map((comp) => (
           <Menu.Item key={comp.id}>
             <Link
-              to={`/season/${comp.id}/${encodeURIComponent(comp.name)}`}
+              to={`/season/${comp.id}`}
+              state={{ competitionName: comp.name }}
               onClick={() => setVisible(false)}
             >
               {comp.name}

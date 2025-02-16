@@ -25,9 +25,7 @@ const UpcomingMatchItem = ({ match }) => {
     <motion.div
       layout
       onClick={toggleExpand}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className="w-full sm:w-[340px] h-[180px] sm:h-[200px] rounded-2xl sm:rounded-3xl shadow-md cursor-pointer relative overflow-hidden md:m-6 group"
+      className="w-full sm:w-[340px] h-[180px] sm:h-[200px] rounded-2xl sm:rounded-3xl shadow-md hover:shadow-xl ransition-shadow duration-300  cursor-pointer relative overflow-hidden md:m-6 group"
       style={{ background: "white" }}
     >
       <AnimatePresence>

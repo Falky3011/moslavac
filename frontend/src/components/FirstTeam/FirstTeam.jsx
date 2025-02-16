@@ -128,7 +128,7 @@ export default function FirstTeam() {
           showIcon
         />
       ) : (
-        ["vratar", "branič", "vezni", "napadač"].map((position) =>
+        ["vratari", "braniči", "vezni", "napadači", "trener"].map((position) =>
           renderPositionSection(
             position.charAt(0).toUpperCase() + position.slice(1),
             position

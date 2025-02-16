@@ -11,7 +11,7 @@ const UpcomingMatches = () => {
   const sliderRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-
+  console.log(matches);
   const checkScroll = () => {
     if (sliderRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
@@ -83,8 +83,6 @@ const UpcomingMatches = () => {
             <motion.div
               key={match.id}
               className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[340px] snap-start"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
             >
               <UpcomingMatchItem match={match} />
             </motion.div>

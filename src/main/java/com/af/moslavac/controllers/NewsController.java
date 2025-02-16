@@ -1,7 +1,7 @@
 package com.af.moslavac.controllers;
 
 import com.af.moslavac.entities.News;
-import com.af.moslavac.services.NewsSevice;
+import com.af.moslavac.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -23,29 +23,29 @@ import static com.af.moslavac.constants.Constant.NEWS_PHOTO_DIRECTORY;
 public class NewsController {
 
     @Autowired
-    private NewsSevice newsSevice;
+    private NewsService newsService;
 
     @GetMapping()
     public Page<News> getAllNews(@RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        return newsSevice.getAllNews(page, size);
+        return newsService.getAllNews(page, size);
     }
 
     @GetMapping("/{id}")
     public Optional<News> getNews(@PathVariable int id) {
-        return newsSevice.getNewsById(id);
+        return newsService.getNewsById(id);
     }
 
     @PostMapping()
     public ResponseEntity<News> addNews(@RequestBody News news) {
-        News createdNews = newsSevice.save(news);
+        News createdNews = newsService.save(news);
         // subscriberService.sendNewsletter(news.getTitle(), news.getContent());
         return ResponseEntity.ok(createdNews);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNews(@PathVariable int id) {
-        newsSevice.deleteNewsById(id);
+        newsService.deleteNewsById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -57,7 +57,7 @@ public class NewsController {
             @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail,
             @RequestParam(value = "files", required = false) List<MultipartFile> files) {
         // Update the news entity using the service
-        News updatedNews = newsSevice.updateNews(id, title, content, thumbnail, files);
+        News updatedNews = newsService.updateNews(id, title, content, thumbnail, files);
         return ResponseEntity.ok(updatedNews);
     }
 
@@ -65,7 +65,7 @@ public class NewsController {
     public ResponseEntity<String> uploadThumbnail(@PathVariable("id") Integer id,
             @RequestParam("thumbnail") MultipartFile file) {
         try {
-            String thumbnailUrl = newsSevice.uploadThumbnail(id, file);
+            String thumbnailUrl = newsService.uploadThumbnail(id, file);
 
             return ResponseEntity.ok(thumbnailUrl);
         } catch (Exception e) {
@@ -80,7 +80,7 @@ public class NewsController {
         StringBuilder responseMessage = new StringBuilder();
         for (MultipartFile file : files) {
             try {
-                String photoResponse = newsSevice.uploadPhoto(id, file);
+                String photoResponse = newsService.uploadPhoto(id, file);
                 responseMessage.append(photoResponse).append("\n");
             } catch (Exception e) {
                 return ResponseEntity.status(500).body("Error uploading files: " + e.getMessage());
@@ -91,7 +91,7 @@ public class NewsController {
 
     @GetMapping("/latest")
     public ResponseEntity<List<News>> getLatestNews() {
-        return ResponseEntity.ok(newsSevice.getLatestNews());
+        return ResponseEntity.ok(newsService.getLatestNews());
     }
 
     @GetMapping("/image/{filename}")

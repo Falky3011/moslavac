@@ -45,25 +45,34 @@ const CompetitionMatches = ({ competitionId }) => {
 
   return (
     <div className="w-full max-w-7xl mx-auto p-4 bg-white shadow-md rounded-3xl">
-      {sortedMonths.map((month) => (
-        <div key={month} className="mb-6">
-          <Typography.Title
-            level={4}
-            className="text-base sm:text-lg font-bold text-gray-800 uppercase"
-          >
-            {new Date(`${month}-01`).toLocaleString("default", {
-              month: "long",
-              year: "numeric",
-            })}
-          </Typography.Title>
-          <Divider className="my-2 sm:my-4" />
-          <List
-            itemLayout="horizontal"
-            dataSource={matchesByMonth[month]}
-            renderItem={(match) => <MatchItem match={match} />}
-          />
-        </div>
-      ))}
+      {sortedMonths.map((month) => {
+        const [year, monthNumber] = month.split("-").map(Number);
+        const formattedMonth = new Date(
+          year,
+          monthNumber - 1,
+          1
+        ).toLocaleDateString("hr-HR", {
+          month: "long",
+          year: "numeric",
+        });
+
+        return (
+          <div key={month} className="mb-6">
+            <Typography.Title
+              level={4}
+              className="text-base sm:text-lg font-bold text-gray-800 uppercase"
+            >
+              {formattedMonth}
+            </Typography.Title>
+            <Divider className="my-2 sm:my-4" />
+            <List
+              itemLayout="horizontal"
+              dataSource={matchesByMonth[month]}
+              renderItem={(match) => <MatchItem match={match} />}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

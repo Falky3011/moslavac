@@ -24,7 +24,6 @@ const PlayerImage = ({ uuid }) => {
 
 const columns = [
   {
-    title: "Igrač",
     dataIndex: "player",
     key: "player",
     render: (player) => (
@@ -35,7 +34,6 @@ const columns = [
     ),
   },
   {
-    title: "Vrijednost",
     dataIndex: "value",
     key: "value",
     render: (value) => <span className="font-semibold">{value}</span>,
@@ -49,6 +47,7 @@ const StatisticsTable = ({ data }) => (
     rowKey={(record) => record.player.personId.toString()}
     pagination={false}
     className="w-full"
+    showHeader={false}
   />
 );
 

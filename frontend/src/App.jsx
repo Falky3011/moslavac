@@ -78,12 +78,9 @@ function App() {
         <Route path="/admin" element={<HomePage />} />
         <Route path="/matches" element={<MatchCalendar />} />
         <Route path="/matches/admin" element={<MatchCalendar />} />
+        <Route path="/season/:competitionId" element={<CompetitionInfo />} />
         <Route
-          path="/season/:competitionId/:competitionName"
-          element={<CompetitionInfo />}
-        />
-        <Route
-          path="/season/:competitionId/:competitionName/admin"
+          path="/season/:competitionId/admin"
           element={<CompetitionInfo />}
         />
         <Route path="/stats/:playerId" element={<PlayerStats />} />

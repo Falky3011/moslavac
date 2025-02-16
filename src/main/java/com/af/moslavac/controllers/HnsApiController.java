@@ -24,7 +24,6 @@ public class HnsApiController {
 
     @GetMapping("/api/competition/{competitionId}/matches")
     public List<Object> getAllCompetitionMatches(@PathVariable Integer competitionId) {
-        System.out.println(competitionId);
         return hnsApiService.getAllCompetitionMatches(competitionId);
     }
 
