@@ -24,7 +24,7 @@ public class NewsService {
 
     @Autowired
     private final NewsRepository newsRepository;
-
+    @Autowired
     private final Cloudinary cloudinary;
 
     @Autowired
