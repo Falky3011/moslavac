@@ -6,7 +6,6 @@ import {
   useLocation,
 } from "react-router-dom";
 import "./App.css";
-import CustomHeader from "./components/CustomHeader";
 import MatchCalendar from "./components/MatchCalendar";
 import NewsList from "./components/NewsList/NewsList";
 import NewsDetail from "./components/NewsDetail";
@@ -21,6 +20,8 @@ import SeasonTicketPurchase from "./components/SeasonTicketPurchase";
 import { generateToken, messaging } from "./config/firebaseConfig";
 import { onMessage } from "firebase/messaging";
 import { useAdminModal } from "./utils/adminUtils";
+import Header from "./components/common/Header";
+import SignInPage from "./components/common/SignInPage";
 
 function AdminModalWrapper() {
   const location = useLocation();
@@ -69,7 +70,7 @@ function App() {
 
   return (
     <Router>
-      <CustomHeader />
+      <Header />
       {/* Admin modal za provjeru */}
       <AdminModalWrapper />
 
@@ -102,6 +103,7 @@ function App() {
           path="/season-ticket-purchase/admin"
           element={<SeasonTicketPurchase />}
         />
+        <Route path="sign-in" element={<SignInPage />} />
       </Routes>
 
       <Footer />
