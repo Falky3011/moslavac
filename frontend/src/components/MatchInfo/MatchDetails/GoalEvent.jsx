@@ -8,29 +8,30 @@ const GoalEvent = ({ event, isMoslavacEvent, isOwnGoal, competition }) => {
 
   return (
     <div
-      className={`w-auto flex items-center p-3 rounded-lg 
-            ${isMoslavacEvent ? "bg-blue-100" : "bg-gray-100"}`}
+      className={`flex items-center p-3 rounded-xl shadow-sm ${
+        isMoslavacEvent ? "bg-blue-50" : "bg-gray-50"
+      }`}
     >
       <FaFutbol
         className={`mr-4 ${
           isOwnGoal
             ? "text-red-500"
             : isMoslavacEvent
-            ? "text-blue-500 text-2xl"
-            : "text-gray-500 text-xl"
+            ? "text-blue-500 text-xl"
+            : "text-gray-500 text-lg"
         }`}
       />
       {playerImage && isMoslavacEvent && (
         <img
           src={playerImage}
           alt={event.player?.name || "Player"}
-          className="w-12 h-12 rounded-full mr-4 object-cover"
+          className="w-10 h-10 rounded-full mr-4 object-cover shadow-md"
         />
       )}
       <div>
         <span
-          className={`font-semibold ${
-            isMoslavacEvent ? "text-blue-600" : "text-gray-600"
+          className={`font-medium text-sm sm:text-base ${
+            isMoslavacEvent ? "text-blue-600" : "text-gray-700"
           }`}
         >
           {renderPlayerName(event.player, isMoslavacEvent, competition)}{" "}

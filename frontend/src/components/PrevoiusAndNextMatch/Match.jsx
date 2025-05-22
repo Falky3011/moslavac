@@ -18,10 +18,10 @@ export default function Match({
 
   const formatDate = (dateString) => {
     if (!dateString) return { date: "N/A", time: "N/A" };
-    const date = new Date(dateString);
+    const d = new Date(dateString);
     return {
-      date: date.toLocaleDateString(),
-      time: date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      date: d.toLocaleDateString(),
+      time: d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
   };
 
@@ -33,11 +33,11 @@ export default function Match({
         <img
           src={teamImage}
           alt={`${team.name} logo`}
-          className="h-12 w-12 sm:h-16 sm:w-16"
+          className="h-12 w-12 sm:h-16 sm:w-16 object-contain"
         />
       </div>
       <div className="flex-grow flex items-center">
-        <span className="font-semibold text-gray-800 text-xs sm:text-sm text-center line-clamp-2">
+        <span className="font-semibold text-gray-800 text-xs sm:text-sm text-center leading-snug line-clamp-2">
           {team.name}
         </span>
       </div>
@@ -45,7 +45,7 @@ export default function Match({
   );
 
   return (
-    <div className="bg-white border border-gray-200 rounded-3xl p-4 sm:p-6 text-center w-full max-w-[28rem] mx-auto shadow-md transition-all duration-300 hover:shadow-xl hover:border-gray-300 flex flex-col justify-between min-h-[400px]">
+    <div className="bg-white/60 backdrop-blur-md border border-gray-200 rounded-3xl p-6 text-center w-full max-w-md mx-auto shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-gray-300 flex flex-col justify-between min-h-[400px]">
       {/* Match title */}
       <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-800 flex items-center justify-center gap-2">
         {match === "Današnja utakmica" && (
@@ -55,7 +55,7 @@ export default function Match({
       </h2>
 
       {/* Teams */}
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-6">
         <TeamCard team={homeTeam} teamImage={homeTeamImage} />
         <div className="flex-shrink-0 text-gray-400 font-bold text-xl sm:text-2xl mt-4">
           VS
@@ -64,12 +64,12 @@ export default function Match({
       </div>
 
       {/* Date, time, location */}
-      <div className="mb-4 text-gray-600">
+      <div className="mb-4 text-gray-600 space-y-1">
         <p className="font-medium text-sm sm:text-base">
           {matchDateAndTime.date}
         </p>
-        <p className="text-xs sm:text-sm mt-1">{matchDateAndTime.time}</p>
-        <p className="text-xs mt-2 text-gray-500">{location}</p>
+        <p className="text-xs sm:text-sm">{matchDateAndTime.time}</p>
+        <p className="text-xs text-gray-500">{location}</p>
       </div>
 
       {/* Score or countdown */}

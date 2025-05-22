@@ -37,7 +37,7 @@ export default function MatchInfo() {
     !matchReferees
   ) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen bg-gradient-to-br from-gray-50 to-gray-200">
         <Spin size="large" tip="Loading..." />
       </div>
     );
@@ -54,29 +54,33 @@ export default function MatchInfo() {
   } = matchInfo;
 
   return (
-    <div className="container mx-auto px-4 py-4 sm:py-8 max-w-4xl">
-      {/* Match Info Header */}
-      <div className="bg-white shadow-md rounded-3xl overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-400 to-blue-600 text-white p-4 sm:p-6">
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      {/* Floating Card Header */}
+      <div className="bg-white/60 backdrop-blur-md shadow-2xl rounded-3xl overflow-hidden border border-white/20">
+        <div className="bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 text-white p-6 sm:p-8 rounded-t-3xl">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
-            <span className="text-xs sm:text-sm font-medium mb-2 sm:mb-0">
+            <span className="text-sm font-medium opacity-90">
               {new Date(dateTimeUTC).toLocaleDateString()}
             </span>
-            <span className="text-xs sm:text-sm font-bold">Kolo {round}</span>
+            <span className="text-sm font-semibold tracking-wider uppercase">
+              Kolo {round}
+            </span>
           </div>
+
           <Link
             to={`/season/${competition.id}/${encodeURIComponent(
               competition.name
             )}`}
             className="block text-center"
           >
-            <h1 className="text-xl sm:text-2xl font-bold mb-4">
+            <h1 className="text-2xl sm:text-3xl font-semibold drop-shadow-md">
               {competition.name}
             </h1>
           </Link>
-          <div className="flex items-center justify-center sm:justify-between">
+
+          <div className="flex items-center justify-center sm:justify-between mt-6">
             <TeamInfo team={homeTeam} teamImage={homeTeamImage} />
-            <div className="flex-shrink-0 text-2xl sm:text-4xl font-bold mx-4">
+            <div className="text-3xl sm:text-5xl font-bold mx-6 tracking-tight text-white drop-shadow">
               {homeTeamResult?.current} - {awayTeamResult?.current}
             </div>
             <TeamInfo team={awayTeam} teamImage={awayTeamImage} />
@@ -85,10 +89,12 @@ export default function MatchInfo() {
       </div>
 
       {matchInfo.liveStatus === "SCHEDULED" && (
-        <MatchVoting matchInfo={matchInfo} />
+        <div className="mt-6">
+          <MatchVoting matchInfo={matchInfo} />
+        </div>
       )}
 
-      <div>
+      <div className="mt-6">
         <MatchDetails
           moslavacIsHome={moslavacIsHome}
           matchEvents={matchEvents}
@@ -100,7 +106,9 @@ export default function MatchInfo() {
         />
       </div>
 
-      <RefereeInfo referees={matchReferees.matchOfficials} />
+      <div className="mt-6">
+        <RefereeInfo referees={matchReferees.matchOfficials} />
+      </div>
     </div>
   );
 }
