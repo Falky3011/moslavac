@@ -7,19 +7,83 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Dependency directories
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+build/
+out/
+.next/
+coverage/
+.storybook-out/
+
+# Environment files
+.env
+.env.*.local
 *.local
 
-# Editor directories and files
+# Vite cache
+.vite/
+
+# IDE / editor config
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
 
+# Optional: system trash or temp
+*.bak
+*.tmp
+
+# Mac: ._ resource forks
+._*
+
+# Yarn PnP
+.pnp/
+.pnp.js
+
+# Optional: images or binaries (if accidentally committed)
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.mp4
+*.mov
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+*.iso
+*.db
+*.sqlite
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Firebase
+.firebase/
+
+# Next.js export
+export/
+
+# Playwright / Cypress
+playwright-report/
+cypress/videos/
+cypress/screenshots/
+
+# ESLint cache
+.eslintcache
+
+# Stylelint cache
+.stylelintcache
