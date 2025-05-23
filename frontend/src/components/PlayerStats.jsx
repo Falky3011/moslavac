@@ -11,13 +11,14 @@ import { useGetPlayerDetails } from "../hooks/useGetPlayerDetails";
 import { useGetCometImage } from "../hooks/useGetCometImage";
 import { FaFutbol, FaSquareFull } from "react-icons/fa";
 import { StatCard } from "./StatCard";
+import useGetCompetitionInfo from "../hooks/useGetCompetitionInfo";
 
 const { Title, Text } = Typography;
 
 const PlayerStats = () => {
-  const { playerId } = useParams();
+  const { playerId, competitionId } = useParams();
   const location = useLocation();
-  const competition = location.state?.competition;
+  const { data: competition } = useGetCompetitionInfo(competitionId);
 
   const {
     data: player,
@@ -28,7 +29,7 @@ const PlayerStats = () => {
     data: stats,
     isLoading: statsLoading,
     isError: statsError,
-  } = useGetPlayerStats(playerId, competition?.id);
+  } = useGetPlayerStats(playerId, competitionId);
   const { data: playerImage } = useGetCometImage(player?.picture);
   const { data: flagImage } = useGetCometImage(player?.flag);
 

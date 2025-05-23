@@ -40,9 +40,8 @@ const MatchLineups = ({
               </span>
               {isMoslavac ? (
                 <Link
-                  to={`/stats/${player.personId}`}
-                  state={{ competition }}
-                  className="hover:underline  text-gray-800"
+                  to={`/stats/${player.personId}/${competition.id}`}
+                  className="hover:underline text-gray-800"
                 >
                   {player.name}
                 </Link>

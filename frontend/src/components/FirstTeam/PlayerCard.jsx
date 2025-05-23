@@ -14,7 +14,7 @@ const PlayerCard = ({ player, onRemove, competition }) => {
 
   return (
     <div className="w-36 m-2 bg-white rounded-lg shadow-md overflow-hidden transition transform hover:scale-105">
-      <Link to={`/stats/${player.personId}`} state={{ competition }}>
+      <Link to={`/stats/${player.personId}/${competition.id}`}>
         <div className="relative h-36 bg-gray-200 flex items-center justify-center">
           {isLoading ? (
             <Spin size="small" />
@@ -33,14 +33,13 @@ const PlayerCard = ({ player, onRemove, competition }) => {
       </Link>
       <div className="p-2 text-center">
         <Link
-          to={`/stats/${player.personId}`}
-          state={{ competition }}
+          to={`/stats/${player.personId}/${competition.id}`}
           className="text-sm font-semibold text-gray-800 hover:underline"
         >
           {player.shortName}
         </Link>
         <div className="mt-2">
-          {isAdmin() && ( // Prikaz gumba samo ako je admin
+          {isAdmin() && (
             <DeleteOutlined
               className="text-red-500 cursor-pointer hover:text-red-600 transition duration-150"
               onClick={() => onRemove(player.id)}

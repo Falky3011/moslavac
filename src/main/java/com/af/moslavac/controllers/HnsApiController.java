@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class HnsApiController {
@@ -139,4 +141,10 @@ public class HnsApiController {
     public Object getCompetitionYellowCardsStats(@PathVariable Integer competitionId) {
         return hnsApiService.fetchCompetitionYellowCardsStats(competitionId);
     }
+
+    @GetMapping("/api/competition/{competitionId}/info")
+    public Object getCompetitionInfo(@PathVariable Integer competitionId) {
+        return hnsApiService.fetchCompetitionInfo(competitionId);
+    }
+
 }

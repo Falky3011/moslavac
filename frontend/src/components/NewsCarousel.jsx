@@ -47,7 +47,7 @@ export default function NewsCarousel() {
   }
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto bg-white md:rounded-3xl shadow-md overflow-hidden">
+    <div className="relative w-full max-w-6xl mx-auto bg-white md:rounded-3xl shadow-lg overflow-hidden">
       <Carousel
         ref={carouselRef}
         autoplay
@@ -68,16 +68,19 @@ export default function NewsCarousel() {
                 }`}
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent opacity-70"></div>
+              {/* Dark blur overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent "></div>
+
+              {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 md:p-10 lg:p-12 flex flex-col justify-end h-full">
-                <h2 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-4 line-clamp-3 leading-tight">
+                <h2 className="text-white drop-shadow-md text-2xl sm:text-3xl md:text-4xl font-bold mb-3 line-clamp-3 leading-tight">
                   {news.title}
                 </h2>
                 <Link
                   to={`/news/${news.id}`}
                   className="self-start mt-4 group inline-flex items-center"
                 >
-                  <span className="text-white bg-blue-600 px-6 py-3 rounded-full font-semibold text-sm sm:text-base transition duration-300 ease-in-out group-hover:bg-blue-700 shadow-md">
+                  <span className="text-white px-6 py-3 rounded-full font-semibold text-sm sm:text-base transition duration-300 ease-in-out bg-gradient-to-r from-blue-500 to-blue-700 shadow-lg group-hover:brightness-110">
                     PROČITAJ
                   </span>
                 </Link>

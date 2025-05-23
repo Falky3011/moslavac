@@ -7,7 +7,6 @@ import { formatEventTime, renderPlayerName } from "../../../utils/eventUtils";
 const MatchEvents = ({ moslavacIsHome, matchEvents, competition }) => {
   const renderEventContent = (event, isMoslavacEvent, eventTextColor) => {
     const baseText = `text-sm sm:text-base ${eventTextColor}`;
-
     const badge = (color) => <FaSquareFull className={`text-${color}-500`} />;
 
     const withTime = (player) => (

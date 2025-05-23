@@ -84,8 +84,14 @@ function App() {
           path="/season/:competitionId/admin"
           element={<CompetitionInfo />}
         />
-        <Route path="/stats/:playerId" element={<PlayerStats />} />
-        <Route path="/stats/:playerId/admin" element={<PlayerStats />} />
+        <Route
+          path="/stats/:playerId/:competitionId"
+          element={<PlayerStats />}
+        />
+        <Route
+          path="/stats/:playerId/:competitionId/admin"
+          element={<PlayerStats />}
+        />
         <Route path="/news" element={<NewsList />} />
         <Route path="/news/admin" element={<NewsList />} />
         <Route path="/news/:id" element={<NewsDetail />} />

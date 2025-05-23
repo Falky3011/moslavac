@@ -314,4 +314,16 @@ public class HnsApiService {
 
         return fetchFromApi(endpoint, Object.class);
     }
+
+    public Object fetchCompetitionInfo(Integer competitionId) {
+        if (competitionId == null) {
+            throw new IllegalArgumentException("Invalid competitionId");
+        }
+
+        String endpoint = String.format(
+                "/api/live/competition/%d?teamIdFilter=%s",
+                competitionId, teamId);
+
+        return fetchFromApi(endpoint, Object.class);
+    }
 }

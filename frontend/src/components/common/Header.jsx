@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 import NavLink from "./NavLink";
 import grb from "../../../public/grb.png";
@@ -17,6 +18,8 @@ export default function Header() {
   const [hidden, setHidden] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const { scrollY } = useScroll();
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -62,7 +65,13 @@ export default function Header() {
               className="flex items-center gap-1 lg:gap-2 shrink-0"
               onClick={closeDrawer}
             >
-              <img src={grb} alt="Logo" width={70} height={70} />
+              <img
+                src={grb}
+                alt="Logo"
+                width={70}
+                height={70}
+                className="transition-all duration-300 rounded-full drop-shadow-glow hover:scale-110 hover:drop-shadow-lg active:scale-95"
+              />{" "}
             </NavLink>
           </div>
 

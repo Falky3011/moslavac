@@ -1,9 +1,12 @@
 import React from "react";
 import { Table, Tabs } from "antd";
+import { Link } from "react-router-dom";
+
 import useGetCompetitionGoalsStats from "../../hooks/useGetCompetitionGoalStats";
 import useGetCompetitionRedCardsStats from "../../hooks/useGetCompetitionRedCardsStats";
 import useGetCompetitionYellowCardsStats from "../../hooks/useGetCompetitionYellowCardStats";
 import { useGetCometImage } from "../../hooks/useGetCometImage";
+
 const { TabPane } = Tabs;
 
 const PlayerImage = ({ uuid }) => {
@@ -22,14 +25,16 @@ const PlayerImage = ({ uuid }) => {
   );
 };
 
-const columns = [
+const getColumns = (competitionId) => [
   {
     dataIndex: "player",
     key: "player",
     render: (player) => (
       <div className="flex items-center space-x-3">
         <PlayerImage uuid={player.picture} />
-        <span className="font-medium">{player.shortName}</span>
+        <Link to={`/stats/${player.personId}/${competitionId}`}>
+          <span className="font-medium">{player.shortName}</span>
+        </Link>
       </div>
     ),
   },
@@ -40,9 +45,9 @@ const columns = [
   },
 ];
 
-const StatisticsTable = ({ data }) => (
+const StatisticsTable = ({ data, competitionId }) => (
   <Table
-    columns={columns}
+    columns={getColumns(competitionId)}
     dataSource={data}
     rowKey={(record) => record.player.personId.toString()}
     pagination={false}
@@ -66,21 +71,30 @@ const Statistics = ({ competitionId }) => {
           {isLoadingGoals ? (
             <p>Loading goals data...</p>
           ) : (
-            <StatisticsTable data={goalsData || []} />
+            <StatisticsTable
+              data={goalsData || []}
+              competitionId={competitionId}
+            />
           )}
         </TabPane>
         <TabPane tab="Crveni kartoni" key="2">
           {isLoadingRedCards ? (
             <p>Loading red cards data...</p>
           ) : (
-            <StatisticsTable data={redCardsData || []} />
+            <StatisticsTable
+              data={redCardsData || []}
+              competitionId={competitionId}
+            />
           )}
         </TabPane>
         <TabPane tab="Žuti kartoni" key="3">
           {isLoadingYellowCards ? (
             <p>Loading yellow cards data...</p>
           ) : (
-            <StatisticsTable data={yellowCardsData || []} />
+            <StatisticsTable
+              data={yellowCardsData || []}
+              competitionId={competitionId}
+            />
           )}
         </TabPane>
       </Tabs>
