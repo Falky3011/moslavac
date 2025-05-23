@@ -46,7 +46,13 @@ export default function FirstTeam() {
 
   const handleAddPlayer = (player) => {
     addPlayer(
-      { ...player, position: selectedPosition },
+      {
+        personId: player.personId,
+        name: player.name,
+        shortName: player.shortName,
+        picture: player.picture,
+        position: selectedPosition,
+      },
       {
         onSuccess: () => {
           message.success("Player added successfully");
