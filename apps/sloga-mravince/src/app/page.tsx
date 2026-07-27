@@ -65,15 +65,28 @@ function getNextMatchMarquee(
 export async function generateMetadata(): Promise<Metadata> {
   const tenant = await getTenant();
   const name = tenant.displayName;
-  const description = `Službena stranica ${name} – raspored utakmica, rezultati, tablica, vijesti i sve o klubu.`;
+  const title = `${name} — službena stranica kluba`;
+  // Bez imena mjesta: genitiv hrvatskog toponima se ne da izvesti iz Tenanta
+  // ("Mravince" → "Mravinaca"), a adresa ionako ide u schema.org graf.
+  const description = `Službena stranica nogometnog kluba ${name}. Raspored utakmica, rezultati uživo, tablica, sastav momčadi i vijesti iz kluba.`;
 
   return {
+    // `absolute` jer bi inače predložak iz layouta dopisao " | ${name}".
+    title: { absolute: title },
     description,
     alternates: { canonical: "/" },
-    openGraph: { description },
-    // `card` se ponavlja jer twitter objekt stranice zamjenjuje onaj iz layouta;
-    // bez njega Next padne na `summary` i grb se prikaže kao sitna sličica.
-    twitter: { card: "summary_large_image", description },
+    // Objekti `openGraph` i `twitter` iz stranice ZAMJENJUJU one iz layouta, ne
+    // spajaju se s njima. Zato se ovdje ponavlja i ono što layout već ima —
+    // bez `siteName` Google u rezultatu ispisuje domenu umjesto imena kluba.
+    openGraph: {
+      type: "website",
+      locale: "hr_HR",
+      siteName: name,
+      url: "/",
+      title,
+      description,
+    },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
