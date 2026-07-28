@@ -7,11 +7,11 @@
  */
 
 export const BRAND = {
-  name: 'MojKlub',
+  name: 'Klubara',
   tagline: 'Web stranica za sportske klubove',
-  domain: 'mojklub.hr',
+  domain: 'klubara.com',
   /** Bez završne kose crte. Na Vercelu prepiši preko NEXT_PUBLIC_SITE_URL. */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mojklub.hr',
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://klubara.com',
 } as const
 
 /** TODO: dopuni prije Stripe verifikacije. */
@@ -19,7 +19,7 @@ export const LEGAL = {
   entity: 'Adriano Faletar, obrt za usluge', // TODO
   address: 'Ulica i broj, 10000 Zagreb', // TODO
   oib: '00000000000', // TODO
-  email: 'kontakt@mojklub.hr', // TODO
+  email: 'kontakt@klubara.com', // TODO
   phone: '+385 91 000 0000', // TODO
   /** Prikazuje se u uvjetima; paušalni obrt nije u sustavu PDV-a. */
   vatRegistered: false,
@@ -31,7 +31,7 @@ export const PRICING = {
    * kontakt i pravila otkazivanja. Postavi na `true` ako ipak želiš iznos na
    * stranici; sve sekcije se same prilagode.
    */
-  showPrice: false,
+  showPrice: true,
   monthly: 50,
   yearly: 500,
   currency: 'EUR',
@@ -63,6 +63,18 @@ export const CLUBS = [
 ] as const
 
 /**
+ * Snimke klupskih stranica na mobitelu — kartice u herou. Srednja je istaknuta.
+ */
+export const HERO_SHOTS = [
+  { src: '/klubovi/moslavac-mobile.webp', alt: 'Naslovnica stranice SNK Moslavac na mobitelu' },
+  { src: '/klubovi/sloga-mobile.webp', alt: 'Naslovnica stranice HNK Sloga Mravince na mobitelu' },
+  {
+    src: '/klubovi/sloga-raspored-mobile.webp',
+    alt: 'Rezultati i raspored HNK Sloga Mravince na mobitelu',
+  },
+] as const
+
+/**
  * Obrazac za upit. Preporuka je Tally (besplatno, neograničen broj odgovora)
  * ili Typeform (besplatni plan: 10 odgovora mjesečno).
  *
@@ -72,10 +84,32 @@ export const CLUBS = [
  *
  * Dok je `embedUrl` prazan, stranica prikazuje kontakt e-poštom.
  */
-export const DEMO_FORM = {
+export const DEMO_FORM: { embedUrl: string; height: number } = {
   embedUrl: '',
   height: 620,
-} as const
+}
+
+/** Sidro CTA bloka na naslovnici — tamo vode svi gumbi „zatraži demo". */
+export const DEMO_ANCHOR = '/#demo'
+
+/**
+ * Odredište obrasca. Dok Tally adresa nije postavljena, upit ide e-poštom s
+ * unaprijed pripremljenim predmetom i tijelom poruke.
+ */
+export function demoFormUrl(email?: string): string {
+  if (DEMO_FORM.embedUrl) {
+    const separator = DEMO_FORM.embedUrl.includes('?') ? '&' : '?'
+    return email
+      ? `${DEMO_FORM.embedUrl}${separator}email=${encodeURIComponent(email)}`
+      : DEMO_FORM.embedUrl
+  }
+
+  const subject = encodeURIComponent('Demo stranica za klub')
+  const body = encodeURIComponent(
+    ['Naziv kluba:', 'Liga:', 'Kontakt osoba:', 'Telefon:', '', 'Poruka:'].join('\n'),
+  )
+  return `mailto:${LEGAL.email}?subject=${subject}&body=${body}`
+}
 
 export const NAV = [
   { label: 'Što dobivate', href: '/#znacajke' },

@@ -16,11 +16,22 @@ export function LogoMark({ className }: { className?: string }) {
   )
 }
 
-export function Wordmark({ className, markClassName }: { className?: string; markClassName?: string }) {
+/** Isti motiv travnjaka, samo linije — služi kao veliki vodeni žig u pozadini. */
+export function LogoVector({ className }: { className?: string }) {
   return (
-    <span className={cn('flex items-center gap-2.5', className)}>
-      <LogoMark className={cn('text-ink', markClassName)} />
-      <span className="display text-[19px] tracking-[-0.02em]">{BRAND.name}</span>
-    </span>
+    <svg viewBox="0 0 128 128" fill="none" aria-hidden className={className}>
+      <g stroke="currentColor" strokeWidth="8">
+        <line x1="4" y1="64" x2="124" y2="64" />
+        <circle cx="64" cy="64" r="26" />
+        <path d="M44 4h40v14a20 20 0 0 1-40 0V4Z" />
+        <path d="M44 124h40v-14a20 20 0 0 0-40 0v14Z" />
+      </g>
+    </svg>
+  )
+}
+
+export function Wordmark({ className }: { className?: string; markClassName?: string }) {
+  return (
+    <span className={cn('display text-[19px] tracking-[-0.02em]', className)}>{BRAND.name}</span>
   )
 }

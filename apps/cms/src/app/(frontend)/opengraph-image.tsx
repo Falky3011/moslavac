@@ -35,7 +35,7 @@ export default function OpenGraphImage() {
               fontWeight: 700,
             }}
           >
-            M
+            K
           </div>
           <div style={{ fontSize: 30, fontWeight: 700, color: '#0e1311' }}>{BRAND.name}</div>
         </div>

@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { ADMIN_PATH, BRAND, CLUBS, LEGAL } from '../config'
-import { LogoMark } from '../ui/Logo'
+import { ADMIN_PATH, BRAND, CLUBS, DEMO_ANCHOR, LEGAL } from '../config'
+import { TopoBackdrop } from './TopoBackdrop'
 
 const columns = [
   {
@@ -23,7 +23,7 @@ const columns = [
   {
     title: 'Kontakt',
     links: [
-      { label: 'Kontaktirajte nas', href: '/kontakt' },
+      { label: 'Zatražite demo', href: DEMO_ANCHOR },
       { label: LEGAL.email, href: `mailto:${LEGAL.email}` },
       { label: 'Prijava za klub', href: ADMIN_PATH },
     ],
@@ -32,14 +32,13 @@ const columns = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-line bg-ink text-white/70">
-      <div className="mx-auto w-full max-w-[1180px] px-5 py-16 sm:px-8">
+    <footer className="relative overflow-hidden bg-black text-white/70">
+      {/* Iste izohipse kao u herou, pa se stranica zatvara istom podlogom. */}
+      <TopoBackdrop className="pointer-events-none absolute inset-0 size-full" />
+      <div className="relative mx-auto w-full max-w-[1180px] px-5 py-16 sm:px-8">
         <div className="grid gap-12 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2.5 text-white">
-              <LogoMark className="text-white/12" />
-              <span className="display text-[19px]">{BRAND.name}</span>
-            </div>
+            <span className="display text-[19px] text-white">{BRAND.name}</span>
             <p className="mt-4 max-w-xs text-sm leading-relaxed">
               {BRAND.tagline}. Rezultati, tablica i raspored ažuriraju se automatski iz službenih
               izvora.

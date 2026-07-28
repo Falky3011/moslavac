@@ -30,6 +30,28 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(dirname, "../.."),
   },
+  /**
+   * Marketinška naslovnica stoji na klupskoj domeni. Tehničke adrese
+   * deploymenta (vercel.app, admin poddomena) vode ravno u Payload admin, pa
+   * nitko ne ulazi u prodajni tekst kad hoće prijavu.
+   *
+   * Dodatne hostove upiši u `ADMIN_HOSTS`, odvojene zarezom.
+   */
+  async redirects() {
+    const hosts = (process.env.ADMIN_HOSTS ?? 'clubs-cms.vercel.app')
+      .split(',')
+      .map((host) => host.trim())
+      .filter(Boolean)
+
+    return hosts.map((host) => ({
+      source: '/',
+      has: [{ type: 'host' as const, value: host }],
+      destination: '/admin',
+      // Namjerno privremeni: vezan je uz okolinu, a trajni bi ostao u cacheu
+      // preglednika i nakon što se domena promijeni.
+      permanent: false,
+    }))
+  },
   // Osnovni sigurnosni headeri. CSP se namjerno ne postavlja jer Payload admin
   // na istoj domeni koristi inline stilove i workere.
   async headers() {

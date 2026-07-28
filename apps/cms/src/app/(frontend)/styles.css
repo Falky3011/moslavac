@@ -4,7 +4,7 @@
 @source '../../marketing';
 @source './';
 
-/* ── MojKlub dizajn sustav ─────────────────────────────────────────────────
+/* ── Klubara dizajn sustav ─────────────────────────────────────────────────
    Topli papir kao podloga, duboka zelena travnjaka kao akcija, limeta samo za
    „uživo" signale. Tamne sekcije nose istu tintu kao tekst, ne crnu. */
 @theme {
@@ -70,6 +70,44 @@
     text-transform: uppercase;
   }
 
+  /* Gumb s rotirajućim spektrom i obojanim odsjajem ispod. */
+  .rainbow-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    background-size: 200%;
+    background-image:
+      linear-gradient(#000, #000), linear-gradient(#000 30%, rgba(0, 0, 0, 0)),
+      linear-gradient(90deg, #ff4242, #a1ff42, #42a1ff, #42d0ff, #a142ff);
+    background-clip: padding-box, border-box, border-box;
+    background-origin: border-box;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    animation: rainbow 2s infinite linear;
+    cursor: pointer;
+  }
+
+  .rainbow-button::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -20%;
+    z-index: -1;
+    width: 100%;
+    height: 20%;
+    background-image: linear-gradient(90deg, #ff4242, #a1ff42, #42a1ff, #42d0ff, #a142ff);
+    background-size: 200%;
+    filter: blur(10px);
+    animation: rainbow 2s infinite linear;
+  }
+
+  .rainbow-button:active {
+    transform: scale(0.98);
+  }
+
   /* Linije travnjaka — pozadinski motiv sekcija, jedva vidljiv. */
   .pitch-lines {
     background-image:
@@ -87,8 +125,42 @@
   }
 }
 
+/* Spojnica timelinea se puni dok je korak aktivan — okomito na užim
+   zaslonima, vodoravno od xl nadalje. */
+@keyframes timeline-fill-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes timeline-fill-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes rainbow {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 200%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .rainbow-button,
+  .rainbow-button::before {
+    animation: none;
   }
 }

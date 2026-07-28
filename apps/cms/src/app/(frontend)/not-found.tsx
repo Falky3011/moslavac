@@ -11,8 +11,8 @@ export default function NotFound() {
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-3">
           <ButtonLink href="/">Natrag na naslovnicu</ButtonLink>
-          <ButtonLink href="/kontakt" variant="secondary">
-            Kontakt
+          <ButtonLink href="/#demo" variant="secondary">
+            Zatražite demo
           </ButtonLink>
         </div>
       </div>
