@@ -1,145 +1,132 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import Image from "next/image";
-import type { FrontendTenant, PayloadMedia } from "@/lib/payload/types";
+import { useRef } from "react";
+import type { FrontendTenant } from "@/lib/payload/types";
 
 type HeroProps = {
   tenant: FrontendTenant;
 };
 
 /**
- * Naslovni hero NK Garić Garešnica — editorial, type-led (varijanta B).
- *
- * Svijetla pozadina s vrlo suptilnim dijagonalnim linijama. Lijevo: kicker s
- * hairlineom + golemi, čitljivi naziv "GARIĆ / GAREŠNICA" (display grotesk,
- * klupska plava) + lokacija. Desno: grb uz meki glow i tihi iscrtani "1923".
- * Grb se ne probija tekstom (bio je uzrok ranije buke). Tema-aware kroz tokene.
+ * Naslovni hero — full-bleed zračni snimak igrališta u klupskoj plavoj
+ * (duoton umjesto sirove fotke), golemi condensed naziv kluba uz donji rub
+ * (prva riječ puna, druga iscrtana bijelo). Grb se ne ponavlja — već je u
+ * headeru. Godina osnutka stoji kao tihi žig u donjem desnom kutu.
  */
 export default function Hero({ tenant }: HeroProps) {
   const reduce = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
 
-  const logo =
-    tenant.branding?.logo && typeof tenant.branding.logo === "object"
-      ? (tenant.branding.logo as PayloadMedia)
-      : null;
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const typeY = useTransform(scrollYProgress, [0, 1], [0, 36]);
 
   const founded = tenant.branding?.founded ?? 1923;
   const [first, ...rest] = tenant.displayName.replace(/^NK\s+/i, "").split(" ");
   const wordLeft = first ?? "Garić";
   const wordRight = rest.join(" ") || "Garešnica";
-  const region = tenant.contact?.region ?? "Bjelovarsko-bilogorska županija";
 
   const anim = (delay: number, from: Record<string, number>) =>
     reduce
       ? { initial: false as const }
       : {
           initial: { opacity: 0, ...from },
-          animate: { opacity: 1, x: 0, y: 0, scale: 1 },
-          transition: { duration: 0.85, delay, ease: [0.16, 1, 0.3, 1] as const },
+          animate: { opacity: 1, x: 0, y: 0 },
+          transition: {
+            duration: 0.85,
+            delay,
+            ease: [0.16, 1, 0.3, 1] as const,
+          },
         };
 
   return (
-    <section className="relative isolate flex min-h-[calc(100svh-5rem)] items-center overflow-hidden bg-background">
-      {/* Jedva vidljiv zračni snimak kompleksa — tekstura iza svega. */}
+    <section
+      ref={sectionRef}
+      className="relative isolate flex min-h-[74vh] flex-col justify-end overflow-hidden bg-navy-deep md:min-h-[82vh]"
+    >
+      {/* Zračni snimak igrališta — full-bleed, u duotonu (grayscale + plavi overlay). */}
       <Image
         src="/photos/stadion.png"
         alt=""
         aria-hidden
         fill
+        priority
         sizes="100vw"
-        className="pointer-events-none absolute inset-0 -z-10 object-cover opacity-[0.07] filter-[grayscale(0.35)]"
+        className="absolute inset-0 object-cover grayscale contrast-125"
       />
-      {/* Suptilne dijagonalne linije — tekstura, ne ukras. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-50"
+        className="absolute inset-0 bg-club mix-blend-color"
+      />
+      {/* Scrim — taman dolje-lijevo (gdje stoji tekst), rasvijetljen gore-desno. */}
+      <div
+        aria-hidden
+        className="absolute inset-0"
         style={{
           background:
-            "repeating-linear-gradient(115deg, color-mix(in oklch, var(--club) 4%, transparent) 0 1px, transparent 1px 46px)",
+            "linear-gradient(to top right, oklch(0.14 0.05 262 / 0.92), oklch(0.14 0.05 262 / 0.5) 46%, oklch(0.14 0.05 262 / 0.15) 78%)",
         }}
       />
 
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-10 px-6 md:grid-cols-2 md:gap-6 lg:px-8">
-        {/* Tekst */}
-        <div className="order-2 text-center md:order-1 md:text-left">
-          <motion.div
-            {...anim(0, { y: -12 })}
-            className="mb-6 flex items-center justify-center gap-4 md:justify-start"
-          >
-            <span className="h-0.5 w-13 bg-club" />
-            <span className="text-[0.8rem] font-bold uppercase tracking-[0.34em] text-club">
-              Osnovan {founded}.
-            </span>
-          </motion.div>
+      {/* Halftone raster iz ramena dresa — gornji desni kut, samo grafika. */}
+      <div
+        aria-hidden
+        className="halftone pointer-events-none absolute -right-16 -top-16 hidden h-105 w-105 rotate-18 opacity-30 md:block"
+        style={
+          {
+            "--halftone-size": "15px",
+            "--halftone-color": "rgba(255,255,255,0.7)",
+            maskImage:
+              "radial-gradient(circle at 35% 60%, black 0%, black 22%, transparent 62%)",
+          } as React.CSSProperties
+        }
+      />
 
-          <h1 className="font-display font-black uppercase leading-[0.82] tracking-tight text-primary">
-            <motion.span
-              {...anim(0.12, { x: -32 })}
-              className="block text-[13vw] md:text-[8.6vw] lg:text-[8.5rem]"
-            >
-              {wordLeft}
-            </motion.span>
-            <motion.span
-              {...anim(0.22, { x: -32 })}
-              className="block text-[9vw] text-primary/85 md:text-[6.2vw] lg:text-[6rem]"
-            >
-              {wordRight}
-            </motion.span>
-          </h1>
-
-          <motion.p
-            {...anim(0.34, { y: 12 })}
-            className="mt-7 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-muted-foreground"
-          >
-            {region} · Hrvatska
-          </motion.p>
-        </div>
-
-        {/* Grb + glow + tihi broj */}
-        <div className="relative order-1 flex items-center justify-center md:order-2">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute h-[62vh] max-h-140 w-[62vh] max-w-140 rounded-full"
-            style={{
-              background:
-                "radial-gradient(closest-side, color-mix(in oklch, var(--club) 14%, transparent), transparent 70%)",
-            }}
-          />
+      <motion.div
+        style={reduce ? undefined : { y: typeY }}
+        className="relative z-10 mx-auto w-full max-w-350 px-4 pb-14 pt-32 sm:px-6 sm:pb-16 md:pb-20 lg:px-10"
+      >
+        <h1 className="font-display uppercase leading-[0.95] text-white">
           <motion.span
-            {...anim(0.1, { scale: 0.9 })}
-            aria-hidden
-            className="pointer-events-none absolute right-[-4%] top-[2%] z-0 select-none font-display text-[38vw] font-black leading-none tracking-tighter md:text-[20vw] lg:text-[18rem]"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(50deg, var(--foreground) 0 1.5px, transparent 1.5px 12px)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent",
-              opacity: 0.1,
-            }}
+            {...anim(0.1, { x: -36 })}
+            className="block text-[clamp(4.6rem,17vw,13.5rem)] tracking-tight"
           >
-            {founded}
+            {wordLeft}
           </motion.span>
+          <motion.span
+            {...anim(0.22, { x: -36 })}
+            className="text-stroke mt-3 block text-[clamp(2.9rem,10.5vw,8.5rem)] tracking-tight sm:mt-5 md:ml-[9vw] md:mt-6"
+            style={{ "--text-stroke-color": "#ffffff" } as React.CSSProperties}
+          >
+            {wordRight}
+          </motion.span>
+        </h1>
+      </motion.div>
 
-          {logo?.url && (
-            <motion.div
-              {...anim(0.18, { y: 22, scale: 0.97 })}
-              className="relative z-10 drop-shadow-[0_26px_46px_rgba(0,80,144,0.22)]"
-            >
-              <Image
-                src={logo.url}
-                alt={logo.alt || tenant.displayName}
-                width={logo.width ?? 232}
-                height={logo.height ?? 290}
-                priority
-                sizes="(max-width: 768px) 60vw, 34vw"
-                className="h-[40vh] max-h-110 w-auto md:h-[54vh]"
-              />
-            </motion.div>
-          )}
-        </div>
-      </div>
+      {/* Godina osnutka — golemi žig u donjem desnom kutu. */}
+      <motion.div
+        {...anim(0.4, { y: 14 })}
+        className="relative z-10 mx-auto mb-6 w-full max-w-350 px-4 text-right sm:px-6 lg:px-10"
+      >
+        <span className="block font-mono text-[0.68rem] uppercase tracking-[0.32em] text-white/55">
+          Osnovan
+        </span>
+        <span
+          className="text-stroke -mt-2 block font-display text-6xl leading-none tracking-tight sm:text-7xl md:text-8xl"
+          style={{ "--text-stroke-color": "#ffffff" } as React.CSSProperties}
+        >
+          {founded}
+        </span>
+      </motion.div>
     </section>
   );
 }

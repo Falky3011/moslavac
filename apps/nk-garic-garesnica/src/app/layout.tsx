@@ -1,4 +1,4 @@
-import { Archivo, Geist, Geist_Mono } from "next/font/google";
+import { Anton, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
@@ -13,11 +13,11 @@ const geistSans = Geist({
   display: "swap",
 });
 
-// Display font — bold grotesk for the club wordmark and numerals (premium brand voice).
-const archivo = Archivo({
-  variable: "--font-archivo",
+// Display font — teški condensed grotesk (poster registar dresa: naslovi, brojevi).
+const anton = Anton({
+  variable: "--font-anton",
   subsets: ["latin", "latin-ext"],
-  weight: ["600", "800", "900"],
+  weight: "400",
   display: "swap",
 });
 
@@ -39,7 +39,7 @@ export default async function RootLayout({
 
   return (
     <ClubRootShell
-      fontVariables={`${geistSans.variable} ${archivo.variable} ${geistMono.variable}`}
+      fontVariables={`${geistSans.variable} ${anton.variable} ${geistMono.variable}`}
       baseUrl={BASE_URL}
     >
       <Header tenant={tenant} />

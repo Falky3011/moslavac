@@ -7,9 +7,8 @@ interface HeaderProps {
 }
 
 /**
- * Minimalni skeleton headera. Prikazuje samo logo + naziv kluba i sticky je.
- * Namjerno bez navigacije — nova stranica se gradi od nule, pa ovdje dodaješ
- * linkove kad kreiraš odgovarajuće rute.
+ * Minimalni sticky header: grb + naziv kluba u display registru, hairline
+ * umjesto sjene. Namjerno bez navigacije — linkovi se dodaju kad nastanu rute.
  */
 export default function Header({ tenant }: HeaderProps) {
   const logo =
@@ -18,26 +17,30 @@ export default function Header({ tenant }: HeaderProps) {
       : null;
 
   return (
-    <header className="sticky top-0 z-50 h-20 border-b border-border/60 bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-6 lg:px-8">
+    <header className="sticky top-0 z-50 h-16 border-b border-border bg-background/92 backdrop-blur-md">
+      <div className="mx-auto flex h-full w-full max-w-350 items-center justify-between px-4 sm:px-6 lg:px-10">
         <Link
           href="/"
-          className="flex items-center gap-3"
+          className="flex min-w-0 items-center gap-3"
           aria-label={tenant.displayName}
         >
           {logo?.url && (
             <Image
               src={logo.url}
               alt={logo.alt || tenant.displayName}
-              width={44}
-              height={44}
-              className="rounded-full"
+              width={36}
+              height={36}
+              className="h-9 w-auto"
             />
           )}
-          <span className="text-[0.7rem] font-semibold uppercase tracking-[0.3em]">
+          <span className="truncate font-display text-lg uppercase leading-none tracking-wide text-foreground">
             {tenant.branding?.shortName ?? tenant.displayName}
           </span>
         </Link>
+
+        <span className="font-mono text-[11px] tabular-nums tracking-[0.22em] text-muted-foreground">
+          {tenant.branding?.founded ?? 1923}
+        </span>
       </div>
     </header>
   );

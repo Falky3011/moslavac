@@ -3,6 +3,7 @@ import Hero from "@/components/features/home/Hero";
 import HistorySection from "@/components/features/home/HistorySection";
 import MatchSection from "@/components/features/home/MatchSection";
 import NewsSection from "@/components/features/home/NewsSection";
+import PlayersSection from "@/components/features/home/PlayersSection";
 import SchoolSection from "@/components/features/home/SchoolSection";
 import StandingsSection from "@/components/features/home/StandingsSection";
 import { SAMPLE_FEATURED, SAMPLE_GRID } from "@/lib/dev/sampleMatches";
@@ -11,6 +12,7 @@ import { fetchAllMatches } from "@/lib/hns/matches";
 import { isFinished } from "@/lib/hns/matchStatus";
 import { fetchTeamStandings } from "@/lib/hns/standings";
 import { fetchLatestNews } from "@/lib/payload/getNews";
+import { fetchRoster } from "@/lib/payload/getRoster";
 import { getTenant } from "@/lib/payload/getTenant";
 import type { PayloadMedia } from "@/lib/payload/types";
 
@@ -30,10 +32,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [tenant, allMatches, news] = await Promise.all([
+  const [tenant, allMatches, news, players] = await Promise.all([
     getTenant(),
     fetchAllMatches(),
     fetchLatestNews(),
+    fetchRoster(),
   ]);
 
   const logo = tenant.branding?.logo;
@@ -79,6 +82,7 @@ export default async function HomePage() {
       <MatchSection featured={featured} grid={grid} isNext={isNext} />
       <NewsSection news={news.slice(0, 3)} crestUrl={crestUrl} />
       <StandingsSection rows={standings} competition={competition} />
+      <PlayersSection players={players} />
       <HistorySection
         founded={tenant.branding?.founded ?? 1923}
         place={tenant.contact?.city ?? "Garešnica"}

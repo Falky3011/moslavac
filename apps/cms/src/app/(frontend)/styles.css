@@ -1,164 +1,94 @@
-:root {
-  --font-mono: 'Roboto Mono', monospace;
+@import 'tailwindcss';
+
+/* Skenira samo marketinški dio — Payload admin ne koristi Tailwind. */
+@source '../../marketing';
+@source './';
+
+/* ── MojKlub dizajn sustav ─────────────────────────────────────────────────
+   Topli papir kao podloga, duboka zelena travnjaka kao akcija, limeta samo za
+   „uživo" signale. Tamne sekcije nose istu tintu kao tekst, ne crnu. */
+@theme {
+  --color-paper: #fbfaf7;
+  --color-paper-2: #f4f2ec;
+  --color-ink: #0e1311;
+  --color-ink-soft: #1a201d;
+  --color-muted: #5c6560;
+  --color-line: #e6e4dc;
+  --color-line-strong: #d5d2c7;
+
+  --color-pitch: #0b7a44;
+  --color-pitch-dark: #095e35;
+  --color-pitch-soft: #e8f3ec;
+  --color-lime: #d8ff4b;
+
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-card: 20px;
 }
 
-* {
-  box-sizing: border-box;
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
 
-html {
-  font-size: 18px;
-  line-height: 32px;
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    margin: 0;
+  }
 
-  background: rgb(0, 0, 0);
-  -webkit-font-smoothing: antialiased;
-}
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-ink);
+  }
 
-html,
-body,
-#app {
-  height: 100%;
-}
-
-body {
-  font-family: system-ui;
-  font-size: 18px;
-  line-height: 32px;
-
-  margin: 0;
-  color: rgb(1000, 1000, 1000);
-
-  @media (max-width: 1024px) {
-    font-size: 15px;
-    line-height: 24px;
+  :focus-visible {
+    outline: 2px solid var(--color-pitch);
+    outline-offset: 3px;
   }
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-h1 {
-  margin: 40px 0;
-  font-size: 64px;
-  line-height: 70px;
-  font-weight: bold;
-
-  @media (max-width: 1024px) {
-    margin: 24px 0;
-    font-size: 42px;
-    line-height: 42px;
+@layer components {
+  /* Naslovi — optical size i uže tracking, jer Bricolage na velikim
+     veličinama inače djeluje razmaknuto. */
+  .display {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 40;
+    font-weight: 600;
+    letter-spacing: -0.032em;
+    line-height: 0.98;
   }
 
-  @media (max-width: 768px) {
-    font-size: 38px;
-    line-height: 38px;
+  .label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
   }
 
-  @media (max-width: 400px) {
-    font-size: 32px;
-    line-height: 32px;
-  }
-}
-
-p {
-  margin: 24px 0;
-
-  @media (max-width: 1024px) {
-    margin: calc(var(--base) * 0.75) 0;
+  /* Linije travnjaka — pozadinski motiv sekcija, jedva vidljiv. */
+  .pitch-lines {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-line) 75%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-line) 75%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 88px 88px;
   }
 }
 
-a {
-  color: currentColor;
-
-  &:focus {
-    opacity: 0.8;
-    outline: none;
-  }
-
-  &:active {
-    opacity: 0.7;
-    outline: none;
-  }
-}
-
-svg {
-  vertical-align: middle;
-}
-
-.home {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  height: 100vh;
-  padding: 45px;
-  max-width: 1024px;
-  margin: 0 auto;
-  overflow: hidden;
-
-  @media (max-width: 400px) {
-    padding: 24px;
-  }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
-
-    h1 {
-      text-align: center;
-    }
-  }
-
-  .links {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-
-    a {
-      text-decoration: none;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-    }
-
-    .admin {
-      color: rgb(0, 0, 0);
-      background: rgb(1000, 1000, 1000);
-      border: 1px solid rgb(0, 0, 0);
-    }
-
-    .docs {
-      color: rgb(1000, 1000, 1000);
-      background: rgb(0, 0, 0);
-      border: 1px solid rgb(1000, 1000, 1000);
-    }
-  }
-
-  .footer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    @media (max-width: 1024px) {
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    p {
-      margin: 0;
-    }
-
-    .codeLink {
-      text-decoration: none;
-      padding: 0 0.5rem;
-      background: rgb(60, 60, 60);
-      border-radius: 4px;
-    }
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }

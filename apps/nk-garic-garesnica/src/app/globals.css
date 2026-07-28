@@ -11,7 +11,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-archivo);
+  --font-display: var(--font-anton);
   --font-mono: var(--font-geist-mono);
   --color-club: var(--club);
   --color-club-red: var(--club-red);
@@ -72,48 +72,48 @@
  *   - optional display font: set --font-display + import it in layout.tsx
  */
 :root {
-  --radius: 0.625rem;
+  --radius: 0rem;
 
-  /* Brand tokens — NK Garić Garešnica: crest blue (#005090) + white (no red).
-     --club matches the shield blue exactly; navy for dark sections. */
-  --club: oklch(0.427 0.125 251);
-  --club-red: oklch(0.5 0.11 250); /* kept for shared tokens — tuned to blue, never renders red */
-  --navy: oklch(0.3 0.09 251);
-  --navy-deep: oklch(0.22 0.07 251);
-  --chalk: oklch(0.99 0.003 250);
+  /* Brand tokens — NK Garić Garešnica: royal plava iz dresa (Macron royal) +
+     bijela. --club je dres-plava; navy tamni registar za tamne trake. */
+  --club: oklch(0.5 0.17 262);
+  --club-red: oklch(0.5 0.15 262); /* kept for shared tokens — tuned to blue, never renders red */
+  --navy: oklch(0.3 0.1 262);
+  --navy-deep: oklch(0.2 0.06 262);
+  --chalk: oklch(0.99 0.003 262);
 
-  --background: oklch(0.985 0.004 250);
-  --foreground: oklch(0.22 0.03 251);
-  --card: oklch(0.997 0.002 250);
-  --card-foreground: oklch(0.22 0.03 251);
-  --popover: oklch(0.997 0.002 250);
-  --popover-foreground: oklch(0.22 0.03 251);
-  --primary: oklch(0.427 0.125 251);
-  --primary-foreground: oklch(0.99 0.003 250);
-  --secondary: oklch(0.95 0.012 251);
-  --secondary-foreground: oklch(0.28 0.06 251);
-  --muted: oklch(0.95 0.012 251);
-  --muted-foreground: oklch(0.52 0.03 251);
-  --accent: oklch(0.93 0.03 251);
-  --accent-foreground: oklch(0.28 0.08 251);
+  --background: oklch(0.985 0.004 262);
+  --foreground: oklch(0.21 0.03 262);
+  --card: oklch(0.997 0.002 262);
+  --card-foreground: oklch(0.21 0.03 262);
+  --popover: oklch(0.997 0.002 262);
+  --popover-foreground: oklch(0.21 0.03 262);
+  --primary: oklch(0.5 0.17 262);
+  --primary-foreground: oklch(0.99 0.003 262);
+  --secondary: oklch(0.95 0.012 262);
+  --secondary-foreground: oklch(0.28 0.06 262);
+  --muted: oklch(0.95 0.012 262);
+  --muted-foreground: oklch(0.52 0.03 262);
+  --accent: oklch(0.93 0.03 262);
+  --accent-foreground: oklch(0.28 0.08 262);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.012 251);
-  --input: oklch(0.9 0.012 251);
-  --ring: oklch(0.427 0.125 251);
-  --chart-1: oklch(0.427 0.125 251);
-  --chart-2: oklch(0.52 0.12 250);
-  --chart-3: oklch(0.62 0.11 249);
-  --chart-4: oklch(0.72 0.09 248);
-  --chart-5: oklch(0.82 0.06 247);
+  --border: oklch(0.9 0.012 262);
+  --input: oklch(0.9 0.012 262);
+  --ring: oklch(0.5 0.17 262);
+  --chart-1: oklch(0.5 0.17 262);
+  --chart-2: oklch(0.56 0.15 261);
+  --chart-3: oklch(0.64 0.13 260);
+  --chart-4: oklch(0.73 0.1 259);
+  --chart-5: oklch(0.82 0.06 258);
 
   /* Age-category ramp (oldest → youngest = dark → light). Chips use white text. */
-  --cat-seniors: oklch(0.32 0.1 251);
-  --cat-juniors: oklch(0.38 0.115 251);
-  --cat-cadets: oklch(0.43 0.125 251);
-  --cat-older-pioneers: oklch(0.48 0.12 250);
-  --cat-younger-pioneers: oklch(0.53 0.11 250);
-  --cat-limaci: oklch(0.58 0.1 249);
-  --cat-prstici: oklch(0.63 0.09 248);
+  --cat-seniors: oklch(0.32 0.11 262);
+  --cat-juniors: oklch(0.38 0.13 262);
+  --cat-cadets: oklch(0.44 0.15 262);
+  --cat-older-pioneers: oklch(0.5 0.15 261);
+  --cat-younger-pioneers: oklch(0.55 0.13 261);
+  --cat-limaci: oklch(0.6 0.11 260);
+  --cat-prstici: oklch(0.65 0.09 259);
 
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
@@ -127,28 +127,28 @@
 
 .dark {
   --background: oklch(0.2 0.03 264);
-  --foreground: oklch(0.97 0.006 250);
+  --foreground: oklch(0.97 0.006 262);
   --card: oklch(0.24 0.04 264);
-  --card-foreground: oklch(0.97 0.006 250);
+  --card-foreground: oklch(0.97 0.006 262);
   --popover: oklch(0.24 0.04 264);
-  --popover-foreground: oklch(0.97 0.006 250);
-  --primary: oklch(0.68 0.13 250);
-  --primary-foreground: oklch(0.18 0.05 251);
-  --secondary: oklch(0.27 0.04 251);
-  --secondary-foreground: oklch(0.97 0.006 250);
-  --muted: oklch(0.27 0.04 251);
-  --muted-foreground: oklch(0.72 0.03 251);
-  --accent: oklch(0.3 0.06 251);
-  --accent-foreground: oklch(0.97 0.006 250);
+  --popover-foreground: oklch(0.97 0.006 262);
+  --primary: oklch(0.68 0.15 262);
+  --primary-foreground: oklch(0.18 0.05 262);
+  --secondary: oklch(0.27 0.04 262);
+  --secondary-foreground: oklch(0.97 0.006 262);
+  --muted: oklch(0.27 0.04 262);
+  --muted-foreground: oklch(0.72 0.03 262);
+  --accent: oklch(0.3 0.06 262);
+  --accent-foreground: oklch(0.97 0.006 262);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(0.97 0.02 251 / 12%);
-  --input: oklch(0.97 0.02 251 / 16%);
-  --ring: oklch(0.68 0.13 250);
-  --chart-1: oklch(0.68 0.13 250);
-  --chart-2: oklch(0.64 0.12 250);
-  --chart-3: oklch(0.7 0.1 249);
-  --chart-4: oklch(0.77 0.08 248);
-  --chart-5: oklch(0.84 0.05 247);
+  --border: oklch(0.97 0.02 262 / 12%);
+  --input: oklch(0.97 0.02 262 / 16%);
+  --ring: oklch(0.68 0.15 262);
+  --chart-1: oklch(0.68 0.15 262);
+  --chart-2: oklch(0.64 0.13 261);
+  --chart-3: oklch(0.7 0.11 260);
+  --chart-4: oklch(0.77 0.09 259);
+  --chart-5: oklch(0.84 0.05 258);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -194,4 +194,27 @@
   to {
     transform: translateX(-50%);
   }
+}
+
+/* Halftone raster s ramena dresa — točkice koje blijede u smjeru maske.
+   Boja preko --halftone-color, gustoća preko --halftone-size. */
+@utility halftone {
+  background-image: radial-gradient(
+    var(--halftone-color, color-mix(in oklch, var(--club) 55%, transparent))
+      1.5px,
+    transparent 1.5px
+  );
+  background-size: var(--halftone-size, 13px) var(--halftone-size, 13px);
+}
+@utility halftone-fade-b {
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+@utility halftone-fade-t {
+  mask-image: linear-gradient(to top, black, transparent);
+}
+@utility halftone-fade-r {
+  mask-image: linear-gradient(to right, black, transparent);
+}
+@utility halftone-fade-l {
+  mask-image: linear-gradient(to left, black, transparent);
 }

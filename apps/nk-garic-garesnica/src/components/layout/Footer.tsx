@@ -1,3 +1,4 @@
+import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { FrontendTenant, PayloadMedia } from "@/lib/payload/types";
@@ -7,8 +8,10 @@ interface FooterProps {
 }
 
 /**
- * Minimalni skeleton footera — logo/naziv + copyright. Namjerno bez linkova na
- * stranice; dodaješ ih kad izgradiš pripadajuće rute.
+ * Footer — tamna traka koja zatvara stranicu: golemi condensed naziv kluba
+ * preko cijele širine, ispod grb, kontakt i društvene mreže, copyright u
+ * donjoj liniji. Prikazuje samo ono što je upisano u Payloadu; prazna polja
+ * se preskaču, i nema linkova na rute koje još ne postoje.
  */
 export default function Footer({ tenant }: FooterProps) {
   const year = new Date().getFullYear();
@@ -17,28 +20,136 @@ export default function Footer({ tenant }: FooterProps) {
       ? (tenant.branding.logo as PayloadMedia)
       : null;
 
+  const { email, phone, address, city } = tenant.contact ?? {};
+  const { facebook, youtube } = tenant.social ?? {};
+  const founded = tenant.branding?.founded ?? null;
+  const location = [address, city].filter(Boolean).join(", ");
+  const clubName = tenant.displayName.replace(/^NK\s+/i, "");
+
+  const socials = [
+    { href: facebook, label: "Facebook" },
+    { href: youtube, label: "YouTube" },
+  ].filter((s): s is { href: string; label: string } => Boolean(s.href));
+
   return (
-    <footer className="mt-24 border-t border-border/60">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-[0.6rem] font-medium uppercase tracking-[0.35em] text-muted-foreground sm:flex-row sm:items-center sm:justify-between lg:px-8">
-        <Link
-          href="/"
-          className="flex items-center gap-3"
-          aria-label={tenant.displayName}
+    <footer className="relative overflow-hidden bg-navy-deep text-white">
+      <div className="mx-auto w-full max-w-350 px-4 pb-10 pt-16 sm:px-6 lg:px-10 lg:pt-20">
+        {/* Golemi wordmark — poster potpis dresa. */}
+        <p
+          aria-hidden
+          className="pointer-events-none select-none font-display text-[13.5vw] uppercase leading-[0.82] tracking-tight text-white/8"
         >
-          {logo?.url && (
-            <Image
-              src={logo.url}
-              alt={logo.alt || tenant.displayName}
-              width={24}
-              height={24}
-              className="rounded-full"
-            />
-          )}
-          <span>{tenant.branding?.shortName ?? tenant.displayName}</span>
-        </Link>
-        <p>
-          &copy; {year} {tenant.displayName} — Sva prava pridržana
+          {clubName}
         </p>
+
+        <div className="mt-12 grid grid-cols-1 gap-12 border-t border-white/15 pt-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
+          {/* Klub */}
+          <div className="sm:col-span-2 lg:col-span-1">
+            <Link
+              href="/"
+              className="flex items-center gap-4"
+              aria-label={tenant.displayName}
+            >
+              {logo?.url && (
+                <Image
+                  src={logo.url}
+                  alt={logo.alt || tenant.displayName}
+                  width={56}
+                  height={56}
+                  className="h-14 w-auto"
+                />
+              )}
+              <span className="max-w-56 font-display text-2xl leading-[0.95] uppercase tracking-wide">
+                {tenant.displayName}
+              </span>
+            </Link>
+            {founded && (
+              <p className="mt-6 max-w-xs text-sm leading-relaxed text-white/55">
+                Nogometni klub iz Garešnice, osnovan {founded}. godine.
+              </p>
+            )}
+          </div>
+
+          {/* Kontakt */}
+          <div>
+            <p className="font-mono text-[10px] font-semibold tracking-[0.3em] text-white/45 uppercase">
+              Kontakt
+            </p>
+            <ul className="mt-5 space-y-3.5 text-sm">
+              {email && (
+                <li>
+                  <a
+                    href={`mailto:${email}`}
+                    className="inline-flex items-center gap-3 text-white/75 transition-colors hover:text-white"
+                  >
+                    <Mail
+                      className="size-4 shrink-0 text-chart-4"
+                      strokeWidth={2}
+                    />
+                    {email}
+                  </a>
+                </li>
+              )}
+              {phone && (
+                <li>
+                  <a
+                    href={`tel:${phone.replace(/\s/g, "")}`}
+                    className="inline-flex items-center gap-3 text-white/75 transition-colors hover:text-white"
+                  >
+                    <Phone
+                      className="size-4 shrink-0 text-chart-4"
+                      strokeWidth={2}
+                    />
+                    {phone}
+                  </a>
+                </li>
+              )}
+              {location && (
+                <li className="flex items-start gap-3 text-white/75">
+                  <MapPin
+                    className="mt-0.5 size-4 shrink-0 text-chart-4"
+                    strokeWidth={2}
+                  />
+                  {location}
+                </li>
+              )}
+            </ul>
+          </div>
+
+          {/* Društvene mreže */}
+          {socials.length > 0 && (
+            <div>
+              <p className="font-mono text-[10px] font-semibold tracking-[0.3em] text-white/45 uppercase">
+                Pratite klub
+              </p>
+              <ul className="mt-5 space-y-3.5 text-sm">
+                {socials.map(({ href, label }) => (
+                  <li key={label}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex items-center gap-2 text-white/75 transition-colors hover:text-white"
+                    >
+                      {label}
+                      <ArrowUpRight
+                        className="size-4 shrink-0 text-chart-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                        strokeWidth={2}
+                      />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        <div className="mt-14 flex flex-col gap-3 border-t border-white/15 pt-6 font-mono text-[11px] text-white/40 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {year} {tenant.displayName}
+          </p>
+          <p>Sva prava pridržana</p>
+        </div>
       </div>
     </footer>
   );
