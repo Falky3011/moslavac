@@ -25,7 +25,7 @@ export default function SchoolSection({
   facebook,
 }: SchoolSectionProps) {
   return (
-    <section className="relative overflow-hidden border-t border-border bg-background">
+    <section className="relative overflow-hidden bg-background">
       <div className="relative mx-auto w-full max-w-350 px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
         <FadeInView>
           <h2 className="font-display text-6xl uppercase leading-[0.9] tracking-tight text-foreground lg:text-8xl">
@@ -58,7 +58,7 @@ export default function SchoolSection({
               />
 
               <div>
-                <p className="max-w-sm text-base leading-relaxed text-white/85 sm:text-lg">
+                <p className="max-w-sm text-base leading-relaxed text-white sm:text-lg">
                   Škola nogometa NK Garić Garešnica okuplja najmlađe uzraste
                   na klupskom igralištu u Garešnici. Dođi na trening i
                   zaigraj.
@@ -71,7 +71,7 @@ export default function SchoolSection({
                       className="flex items-center gap-3.5 border-b border-white/20 pb-3.5 text-base font-medium"
                     >
                       <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white">
-                        <Check className="size-3.5 text-club" strokeWidth={3} />
+                        <Check className="size-3.5 text-club" strokeWidth={2} />
                       </span>
                       {point}
                     </li>
@@ -87,11 +87,11 @@ export default function SchoolSection({
                   {email && (
                     <a
                       href={`mailto:${email}?subject=${encodeURIComponent("Škola nogometa")}`}
-                      className="inline-flex items-center gap-3 rounded-full bg-white py-3 pl-6 pr-3 text-base font-bold text-club transition-transform active:scale-[0.98]"
+                      className="inline-flex items-center gap-3 rounded-full bg-white py-3 pl-6 pr-3 text-base font-bold text-club transition-transform active:scale-[0.96] motion-reduce:active:scale-100"
                     >
                       Prijavi dijete
                       <span className="flex size-8 items-center justify-center rounded-full bg-club">
-                        <ArrowRight className="size-4.5 text-white" strokeWidth={2.5} />
+                        <ArrowRight className="size-4.5 text-white" strokeWidth={2} />
                       </span>
                     </a>
                   )}

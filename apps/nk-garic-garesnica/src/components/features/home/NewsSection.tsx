@@ -66,17 +66,17 @@ function CoverCard({
 
   return (
     <article
-      className={`group relative overflow-hidden rounded-2xl shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)] sm:rounded-3xl ${
+      className={`group relative overflow-hidden rounded-2xl shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)] ring-1 ring-inset ring-black/10 sm:rounded-3xl ${
         lead ? "aspect-16/10 lg:h-full lg:aspect-auto" : "aspect-16/10"
       }`}
     >
       {image ? (
         <Image
           src={image}
-          alt={article.title}
+          alt=""
           fill
           sizes={sizes}
-          className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.04] motion-reduce:group-hover:scale-100"
         />
       ) : (
         <CrestFallback crestUrl={crestUrl} />
@@ -116,7 +116,7 @@ export default function NewsSection({ news, crestUrl }: NewsSectionProps) {
   const [lead, ...others] = news;
 
   return (
-    <section className="relative overflow-hidden border-t border-border bg-background">
+    <section className="relative overflow-hidden bg-background">
       <div className="relative mx-auto w-full max-w-350 px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <FadeInView>
@@ -126,14 +126,15 @@ export default function NewsSection({ news, crestUrl }: NewsSectionProps) {
           </FadeInView>
 
           <FadeInView delay={0.1}>
-            {/* Link se veže kad se izgradi ruta /novosti. */}
+            {/* Namjerno zadržano dok ruta /novosti ne postoji — veži `href` kad
+                nastane. Do tada je ovo kontrola bez odredišta. */}
             <span className="group inline-flex items-center gap-2.5 rounded-full bg-foreground px-6 py-3.5 text-background transition-colors hover:bg-club">
               <span className="font-mono text-sm font-bold uppercase tracking-wide">
                 Sve vijesti
               </span>
               <ArrowUpRight
-                className="size-4.5 text-club transition-[color,transform] duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white"
-                strokeWidth={2.5}
+                className="size-4.5 text-club transition-[color,transform] duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-white motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0"
+                strokeWidth={2}
               />
             </span>
           </FadeInView>

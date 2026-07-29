@@ -1,5 +1,6 @@
 "use client";
 
+import { useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
@@ -42,7 +43,7 @@ function PlayerCard({
 
   if (photo) {
     return (
-      <article className="group relative flex h-100 w-64 shrink-0 snap-start flex-col overflow-hidden rounded-[28px] bg-background shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out hover:-translate-y-1 sm:h-112 sm:w-72">
+      <article className="group relative flex h-100 w-64 shrink-0 snap-start flex-col overflow-hidden rounded-[28px] bg-background shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out hover:-translate-y-1 motion-reduce:hover:translate-y-0 sm:h-112 sm:w-72">
         {player.captain && (
           <span className="absolute right-4 top-4 z-20 rounded-full bg-white/90 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-club">
             Kapetan
@@ -55,7 +56,7 @@ function PlayerCard({
             alt={player.displayName}
             fill
             sizes="272px"
-            className="object-cover object-[center_28%] transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+            className="object-cover object-[center_28%] ring-1 ring-inset ring-black/10 transition-transform duration-500 ease-out group-hover:scale-[1.05] motion-reduce:group-hover:scale-100"
           />
           {/* Blagi scrim prema dnu da broj dresa ostane čitljiv na svakoj fotki. */}
           <span
@@ -81,7 +82,7 @@ function PlayerCard({
               {position}
             </p>
           )}
-          <div className="mt-3 h-0.5 w-8 rounded-full bg-club transition-[width] duration-300 ease-out group-hover:w-14" />
+          <div className="mt-3 h-0.5 w-8 rounded-full bg-club transition-[width] duration-300 ease-out group-hover:w-14 motion-reduce:group-hover:w-8" />
           {first && <p className="mt-4 text-base text-muted-foreground">{first}</p>}
           <h3 className="mt-1 font-display text-[2rem] uppercase leading-[1.02] tracking-wide text-foreground">
             {last}
@@ -92,7 +93,7 @@ function PlayerCard({
   }
 
   return (
-    <article className="group relative flex h-100 w-64 shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-border bg-card transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-club/40 hover:shadow-[0_16px_44px_-20px_oklch(0.5_0.17_262/0.3)] sm:h-112 sm:w-72">
+    <article className="group relative flex h-100 w-64 shrink-0 snap-start flex-col overflow-hidden rounded-[28px] bg-background shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out hover:-translate-y-1 motion-reduce:hover:translate-y-0 sm:h-112 sm:w-72">
       {player.captain && (
         <span className="absolute right-4 top-4 z-10 rounded-full bg-club/10 px-3 py-1 font-mono text-xs font-semibold tracking-[0.08em] text-club uppercase">
           Kapetan
@@ -126,7 +127,7 @@ function PlayerCard({
             {position}
           </p>
         )}
-        <div className="mt-3 h-0.5 w-8 rounded-full bg-club transition-[width] duration-300 ease-out group-hover:w-14" />
+        <div className="mt-3 h-0.5 w-8 rounded-full bg-club transition-[width] duration-300 ease-out group-hover:w-14 motion-reduce:group-hover:w-8" />
         {first && (
           <p className="mt-4 text-base text-muted-foreground">{first}</p>
         )}
@@ -149,6 +150,7 @@ export default function PlayersCarousel({
   players: RosterEntry[];
   photos: Record<number, string>;
 }) {
+  const reduceMotion = useReducedMotion();
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
   const [atStart, setAtStart] = useState(true);
@@ -163,19 +165,30 @@ export default function PlayersCarousel({
     setAtEnd(el.scrollLeft >= max - 8);
   }, []);
 
-  const scrollBy = useCallback((direction: 1 | -1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    el.scrollBy({ left: direction * el.clientWidth * 0.8, behavior: "smooth" });
-  }, []);
+  const scrollBy = useCallback(
+    (direction: 1 | -1) => {
+      const el = scrollerRef.current;
+      if (!el) return;
+      el.scrollBy({
+        left: direction * el.clientWidth * 0.8,
+        behavior: reduceMotion ? "auto" : "smooth",
+      });
+    },
+    [reduceMotion],
+  );
 
   return (
     <div>
       {/* Okomiti padding je nužan: `overflow-x: auto` kliparo i po Y osi, pa bi
           bez njega podignuta kartica i njena sjena bile odrezane. */}
+      {/* Kartice igrača nemaju fokusabilnog sadržaja, pa bi bez `tabIndex` ovo
+          skrolabilno područje bilo nedostupno tipkovnicom. */}
       <div
         ref={scrollerRef}
         onScroll={onScroll}
+        tabIndex={0}
+        role="region"
+        aria-label="Igrači prve momčadi"
         className="-my-8 flex snap-x snap-mandatory gap-4 overflow-x-auto py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {players.map((player) => (
@@ -200,7 +213,7 @@ export default function PlayersCarousel({
             onClick={() => scrollBy(-1)}
             disabled={atStart}
             aria-label="Prethodni igrači"
-            className="flex size-12 items-center justify-center rounded-full border border-border text-foreground transition-[transform,background-color,border-color,opacity] duration-150 ease-out hover:border-club/50 hover:bg-secondary active:scale-[0.97] disabled:pointer-events-none disabled:opacity-30"
+            className="flex size-12 items-center justify-center rounded-full border border-border text-foreground transition-[transform,background-color,border-color,opacity] duration-150 ease-out hover:border-club/50 hover:bg-secondary active:scale-[0.96] motion-reduce:active:scale-100 disabled:pointer-events-none disabled:opacity-30"
           >
             <ArrowLeft className="size-4.5" strokeWidth={2} />
           </button>
@@ -209,7 +222,7 @@ export default function PlayersCarousel({
             onClick={() => scrollBy(1)}
             disabled={atEnd}
             aria-label="Sljedeći igrači"
-            className="flex size-12 items-center justify-center rounded-full border border-border text-foreground transition-[transform,background-color,border-color,opacity] duration-150 ease-out hover:border-club/50 hover:bg-secondary active:scale-[0.97] disabled:pointer-events-none disabled:opacity-30"
+            className="flex size-12 items-center justify-center rounded-full border border-border text-foreground transition-[transform,background-color,border-color,opacity] duration-150 ease-out hover:border-club/50 hover:bg-secondary active:scale-[0.96] motion-reduce:active:scale-100 disabled:pointer-events-none disabled:opacity-30"
           >
             <ArrowRight className="size-4.5" strokeWidth={2} />
           </button>

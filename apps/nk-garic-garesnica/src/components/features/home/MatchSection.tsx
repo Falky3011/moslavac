@@ -24,6 +24,11 @@ function goals(side: Match["score"]["home"]): number | null {
   return side.current ?? side.regular;
 }
 
+/** Odigrana utakmica bez upisanog rezultata ne smije rendati prazan razmak. */
+function scoreText(value: number | null): string {
+  return value === null ? "–" : String(value);
+}
+
 function isPlayed(m: Match): boolean {
   return m.liveStatus === "PLAYED";
 }
@@ -72,7 +77,7 @@ export default function MatchSection({
   const orderedResults = isNext ? results : [...results].reverse();
 
   return (
-    <section className="relative overflow-hidden border-t border-border bg-background">
+    <section className="relative overflow-hidden bg-background">
       <div className="relative mx-auto w-full max-w-350 px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <FadeInView>
@@ -135,7 +140,7 @@ function TodayDivider() {
   return (
     <div className="flex items-center gap-3 py-1">
       <span aria-hidden className="h-px flex-1 bg-border" />
-      <span className="shrink-0 rounded-full bg-club px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-white">
+      <span className="shrink-0 rounded-full bg-club px-3 py-1 font-mono text-xs font-bold uppercase tracking-widest text-white">
         Danas
       </span>
       <span
@@ -174,45 +179,49 @@ function ResultCard({ match }: { match: Match }) {
 
   return (
     <div
-      className={`flex h-full flex-col rounded-[28px] bg-background p-4 transition-transform duration-300 hover:-translate-y-1 ${CARD_SHADOW}`}
+      className={`flex h-full flex-col rounded-[28px] bg-background p-4 transition-transform duration-300 hover:-translate-y-1 motion-reduce:hover:translate-y-0 ${CARD_SHADOW}`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+        <span className="font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground">
           {roundLabel(match)}
         </span>
-        <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+        <span className="font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground">
           {date}
         </span>
       </div>
 
-      <p className="mt-3 line-clamp-1 font-display text-xl uppercase leading-none tracking-tight text-foreground">
+      {/* `title` drži puno ime dohvatljivim kad ga clamp odreže. */}
+      <p
+        className="mt-3 line-clamp-1 font-display text-xl uppercase leading-none tracking-tight text-foreground"
+        title={opponent?.name ?? undefined}
+      >
         {opponent?.name ?? "-"}
       </p>
-      <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">
+      <p className="mt-0.5 text-xs font-medium text-muted-foreground">
         {venue}
       </p>
 
       <div className="relative mt-4">
         <span
           aria-hidden
-          className={`absolute inset-0 translate-x-2 translate-y-2 rounded-2xl opacity-80 ${accentCls}`}
+          className={`absolute inset-0 translate-x-2 translate-y-2 rounded-lg opacity-80 ${accentCls}`}
         />
-        <div className="relative flex items-center justify-center gap-2.5 rounded-2xl bg-secondary/70 py-5">
+        <div className="relative flex items-center justify-center gap-2.5 rounded-lg bg-secondary/70 py-5">
           <TeamCrest team={match.homeTeam} ours={match.teamSide === "home"} />
           <span className="font-display text-2xl leading-none tracking-tight tabular-nums">
             <span className={match.teamSide === "home" ? ourScoreCls : "text-foreground/60"}>
-              {hg}
+              {scoreText(hg)}
             </span>
             <span className="mx-0.5 text-muted-foreground/40">:</span>
             <span className={match.teamSide === "away" ? ourScoreCls : "text-foreground/60"}>
-              {ag}
+              {scoreText(ag)}
             </span>
           </span>
           <TeamCrest team={match.awayTeam} ours={match.teamSide === "away"} />
         </div>
       </div>
 
-      <div className="mt-3 flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+      <div className="mt-3 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
         <span aria-hidden className={`size-1.5 rounded-full ${accentCls}`} />
         {match.teamResult ? OUTCOME_LABEL[match.teamResult] : "Odigrano"}
       </div>
@@ -252,30 +261,34 @@ function FixtureCard({ match }: { match: Match }) {
 
   return (
     <div
-      className={`flex h-full flex-col rounded-[28px] bg-background p-4 transition-transform duration-300 hover:-translate-y-1 ${CARD_SHADOW}`}
+      className={`flex h-full flex-col rounded-[28px] bg-background p-4 transition-transform duration-300 hover:-translate-y-1 motion-reduce:hover:translate-y-0 ${CARD_SHADOW}`}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+        <span className="font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground">
           {roundLabel(match)}
         </span>
-        <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-muted-foreground">
+        <span className="font-mono text-xs font-medium uppercase tracking-widest text-muted-foreground">
           {parts ? `${parts.day}. ${parts.monthShort}` : ""}
         </span>
       </div>
 
-      <p className="mt-3 line-clamp-1 font-display text-xl uppercase leading-none tracking-tight text-foreground">
+      {/* `title` drži puno ime dohvatljivim kad ga clamp odreže. */}
+      <p
+        className="mt-3 line-clamp-1 font-display text-xl uppercase leading-none tracking-tight text-foreground"
+        title={opponent?.name ?? undefined}
+      >
         {opponent?.name ?? "-"}
       </p>
-      <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">
+      <p className="mt-0.5 text-xs font-medium text-muted-foreground">
         {venue}
       </p>
 
       <div className="relative mt-4">
         <span
           aria-hidden
-          className="absolute inset-0 translate-x-2 translate-y-2 rounded-2xl border-2 border-dashed border-club/35"
+          className="absolute inset-0 translate-x-2 translate-y-2 rounded-lg border-2 border-dashed border-club/35"
         />
-        <div className="relative flex items-center justify-center gap-2.5 rounded-2xl bg-club/10 py-5">
+        <div className="relative flex items-center justify-center gap-2.5 rounded-lg bg-club/10 py-5">
           <TeamCrest team={match.homeTeam} ours={match.teamSide === "home"} />
           <span className="font-display text-xl leading-none tracking-tight tabular-nums text-club">
             {parts?.time ?? "VS"}
@@ -284,10 +297,19 @@ function FixtureCard({ match }: { match: Match }) {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
-        <span aria-hidden className="size-1.5 rounded-full ring-1 ring-inset ring-club" />
-        {venue}
-      </div>
+      {/* Donji redak nosi igralište, ne ponovljeni "Doma"/"Gosti" koji već stoji
+          pod imenom protivnika. Bez igrališta redak otpada. */}
+      {match.facility?.name && (
+        <div className="mt-3 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+          <span
+            aria-hidden
+            className="size-1.5 shrink-0 rounded-full ring-1 ring-inset ring-club"
+          />
+          <span className="truncate" title={match.facility.name}>
+            {match.facility.name}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
@@ -329,7 +351,7 @@ function FeaturedPoster({ match, isNext }: { match: Match; isNext: boolean }) {
           }
         />
 
-        <div className="flex items-center justify-between gap-2 px-6 pt-6 font-mono text-[11px] uppercase tracking-[0.12em] text-white/60">
+        <div className="flex items-center justify-between gap-2 px-6 pt-6 font-mono text-xs uppercase tracking-[0.12em] text-white/75">
           <span className="rounded-full bg-club px-2.5 py-1 font-bold text-white">
             {isNext ? "Slijedi" : "Zadnja"}
           </span>
@@ -341,7 +363,7 @@ function FeaturedPoster({ match, isNext }: { match: Match; isNext: boolean }) {
             {match.homeTeam?.name ?? "-"}
           </p>
 
-          <div className="flex items-center justify-center gap-4 rounded-2xl bg-white/5 px-5 py-4 sm:gap-5">
+          <div className="flex items-center justify-center gap-4 rounded-sm bg-white/5 px-5 py-4 sm:gap-5">
             <CrestBadge team={match.homeTeam} />
             <span className="shrink-0 font-display text-4xl leading-none tracking-tight tabular-nums sm:text-5xl">
               {played ? (
@@ -365,7 +387,7 @@ function FeaturedPoster({ match, isNext }: { match: Match; isNext: boolean }) {
           </p>
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-white/10 px-6 py-4 font-mono text-[11px] uppercase tracking-widest text-white/50">
+        <div className="flex items-center justify-between gap-3 border-t border-white/10 px-6 py-4 font-mono text-xs uppercase tracking-widest text-white/75">
           <span className="truncate">{venue ?? ""}</span>
           {round && <span className="shrink-0">{round}</span>}
         </div>

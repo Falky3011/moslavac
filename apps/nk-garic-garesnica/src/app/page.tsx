@@ -92,7 +92,9 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero tenant={tenant} match={featured} isNext={isNext} />
+      {/* Hero nosi samo identitet kluba. Istaknutu utakmicu prikazuje
+          MatchSection odmah ispod, pa je hero ne duplicira. */}
+      <Hero tenant={tenant} />
       <MatchSection
         featured={featured}
         results={results}

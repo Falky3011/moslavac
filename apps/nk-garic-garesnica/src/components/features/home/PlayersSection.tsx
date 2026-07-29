@@ -36,7 +36,7 @@ export default function PlayersSection({
   if (squad.length === 0) return null;
 
   return (
-    <section className="border-t border-border bg-background py-16 lg:py-24">
+    <section className="bg-background py-16 lg:py-24">
       <div className="relative mx-auto w-full max-w-350 px-4 sm:px-6 lg:px-10">
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <FadeInView>

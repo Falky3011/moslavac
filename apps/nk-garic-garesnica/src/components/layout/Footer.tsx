@@ -70,7 +70,7 @@ export default function Footer({ tenant }: FooterProps) {
               </span>
             </Link>
             {founded && (
-              <p className="mt-6 max-w-xs text-sm leading-relaxed text-white/55">
+              <p className="mt-6 max-w-xs text-sm leading-relaxed text-white/85">
                 Nogometni klub iz Garešnice, osnovan {founded}. godine.
               </p>
             )}
@@ -78,7 +78,7 @@ export default function Footer({ tenant }: FooterProps) {
 
           {/* Kontakt */}
           <div>
-            <p className="font-mono text-[10px] font-semibold tracking-[0.3em] text-white/45 uppercase">
+            <p className="font-mono text-xs font-semibold tracking-[0.3em] text-white/75 uppercase">
               Kontakt
             </p>
             <ul className="mt-5 space-y-3.5 text-sm">
@@ -90,7 +90,7 @@ export default function Footer({ tenant }: FooterProps) {
                   >
                     <Mail
                       className="size-4 shrink-0 text-chart-4"
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                     />
                     {email}
                   </a>
@@ -104,7 +104,7 @@ export default function Footer({ tenant }: FooterProps) {
                   >
                     <Phone
                       className="size-4 shrink-0 text-chart-4"
-                      strokeWidth={2}
+                      strokeWidth={1.5}
                     />
                     {phone}
                   </a>
@@ -114,7 +114,7 @@ export default function Footer({ tenant }: FooterProps) {
                 <li className="flex items-start gap-3 text-white/75">
                   <MapPin
                     className="mt-0.5 size-4 shrink-0 text-chart-4"
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                   />
                   {location}
                 </li>
@@ -125,7 +125,7 @@ export default function Footer({ tenant }: FooterProps) {
           {/* Društvene mreže */}
           {socials.length > 0 && (
             <div>
-              <p className="font-mono text-[10px] font-semibold tracking-[0.3em] text-white/45 uppercase">
+              <p className="font-mono text-xs font-semibold tracking-[0.3em] text-white/75 uppercase">
                 Pratite klub
               </p>
               <ul className="mt-5 space-y-3.5 text-sm">
@@ -139,8 +139,8 @@ export default function Footer({ tenant }: FooterProps) {
                     >
                       {label}
                       <ArrowUpRight
-                        className="size-4 shrink-0 text-chart-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                        strokeWidth={2}
+                        className="size-4 shrink-0 text-chart-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0"
+                        strokeWidth={1.5}
                       />
                     </a>
                   </li>
@@ -150,7 +150,7 @@ export default function Footer({ tenant }: FooterProps) {
           )}
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-white/15 pt-6 font-mono text-[11px] text-white/40 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-14 flex flex-col gap-3 border-t border-white/15 pt-6 font-mono text-xs text-white/75 sm:flex-row sm:items-center sm:justify-between">
           <p>
             &copy; {year} {tenant.displayName}
           </p>

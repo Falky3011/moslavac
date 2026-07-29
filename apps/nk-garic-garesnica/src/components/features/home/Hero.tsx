@@ -51,7 +51,7 @@ export default function Hero({ tenant }: HeroProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden bg-navy-deep"
+      className="relative isolate flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-navy-deep"
     >
       {/* Zračni snimak igrališta — full-bleed, u duotonu (grayscale + plavi overlay). */}
       <Image
@@ -110,7 +110,7 @@ export default function Hero({ tenant }: HeroProps) {
 
         {/* Godina osnutka — ispod naslova, centrirano. */}
         <motion.div {...anim(0.4, { y: 14 })} className="mt-10">
-          <span className="block font-mono text-[0.68rem] uppercase tracking-[0.32em] text-white/55">
+          <span className="block font-mono text-xs uppercase tracking-[0.32em] text-white/75">
             Osnovan
           </span>
           <span

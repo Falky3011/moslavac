@@ -3,4 +3,4 @@
  * of `--club` in globals.css, which is authored in oklch and so cannot be read
  * from here. Re-skin the club and update this in the same change.
  */
-export const THEME_COLOR = "#005090";
+export const THEME_COLOR = "#285cc2";

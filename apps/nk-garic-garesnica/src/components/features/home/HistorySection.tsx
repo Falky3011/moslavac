@@ -56,7 +56,7 @@ export default function HistorySection({
 
       <div className="relative z-10 mx-auto w-full max-w-350 px-4 py-14 sm:px-6 lg:px-10 lg:py-24">
         <FadeInView className="max-w-xl text-white lg:max-w-2xl">
-          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.28em] text-white/70">
+          <p className="font-mono text-xs font-semibold uppercase tracking-[0.28em] text-white/70">
             Naša priča
           </p>
           <h2 className="mt-6 font-display text-[2.75rem] uppercase leading-[0.9] tracking-tight sm:text-6xl lg:text-7xl">
@@ -75,7 +75,7 @@ export default function HistorySection({
           <dl className="mt-10 grid max-w-md grid-cols-2 gap-x-4 border-t border-white/20 pt-6 sm:gap-x-8">
             {stats.map((s) => (
               <div key={s.label}>
-                <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/55">
+                <dt className="font-mono text-xs uppercase tracking-[0.18em] text-white/75">
                   {s.label}
                 </dt>
                 <dd className="mt-2 font-display text-2xl leading-none tracking-tight sm:text-3xl lg:text-4xl">

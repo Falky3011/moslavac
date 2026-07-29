@@ -47,7 +47,7 @@ export default async function RootLayout({
       baseUrl={BASE_URL}
     >
       <Header tenant={tenant} />
-      <main className="flex-1 overflow-x-clip">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer tenant={tenant} />
     </ClubRootShell>
   );

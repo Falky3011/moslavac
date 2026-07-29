@@ -72,7 +72,11 @@
  *   - optional display font: set --font-display + import it in layout.tsx
  */
 :root {
-  --radius: 0rem;
+  /* Radijus komponenti (shadcn: toast, tooltip, input). Ujedno je i unutarnji
+     radijus kartica naslovnice: 28px vanjski − 16px padding = 12px. Velike
+     kartice zadržavaju eksplicitnih 28/32px jer su display oblik, ne
+     komponenta — ovaj token bi na toj vrijednosti izobličio toast. */
+  --radius: 0.75rem;
 
   /* Brand tokens — NK Garić Garešnica: royal plava iz dresa (Macron royal) +
      bijela. --club je dres-plava; navy tamni registar za tamne trake. */
@@ -96,7 +100,7 @@
   --muted-foreground: oklch(0.52 0.03 262);
   --accent: oklch(0.93 0.03 262);
   --accent-foreground: oklch(0.28 0.08 262);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.577 0.208 27.325);
   --border: oklch(0.9 0.012 262);
   --input: oklch(0.9 0.012 262);
   --ring: oklch(0.5 0.17 262);
@@ -163,15 +167,28 @@
   * {
     @apply border-border outline-ring/50;
   }
+  /* Dvotonski fokus prsten: klupska plava traka + bijeli halo odmah izvan nje.
+     Stranica se kreće po tri podloge (svijetla sekcija, --navy-deep, --club) i
+     nijedna jedna boja ne kontrastira na sve tri. Plava nosi indikator na
+     svijetlom, halo ga nosi na tamnom i na plavoj plohi. */
+  *:focus-visible {
+    outline: 2px solid var(--club);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--chalk);
+  }
+  /* Na tamnim plohama je odnos obrnut — halo je unutarnja traka. */
+  .bg-navy-deep *:focus-visible,
+  .bg-club *:focus-visible {
+    outline-color: var(--chalk);
+    box-shadow: 0 0 0 4px var(--navy-deep);
+  }
   html {
     font-size: 16px;
-    overflow-x: clip;
   }
   body {
     color: var(--foreground);
     font-size: 1rem;
     line-height: 1.6;
-    overflow-x: clip;
   }
   /* Big Shoulders je varijabilan: default mu je weight 400 i opsz 14 — tanko i
      tekstualno. Naslovi traže display rez i tešku težinu; utility klasa
@@ -183,6 +200,22 @@
   ::selection {
     background: var(--club);
     color: var(--chalk);
+  }
+  /* Sigurnosna mreža za smanjeno kretanje. JS primitivi (FadeInView,
+     ParallaxImage, Hero) granaju na useReducedMotion; ovo hvata čisti CSS —
+     trajanja tranzicija i keyframe animacije. Same hover transformacije se
+     gase `motion-reduce:` varijantama na mjestu upotrebe, da se ne pogazi
+     statični `translate` koji nosi raspored (žig u podnožju, pomaknute
+     pločice na karticama). */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
