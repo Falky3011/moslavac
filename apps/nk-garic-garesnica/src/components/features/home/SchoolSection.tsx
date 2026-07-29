@@ -1,6 +1,5 @@
 import { ArrowRight, Check } from "lucide-react";
-import Image from "next/image";
-import { FadeInView } from "@/components/animations";
+import { FadeInView, ParallaxImage } from "@/components/animations";
 
 type SchoolSectionProps = {
   imageSrc: string;
@@ -15,10 +14,10 @@ const POINTS = [
 ];
 
 /**
- * Škola nogometa — jedina puna royal ploha na stranici (akcent, motiv dresa):
- * lijevo poziv s checklistom i pravim kontaktima kluba (e-mail, Facebook),
- * desno fotografija s klupskog igrališta preko koje prelazi halftone raster.
- * Copy je faktičan — bez izmišljenih brojki i termina.
+ * Škola nogometa — svijetla sekcija (ne treći puni royal poster zaredom):
+ * fotografija s igrališta lijevo, plava CTA kartica desno u istom jeziku kao
+ * kartice rezultata/igrača (rounded-[28px], meka sjena). Copy je faktičan,
+ * bez izmišljenih brojki i termina.
  */
 export default function SchoolSection({
   imageSrc,
@@ -26,79 +25,90 @@ export default function SchoolSection({
   facebook,
 }: SchoolSectionProps) {
   return (
-    <section className="relative overflow-hidden bg-club text-white">
-      <div className="mx-auto grid w-full max-w-350 grid-cols-1 lg:grid-cols-12">
-        {/* Lijevo — poziv */}
-        <FadeInView className="relative z-10 px-4 py-16 sm:px-6 lg:col-span-6 lg:px-10 lg:py-24">
-          <p className="mb-4 font-mono text-[11px] font-semibold uppercase tracking-[0.34em] text-white/70">
-            Škola nogometa
-          </p>
-          <h2 className="font-display text-6xl leading-[0.95] tracking-tight uppercase sm:text-7xl">
-            Zaigraj
-            <br />
-            za Garić.
+    <section className="relative overflow-hidden border-t border-border bg-background">
+      <div className="relative mx-auto w-full max-w-350 px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
+        <FadeInView>
+          <h2 className="font-display text-6xl uppercase leading-[0.9] tracking-tight text-foreground lg:text-8xl">
+            Škola <span className="text-club">nogometa</span>
           </h2>
-          <p className="mt-6 max-w-md text-sm leading-relaxed text-white/85 sm:text-base">
-            Škola nogometa NK Garić Garešnica okuplja najmlađe uzraste na
-            klupskom igralištu u Garešnici. Dođi na trening i zaigraj.
-          </p>
-
-          <p className="mt-8 text-sm text-white/85">
-            Prijava i sve informacije putem kluba.
-          </p>
-          <ul className="mt-4 space-y-2.5">
-            {POINTS.map((point) => (
-              <li
-                key={point}
-                className="flex items-center gap-3 text-sm font-medium"
-              >
-                <span className="flex size-5 shrink-0 items-center justify-center bg-white">
-                  <Check className="size-3 text-club" strokeWidth={3} />
-                </span>
-                {point}
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-9 flex flex-wrap items-center gap-3">
-            {email && (
-              <a
-                href={`mailto:${email}?subject=${encodeURIComponent("Škola nogometa")}`}
-                className="inline-flex items-center gap-3 bg-white py-3 pr-3 pl-5 text-sm font-bold text-club transition-transform active:scale-[0.98]"
-              >
-                Prijavi dijete
-                <span className="flex size-7 items-center justify-center bg-club">
-                  <ArrowRight className="size-4 text-white" strokeWidth={2.5} />
-                </span>
-              </a>
-            )}
-            {facebook && (
-              <a
-                href={facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center border border-white/60 px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-white hover:text-club"
-              >
-                Facebook
-              </a>
-            )}
-          </div>
         </FadeInView>
 
-        {/* Desno — fotografija s igrališta, halftone prijelaz prema plavoj. */}
-        <div className="relative min-h-72 lg:col-span-6 lg:min-h-0">
-          <Image
-            src={imageSrc}
-            alt="Škola nogometa NK Garić Garešnica"
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover object-[center_30%]"
-          />
-          <span
-            aria-hidden
-            className="halftone halftone-fade-r pointer-events-none absolute inset-y-0 left-0 hidden w-32 lg:block"
-            style={{ "--halftone-color": "var(--club)", "--halftone-size": "11px" } as React.CSSProperties}
-          />
+        <div className="mt-12 grid grid-cols-1 items-stretch gap-6 lg:mt-16 lg:grid-cols-12 lg:gap-8">
+          <FadeInView className="lg:col-span-7">
+            <ParallaxImage
+              src={imageSrc}
+              alt="Škola nogometa NK Garić Garešnica"
+              sizes="(max-width: 1024px) 100vw, 58vw"
+              className="aspect-4/3 h-full rounded-[28px] shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)] lg:aspect-auto"
+              imageClassName="object-[center_30%]"
+              strength={6}
+            />
+          </FadeInView>
+
+          <FadeInView delay={0.1} className="lg:col-span-5">
+            <div className="relative isolate flex h-full flex-col justify-between overflow-hidden rounded-[28px] bg-club px-7 py-8 text-white shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)] sm:px-9 sm:py-10">
+              <span
+                aria-hidden
+                className="halftone halftone-fade-b pointer-events-none absolute inset-x-0 top-0 -z-10 h-32 opacity-25"
+                style={
+                  {
+                    "--halftone-color": "rgba(255,255,255,0.65)",
+                  } as React.CSSProperties
+                }
+              />
+
+              <div>
+                <p className="max-w-sm text-base leading-relaxed text-white/85 sm:text-lg">
+                  Škola nogometa NK Garić Garešnica okuplja najmlađe uzraste
+                  na klupskom igralištu u Garešnici. Dođi na trening i
+                  zaigraj.
+                </p>
+
+                <ul className="mt-7 space-y-3.5">
+                  {POINTS.map((point) => (
+                    <li
+                      key={point}
+                      className="flex items-center gap-3.5 border-b border-white/20 pb-3.5 text-base font-medium"
+                    >
+                      <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-white">
+                        <Check className="size-3.5 text-club" strokeWidth={3} />
+                      </span>
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="mt-8">
+                <p className="text-sm text-white/85">
+                  Prijava i sve informacije putem kluba.
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  {email && (
+                    <a
+                      href={`mailto:${email}?subject=${encodeURIComponent("Škola nogometa")}`}
+                      className="inline-flex items-center gap-3 rounded-full bg-white py-3 pl-6 pr-3 text-base font-bold text-club transition-transform active:scale-[0.98]"
+                    >
+                      Prijavi dijete
+                      <span className="flex size-8 items-center justify-center rounded-full bg-club">
+                        <ArrowRight className="size-4.5 text-white" strokeWidth={2.5} />
+                      </span>
+                    </a>
+                  )}
+                  {facebook && (
+                    <a
+                      href={facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center rounded-full border border-white/60 px-6 py-3.5 text-base font-bold text-white transition-colors hover:bg-white hover:text-club"
+                    >
+                      Facebook
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </FadeInView>
         </div>
       </div>
     </section>

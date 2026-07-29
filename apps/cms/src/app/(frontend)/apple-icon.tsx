@@ -1,13 +1,10 @@
 import { ImageResponse } from 'next/og'
 
-export const size = { width: 32, height: 32 }
+export const size = { width: 180, height: 180 }
 export const contentType = 'image/png'
 
-/**
- * Znak je travnjak odozgo — središnji krug i središnja linija. Debljine su
- * namjerno velike jer se na 32 px tanke linije izgube.
- */
-export default function Icon() {
+/** Isti znak za iOS početni zaslon; iOS sam zaobljuje rubove. */
+export default function AppleIcon() {
   return new ImageResponse(
     (
       <div
@@ -19,24 +16,23 @@ export default function Icon() {
           justifyContent: 'center',
           position: 'relative',
           background: '#0e1311',
-          borderRadius: 7,
         }}
       >
         <div
           style={{
             position: 'absolute',
-            left: 3,
-            right: 3,
-            height: 2.5,
+            left: 18,
+            right: 18,
+            height: 12,
             background: '#d8ff4b',
           }}
         />
         <div
           style={{
-            width: 15,
-            height: 15,
+            width: 84,
+            height: 84,
             borderRadius: 999,
-            border: '2.5px solid #d8ff4b',
+            border: '12px solid #d8ff4b',
             background: 'transparent',
           }}
         />

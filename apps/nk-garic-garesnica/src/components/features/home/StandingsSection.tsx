@@ -10,69 +10,95 @@ type StandingsSectionProps = {
 /** Koliko ekipa s vrha ide na homepage; ostatak poretka ide na svoju stranicu. */
 const TOP_COUNT = 5;
 
-const HEAD =
-  "py-3.5 font-mono text-[10px] font-medium tracking-[0.2em] text-muted-foreground uppercase";
+/** Isti raspored stupaca dijele zaglavlje i svaki redak. */
+const COLS =
+  "grid grid-cols-[2.75rem_1fr_4.5rem] items-center gap-2 sm:grid-cols-[3rem_1fr_4.5rem_4.5rem_5.5rem] sm:gap-3";
+
+/** Ista meka, slojevita sjena kao kod ostalih kartica na naslovnici. */
+const CARD_SHADOW =
+  "shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)]";
 
 function goalDiff(row: TeamRanking): string {
   const diff = row.goalsFor - row.goalsAgainst;
   return diff > 0 ? `+${diff}` : String(diff);
 }
 
+/**
+ * Redak poretka. Garićev je zaobljeni royal blok umetnut unutar kartice
+ * (isti motiv kao "tile" na karticama rezultata) umjesto pune trake preko
+ * cijele širine — ostali redci nemaju rubove, samo razmak i hover.
+ */
 function StandingsRow({ row, index }: { row: TeamRanking; index: number }) {
   const me = row.highlight;
 
   return (
-    <tr
-      className={
-        me
-          ? "bg-club/6 shadow-[inset_3px_0_0_var(--club)]"
-          : "transition-colors duration-200 hover:bg-secondary/60"
-      }
+    <div
+      role="row"
+      className={`${COLS} rounded-2xl px-3 py-4 transition-colors duration-200 sm:px-4 sm:py-5 ${
+        me ? "bg-club text-white" : "hover:bg-secondary/50"
+      }`}
     >
-      <td
-        className={`py-4 pr-2 pl-4 text-left font-display text-xl tabular-nums ${
-          me ? "text-club" : "text-muted-foreground/60"
+      <span
+        role="cell"
+        className={`font-display text-2xl tabular-nums sm:text-3xl ${
+          me ? "text-white" : "text-muted-foreground/50"
         }`}
       >
         {row.position ?? index + 1}
-      </td>
-      <td className="py-4 pr-2">
-        <div className="flex min-w-0 items-center gap-3">
-          <HnsCrest
-            picture={row.team?.picture}
-            name={row.team?.name}
-            size={28}
-            className="size-7 shrink-0 object-contain"
-          />
-          <span
-            className={`truncate ${me ? "font-bold text-club" : "font-medium text-foreground"}`}
-          >
-            {row.team?.name ?? "-"}
-          </span>
-        </div>
-      </td>
-      <td className="hidden px-3 py-4 text-center font-mono text-sm tabular-nums text-muted-foreground sm:table-cell">
+      </span>
+
+      <span role="cell" className="flex min-w-0 items-center gap-3 sm:gap-4">
+        <HnsCrest
+          picture={row.team?.picture}
+          name={row.team?.name}
+          size={44}
+          className={`size-9 shrink-0 rounded-full object-contain sm:size-11 ${
+            me ? "bg-white" : "bg-background"
+          }`}
+        />
+        <span
+          className={`truncate text-sm sm:text-lg ${
+            me ? "font-bold" : "font-medium text-foreground"
+          }`}
+        >
+          {row.team?.name ?? "-"}
+        </span>
+      </span>
+
+      <span
+        role="cell"
+        className={`hidden text-center font-mono text-base tabular-nums sm:block ${
+          me ? "text-white/80" : "text-muted-foreground"
+        }`}
+      >
         {row.played}
-      </td>
-      <td className="hidden px-3 py-4 text-center font-mono text-sm tabular-nums text-muted-foreground sm:table-cell">
+      </span>
+      <span
+        role="cell"
+        className={`hidden text-center font-mono text-base tabular-nums sm:block ${
+          me ? "text-white/80" : "text-muted-foreground"
+        }`}
+      >
         {goalDiff(row)}
-      </td>
-      <td
-        className={`py-4 pr-4 pl-3 text-right font-display text-2xl tabular-nums ${
-          me ? "text-club" : "text-foreground"
+      </span>
+
+      <span
+        role="cell"
+        className={`text-right font-display text-3xl tabular-nums sm:text-4xl ${
+          me ? "text-white" : "text-foreground"
         }`}
       >
         {row.points}
-      </td>
-    </tr>
+      </span>
+    </div>
   );
 }
 
 /**
- * Tablica na homepageu — vrh poretka plus redak Garića kad je izvan vrha.
- * Asimetrični raspored: naslov u lijevoj koloni, tablica u desnoj, bez card
- * okvira — samo hairline linije. Pobjede, neriješeno, porazi i forma idu na
- * stranicu tablice.
+ * Tablica na homepageu — vrh poretka plus redak Garića kad je izvan vrha, u
+ * jednoj mekano osjenčanoj kartici kao i ostatak naslovnice (semafor,
+ * rezultati, igrači). Pobjede, neriješeno, porazi i forma idu na stranicu
+ * tablice.
  */
 export default function StandingsSection({
   rows,
@@ -87,35 +113,63 @@ export default function StandingsSection({
     mine !== null && !mineIsInTop && (mine.position ?? 0) > TOP_COUNT + 1;
 
   return (
-    <section className="border-t border-border bg-background">
-      <div className="mx-auto grid w-full max-w-350 grid-cols-1 gap-x-12 px-4 py-16 sm:px-6 lg:grid-cols-12 lg:px-10 lg:py-24">
-        <div className="lg:col-span-4">
+    <section className="relative overflow-hidden border-t border-border bg-background">
+      <div className="relative mx-auto w-full max-w-350 px-4 py-16 sm:px-6 lg:px-10 lg:py-24">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <FadeInView>
             <h2 className="font-display text-6xl uppercase leading-[0.9] tracking-tight text-foreground lg:text-8xl">
               Tablica
             </h2>
-            <p className="mt-5 font-mono text-xs text-muted-foreground">
+          </FadeInView>
+          <FadeInView delay={0.08}>
+            <p className="text-base leading-relaxed text-muted-foreground sm:pb-2 sm:text-right">
               {competition ?? "Poredak"} · {rows.length} ekipa
             </p>
           </FadeInView>
         </div>
 
-        <FadeInView delay={0.12} className="mt-10 lg:col-span-8 lg:mt-0">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="border-b-2 border-foreground">
-                <th className={`${HEAD} w-14 pr-2 pl-4 text-left`}>#</th>
-                <th className={`${HEAD} pr-2 text-left`}>Klub</th>
-                <th className={`${HEAD} hidden w-20 px-3 text-center sm:table-cell`}>
-                  Ou
-                </th>
-                <th className={`${HEAD} hidden w-20 px-3 text-center sm:table-cell`}>
-                  +/−
-                </th>
-                <th className={`${HEAD} w-20 pr-4 pl-3 text-right`}>Bod</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
+        <FadeInView delay={0.1}>
+          <div
+            role="table"
+            className={`mt-10 overflow-hidden rounded-[28px] bg-background p-2 sm:mt-14 sm:p-3 ${CARD_SHADOW}`}
+          >
+            <div
+              role="row"
+              className={`${COLS} border-b border-border/70 px-3 pb-3 pt-2 sm:px-4`}
+            >
+              <span
+                role="columnheader"
+                className="font-mono text-[13px] font-medium uppercase tracking-widest text-muted-foreground"
+              >
+                #
+              </span>
+              <span
+                role="columnheader"
+                className="font-mono text-[13px] font-medium uppercase tracking-widest text-muted-foreground"
+              >
+                Klub
+              </span>
+              <span
+                role="columnheader"
+                className="hidden text-center font-mono text-[13px] font-medium uppercase tracking-widest text-muted-foreground sm:block"
+              >
+                Ou
+              </span>
+              <span
+                role="columnheader"
+                className="hidden text-center font-mono text-[13px] font-medium uppercase tracking-widest text-muted-foreground sm:block"
+              >
+                +/-
+              </span>
+              <span
+                role="columnheader"
+                className="text-right font-mono text-[13px] font-medium uppercase tracking-widest text-muted-foreground"
+              >
+                Bod
+              </span>
+            </div>
+
+            <div role="rowgroup" className="space-y-0.5 pt-1">
               {top.map((row, i) => (
                 <StandingsRow
                   key={row.team?.id ?? `${row.position}-${i}`}
@@ -125,21 +179,16 @@ export default function StandingsSection({
               ))}
 
               {hasGap && (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="py-3 pl-4 font-mono text-sm text-muted-foreground"
-                  >
-                    ···
-                  </td>
-                </tr>
+                <div className="px-4 py-2 font-mono text-base tracking-[0.3em] text-muted-foreground">
+                  ···
+                </div>
               )}
 
               {mine && !mineIsInTop && (
                 <StandingsRow row={mine} index={TOP_COUNT} />
               )}
-            </tbody>
-          </table>
+            </div>
+          </div>
         </FadeInView>
       </div>
     </section>

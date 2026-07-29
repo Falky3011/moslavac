@@ -6,10 +6,15 @@ import NewsSection from "@/components/features/home/NewsSection";
 import PlayersSection from "@/components/features/home/PlayersSection";
 import SchoolSection from "@/components/features/home/SchoolSection";
 import StandingsSection from "@/components/features/home/StandingsSection";
-import { SAMPLE_FEATURED, SAMPLE_GRID } from "@/lib/dev/sampleMatches";
+import {
+  SAMPLE_FEATURED,
+  SAMPLE_FIXTURES,
+  SAMPLE_RESULTS,
+} from "@/lib/dev/sampleMatches";
 import { SAMPLE_STANDINGS } from "@/lib/dev/sampleStandings";
 import { fetchAllMatches } from "@/lib/hns/matches";
 import { isFinished } from "@/lib/hns/matchStatus";
+import { fetchPlayerPhotos } from "@/lib/hns/players";
 import { fetchTeamStandings } from "@/lib/hns/standings";
 import { fetchLatestNews } from "@/lib/payload/getNews";
 import { fetchRoster } from "@/lib/payload/getRoster";
@@ -55,9 +60,10 @@ export default async function HomePage() {
   const competitionId =
     seniorMatches.find((m) => m.competition?.id)?.competition?.id ?? null;
   const competitionName = seniorMatches[0]?.competition?.name ?? null;
-  const liveStandings = competitionId
-    ? await fetchTeamStandings({ competitionId })
-    : [];
+  const [liveStandings, playerPhotos] = await Promise.all([
+    competitionId ? fetchTeamStandings({ competitionId }) : [],
+    fetchPlayerPhotos({ personIds: players.map((p) => p.personId) }),
+  ]);
 
   const byKickoff = (
     a: (typeof seniorMatches)[number],
@@ -67,22 +73,35 @@ export default async function HomePage() {
   // "Nadolazeće" = još neodigrane (HNS future upit ionako vraća samo buduće).
   const upcoming = seniorMatches.filter((m) => !isFinished(m)).sort(byKickoff);
   const liveFeatured = upcoming[0] ?? finished.at(-1) ?? null;
-  const liveGrid = [...finished.slice(-2).reverse(), ...upcoming.slice(0, 2)];
+  // Rezultati i termini bez istaknute utakmice — ta je već u traci istaknuta.
+  // Kronološki poredak (najstarije prvo) jer traka ide s lijeva na desno.
+  const liveResults = finished
+    .filter((m) => m.id !== liveFeatured?.id)
+    .slice(-3);
+  const liveFixtures = upcoming
+    .filter((m) => m.id !== liveFeatured?.id)
+    .slice(0, 3);
 
   // Placeholder samo ako HNS nema podataka (npr. dok se ne upiše pravi teamId).
   const featured = liveFeatured ?? SAMPLE_FEATURED;
-  const grid = liveFeatured ? liveGrid : SAMPLE_GRID;
+  const results = liveFeatured ? liveResults : SAMPLE_RESULTS;
+  const fixtures = liveFeatured ? liveFixtures : SAMPLE_FIXTURES;
   const isNext = liveFeatured ? upcoming.length > 0 : true;
   const standings = liveStandings.length > 0 ? liveStandings : SAMPLE_STANDINGS;
   const competition = competitionName ?? "3. NL Središte";
 
   return (
     <>
-      <Hero tenant={tenant} />
-      <MatchSection featured={featured} grid={grid} isNext={isNext} />
+      <Hero tenant={tenant} match={featured} isNext={isNext} />
+      <MatchSection
+        featured={featured}
+        results={results}
+        fixtures={fixtures}
+        isNext={isNext}
+      />
       <NewsSection news={news.slice(0, 3)} crestUrl={crestUrl} />
       <StandingsSection rows={standings} competition={competition} />
-      <PlayersSection players={players} />
+      <PlayersSection players={players} photos={playerPhotos} />
       <HistorySection
         founded={tenant.branding?.founded ?? 1923}
         place={tenant.contact?.city ?? "Garešnica"}

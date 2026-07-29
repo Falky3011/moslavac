@@ -37,10 +37,6 @@ export default function Header({ tenant }: HeaderProps) {
             {tenant.branding?.shortName ?? tenant.displayName}
           </span>
         </Link>
-
-        <span className="font-mono text-[11px] tabular-nums tracking-[0.22em] text-muted-foreground">
-          {tenant.branding?.founded ?? 1923}
-        </span>
       </div>
     </header>
   );

@@ -51,7 +51,7 @@ export default function Hero({ tenant }: HeroProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative isolate flex min-h-[74vh] flex-col justify-end overflow-hidden bg-navy-deep md:min-h-[82vh]"
+      className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden bg-navy-deep"
     >
       {/* Zračni snimak igrališta — full-bleed, u duotonu (grayscale + plavi overlay). */}
       <Image
@@ -63,10 +63,7 @@ export default function Hero({ tenant }: HeroProps) {
         sizes="100vw"
         className="absolute inset-0 object-cover grayscale contrast-125"
       />
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-club mix-blend-color"
-      />
+      <div aria-hidden className="absolute inset-0 bg-club mix-blend-color" />
       {/* Scrim — taman dolje-lijevo (gdje stoji tekst), rasvijetljen gore-desno. */}
       <div
         aria-hidden
@@ -93,9 +90,9 @@ export default function Hero({ tenant }: HeroProps) {
 
       <motion.div
         style={reduce ? undefined : { y: typeY }}
-        className="relative z-10 mx-auto w-full max-w-350 px-4 pb-14 pt-32 sm:px-6 sm:pb-16 md:pb-20 lg:px-10"
+        className="relative z-10 mx-auto flex w-full max-w-350 flex-col items-center px-4 text-center sm:px-6 lg:px-10"
       >
-        <h1 className="font-display uppercase leading-[0.95] text-white">
+        <h1 className="font-display uppercase leading-[0.84] text-white">
           <motion.span
             {...anim(0.1, { x: -36 })}
             className="block text-[clamp(4.6rem,17vw,13.5rem)] tracking-tight"
@@ -104,28 +101,25 @@ export default function Hero({ tenant }: HeroProps) {
           </motion.span>
           <motion.span
             {...anim(0.22, { x: -36 })}
-            className="text-stroke mt-3 block text-[clamp(2.9rem,10.5vw,8.5rem)] tracking-tight sm:mt-5 md:ml-[9vw] md:mt-6"
+            className="text-stroke mt-4 block text-[clamp(2.9rem,10.5vw,8.5rem)] tracking-tight sm:mt-5 md:mt-6"
             style={{ "--text-stroke-color": "#ffffff" } as React.CSSProperties}
           >
             {wordRight}
           </motion.span>
         </h1>
-      </motion.div>
 
-      {/* Godina osnutka — golemi žig u donjem desnom kutu. */}
-      <motion.div
-        {...anim(0.4, { y: 14 })}
-        className="relative z-10 mx-auto mb-6 w-full max-w-350 px-4 text-right sm:px-6 lg:px-10"
-      >
-        <span className="block font-mono text-[0.68rem] uppercase tracking-[0.32em] text-white/55">
-          Osnovan
-        </span>
-        <span
-          className="text-stroke -mt-2 block font-display text-6xl leading-none tracking-tight sm:text-7xl md:text-8xl"
-          style={{ "--text-stroke-color": "#ffffff" } as React.CSSProperties}
-        >
-          {founded}
-        </span>
+        {/* Godina osnutka — ispod naslova, centrirano. */}
+        <motion.div {...anim(0.4, { y: 14 })} className="mt-10">
+          <span className="block font-mono text-[0.68rem] uppercase tracking-[0.32em] text-white/55">
+            Osnovan
+          </span>
+          <span
+            className="text-stroke -mt-2 block font-display text-6xl leading-none tracking-tight sm:text-7xl md:text-8xl"
+            style={{ "--text-stroke-color": "#ffffff" } as React.CSSProperties}
+          >
+            {founded}
+          </span>
+        </motion.div>
       </motion.div>
     </section>
   );

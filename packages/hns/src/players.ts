@@ -28,6 +28,33 @@ export async function fetchPlayerDetails(params: {
   return adaptPlayer(player);
 }
 
+/**
+ * Fotografije igrača iz Cometa, po `personId`. HNS nema endpoint za sastav
+ * momčadi, pa se ide igrač po igrač — pozivi su keširani (`PLAYER_TTL`) i idu
+ * paralelno. Igrači bez fotke se izostavljaju iz mape.
+ */
+export async function fetchPlayerPhotos(params: {
+  personIds: number[];
+}): Promise<Record<number, string>> {
+  const unique = [
+    ...new Set(params.personIds.filter((id) => Number.isFinite(id))),
+  ];
+  if (unique.length === 0) return {};
+
+  const entries = await Promise.all(
+    unique.map(async (personId) => {
+      const player = await fetchPlayerDetails({ personId: String(personId) });
+      return [personId, player?.picture ?? null] as const;
+    }),
+  );
+
+  return Object.fromEntries(
+    entries.filter((entry): entry is readonly [number, string] =>
+      Boolean(entry[1]),
+    ),
+  );
+}
+
 export async function fetchPlayerStats(params: {
   personId: string;
   competitionId: number;

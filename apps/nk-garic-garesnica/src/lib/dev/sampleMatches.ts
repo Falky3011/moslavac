@@ -83,4 +83,5 @@ const m07 = {
 } as unknown as Match;
 
 export const SAMPLE_FEATURED: Match = m06;
-export const SAMPLE_GRID: Match[] = [m05, m04, m06, m07];
+export const SAMPLE_RESULTS: Match[] = [m05, m04];
+export const SAMPLE_FIXTURES: Match[] = [m07];

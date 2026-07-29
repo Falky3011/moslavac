@@ -33,16 +33,22 @@ export default function Footer({ tenant }: FooterProps) {
 
   return (
     <footer className="relative overflow-hidden bg-navy-deep text-white">
-      <div className="mx-auto w-full max-w-350 px-4 pb-10 pt-16 sm:px-6 lg:px-10 lg:pt-20">
-        {/* Golemi wordmark — poster potpis dresa. */}
-        <p
-          aria-hidden
-          className="pointer-events-none select-none font-display text-[13.5vw] uppercase leading-[0.82] tracking-tight text-white/8"
-        >
-          {clubName}
-        </p>
+      {/* Halftone raster — motiv dresa u gornjem desnom kutu plohe. */}
+      <div
+        aria-hidden
+        className="halftone pointer-events-none absolute -right-16 -top-16 hidden h-105 w-105 rotate-18 opacity-15 md:block"
+        style={
+          {
+            "--halftone-size": "15px",
+            "--halftone-color": "rgba(255,255,255,0.6)",
+            maskImage:
+              "radial-gradient(circle at 35% 60%, black 0%, black 22%, transparent 62%)",
+          } as React.CSSProperties
+        }
+      />
 
-        <div className="mt-12 grid grid-cols-1 gap-12 border-t border-white/15 pt-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="relative mx-auto w-full max-w-350 px-4 pt-16 sm:px-6 lg:px-10 lg:pt-20">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
           {/* Klub */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link
@@ -150,6 +156,15 @@ export default function Footer({ tenant }: FooterProps) {
           </p>
           <p>Sva prava pridržana</p>
         </div>
+
+        {/* Golemi wordmark — poster potpis dresa, namjerno odrezan donjim
+            rubom footera (translate prema dolje unutar overflow-hidden). */}
+        <p
+          aria-hidden
+          className="pointer-events-none mt-8 translate-y-[24%] select-none whitespace-nowrap text-center font-display text-[13vw] uppercase leading-[0.78] tracking-tight text-white/8"
+        >
+          {clubName}
+        </p>
       </div>
     </footer>
   );

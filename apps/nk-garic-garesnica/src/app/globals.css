@@ -10,9 +10,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-anton);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-heading);
+  --font-mono: var(--font-mono-club);
   --color-club: var(--club);
   --color-club-red: var(--club-red);
   --color-navy: var(--navy);
@@ -172,6 +172,13 @@
     font-size: 1rem;
     line-height: 1.6;
     overflow-x: clip;
+  }
+  /* Big Shoulders je varijabilan: default mu je weight 400 i opsz 14 — tanko i
+     tekstualno. Naslovi traže display rez i tešku težinu; utility klasa
+     (font-black) i dalje pregazi ovaj default. */
+  .font-display {
+    font-weight: 800;
+    font-variation-settings: "opsz" 72;
   }
   ::selection {
     background: var(--club);

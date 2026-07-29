@@ -1,7 +1,9 @@
 "use client";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
+import { getCometImageUrl } from "@/lib/hns/imageUrl";
 import type { RosterEntry, RosterPosition } from "@/types/roster";
 
 const POSITION_LABEL: Record<Exclude<RosterPosition, "trener">, string> = {
@@ -19,56 +21,116 @@ function splitName(name: string): { first: string; last: string } {
 }
 
 /**
- * Kartica igrača. Igrači nemaju fotografije, pa kartica ostaje tipografska:
- * broj dresa, ime, linija. Sve ostalo je bjelina.
+ * Kartica igrača. S fotografijom iz Cometa slika nosi karticu, a broj dresa
+ * stoji kao iscrtani žig preko nje; bez fotografije broj preuzima cijelu
+ * plohu i na hover se "izveze" (stroke → puna boja).
  */
-function PlayerCard({ player }: { player: RosterEntry }) {
+function PlayerCard({
+  player,
+  photo,
+}: {
+  player: RosterEntry;
+  photo: string | null;
+}) {
   const { first, last } = splitName(player.displayName);
   const position =
     player.position !== "trener" ? POSITION_LABEL[player.position] : null;
+  const number =
+    player.jerseyNumber !== null
+      ? String(player.jerseyNumber).padStart(2, "0")
+      : "-";
 
-  return (
-    <article className="group relative flex h-80 w-56 shrink-0 snap-start flex-col justify-between overflow-hidden border border-border bg-card p-6 transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-club/40 hover:shadow-[0_16px_44px_-20px_oklch(0.5_0.17_262/0.3)] sm:h-88 sm:w-64">
-      {/* Halftone raster s dresa — izranja na hover. */}
-      <span
-        aria-hidden
-        className="halftone halftone-fade-t pointer-events-none absolute inset-x-0 bottom-0 h-2/5 opacity-0 transition-opacity duration-300 group-hover:opacity-25"
-      />
-
-      {/* Broj dresa — golemi condensed broj, glavni motiv kartice. */}
-      {player.jerseyNumber !== null && (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute -right-3 -top-4 font-display text-[8.5rem] leading-none tabular-nums text-club/10 transition-colors duration-300 group-hover:text-club/20"
-        >
-          {player.jerseyNumber}
-        </span>
-      )}
-
-      <div className="relative flex items-start justify-between">
-        <span className="font-display text-xl tabular-nums text-club">
-          {player.jerseyNumber === null
-            ? "-"
-            : String(player.jerseyNumber).padStart(2, "0")}
-        </span>
+  if (photo) {
+    return (
+      <article className="group relative flex h-100 w-64 shrink-0 snap-start flex-col overflow-hidden rounded-[28px] bg-background shadow-[0_1px_2px_rgba(15,23,42,0.04),0_20px_36px_-22px_rgba(15,23,42,0.35)] transition-transform duration-300 ease-out hover:-translate-y-1 sm:h-112 sm:w-72">
         {player.captain && (
-          <span className="font-mono text-[10px] font-semibold tracking-[0.2em] text-club uppercase">
+          <span className="absolute right-4 top-4 z-20 rounded-full bg-white/90 px-3 py-1 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-club">
             Kapetan
           </span>
         )}
+
+        <div className="relative flex-1 overflow-hidden bg-secondary">
+          <Image
+            src={getCometImageUrl(photo)}
+            alt={player.displayName}
+            fill
+            sizes="272px"
+            className="object-cover object-[center_28%] transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+          />
+          {/* Blagi scrim prema dnu da broj dresa ostane čitljiv na svakoj fotki. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to top, oklch(0.14 0.05 262 / 0.55), transparent 42%)",
+            }}
+          />
+          <span
+            aria-hidden
+            className="text-stroke pointer-events-none absolute bottom-2 left-4 font-display text-[4.5rem] leading-none tabular-nums opacity-80"
+            style={{ "--text-stroke-color": "#ffffff" } as React.CSSProperties}
+          >
+            {number}
+          </span>
+        </div>
+
+        <div className="relative border-t border-border p-5">
+          {position && (
+            <p className="font-mono text-[13px] uppercase tracking-widest text-muted-foreground">
+              {position}
+            </p>
+          )}
+          <div className="mt-3 h-0.5 w-8 rounded-full bg-club transition-[width] duration-300 ease-out group-hover:w-14" />
+          {first && <p className="mt-4 text-base text-muted-foreground">{first}</p>}
+          <h3 className="mt-1 font-display text-[2rem] uppercase leading-[1.02] tracking-wide text-foreground">
+            {last}
+          </h3>
+        </div>
+      </article>
+    );
+  }
+
+  return (
+    <article className="group relative flex h-100 w-64 shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-border bg-card transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-club/40 hover:shadow-[0_16px_44px_-20px_oklch(0.5_0.17_262/0.3)] sm:h-112 sm:w-72">
+      {player.captain && (
+        <span className="absolute right-4 top-4 z-10 rounded-full bg-club/10 px-3 py-1 font-mono text-xs font-semibold tracking-[0.08em] text-club uppercase">
+          Kapetan
+        </span>
+      )}
+
+      {/* Broj dresa — kao na leđima: iscrtan uvijek, izvezen (puna boja) na hover. */}
+      <div className="relative flex flex-1 items-center justify-center overflow-hidden">
+        <span
+          aria-hidden
+          className="halftone halftone-fade-t pointer-events-none absolute inset-x-0 bottom-0 h-1/2 opacity-0 transition-opacity duration-300 group-hover:opacity-20"
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute font-display text-[7rem] leading-none tabular-nums text-club opacity-0 transition-opacity duration-300 group-hover:opacity-100 sm:text-[8rem]"
+        >
+          {number}
+        </span>
+        <span
+          aria-hidden
+          className="text-stroke pointer-events-none relative font-display text-[7rem] leading-none tabular-nums transition-opacity duration-300 group-hover:opacity-0 sm:text-[8rem]"
+          style={{ "--text-stroke-color": "var(--club)" } as React.CSSProperties}
+        >
+          {number}
+        </span>
       </div>
 
-      <div className="relative">
+      <div className="relative border-t border-border p-5">
         {position && (
-          <p className="font-mono text-[10px] tracking-[0.28em] text-muted-foreground uppercase">
+          <p className="font-mono text-[13px] tracking-widest text-muted-foreground uppercase">
             {position}
           </p>
         )}
-        <div className="mt-3 h-0.5 w-8 bg-club transition-[width] duration-300 ease-out group-hover:w-14" />
+        <div className="mt-3 h-0.5 w-8 rounded-full bg-club transition-[width] duration-300 ease-out group-hover:w-14" />
         {first && (
-          <p className="mt-4 text-sm text-muted-foreground">{first}</p>
+          <p className="mt-4 text-base text-muted-foreground">{first}</p>
         )}
-        <h3 className="mt-1 font-display text-3xl leading-[1.02] tracking-wide text-foreground uppercase">
+        <h3 className="mt-1 font-display text-[2rem] leading-[1.02] tracking-wide text-foreground uppercase">
           {last}
         </h3>
       </div>
@@ -82,8 +144,10 @@ function PlayerCard({ player }: { player: RosterEntry }) {
  */
 export default function PlayersCarousel({
   players,
+  photos,
 }: {
   players: RosterEntry[];
+  photos: Record<number, string>;
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
@@ -112,17 +176,21 @@ export default function PlayersCarousel({
       <div
         ref={scrollerRef}
         onScroll={onScroll}
-        className="-my-4 flex snap-x snap-mandatory gap-4 overflow-x-auto py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="-my-8 flex snap-x snap-mandatory gap-4 overflow-x-auto py-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {players.map((player) => (
-          <PlayerCard key={player.id} player={player} />
+          <PlayerCard
+            key={player.id}
+            player={player}
+            photo={photos[player.personId] ?? null}
+          />
         ))}
       </div>
 
       <div className="mt-8 flex items-center gap-5 pr-4 sm:pr-6 lg:pr-10">
-        <div className="h-px flex-1 bg-border">
+        <div className="h-1 flex-1 rounded-full bg-border">
           <div
-            className="h-0.5 bg-club transition-[width] duration-150 ease-out"
+            className="h-1 rounded-full bg-club transition-[width] duration-150 ease-out"
             style={{ width: `${Math.max(8, progress * 100)}%` }}
           />
         </div>
@@ -132,18 +200,18 @@ export default function PlayersCarousel({
             onClick={() => scrollBy(-1)}
             disabled={atStart}
             aria-label="Prethodni igrači"
-            className="flex size-11 items-center justify-center border border-border text-foreground transition-[transform,background-color,border-color,opacity] duration-150 ease-out hover:border-club/50 hover:bg-secondary active:scale-[0.97] disabled:pointer-events-none disabled:opacity-30"
+            className="flex size-12 items-center justify-center rounded-full border border-border text-foreground transition-[transform,background-color,border-color,opacity] duration-150 ease-out hover:border-club/50 hover:bg-secondary active:scale-[0.97] disabled:pointer-events-none disabled:opacity-30"
           >
-            <ArrowLeft className="size-4" strokeWidth={2} />
+            <ArrowLeft className="size-4.5" strokeWidth={2} />
           </button>
           <button
             type="button"
             onClick={() => scrollBy(1)}
             disabled={atEnd}
             aria-label="Sljedeći igrači"
-            className="flex size-11 items-center justify-center border border-border text-foreground transition-[transform,background-color,border-color,opacity] duration-150 ease-out hover:border-club/50 hover:bg-secondary active:scale-[0.97] disabled:pointer-events-none disabled:opacity-30"
+            className="flex size-12 items-center justify-center rounded-full border border-border text-foreground transition-[transform,background-color,border-color,opacity] duration-150 ease-out hover:border-club/50 hover:bg-secondary active:scale-[0.97] disabled:pointer-events-none disabled:opacity-30"
           >
-            <ArrowRight className="size-4" strokeWidth={2} />
+            <ArrowRight className="size-4.5" strokeWidth={2} />
           </button>
         </div>
       </div>
