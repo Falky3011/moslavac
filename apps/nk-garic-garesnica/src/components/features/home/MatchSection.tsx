@@ -33,9 +33,12 @@ function isPlayed(m: Match): boolean {
   return m.liveStatus === "PLAYED";
 }
 
+/** HNS ponekad nema `matchDay`, a `round` vrati kao goli broj ("30"). */
 function roundLabel(m: Match): string {
   if (m.matchDay != null) return `${m.matchDay}. kolo`;
-  return m.round ?? "";
+  const round = m.round?.trim();
+  if (!round) return "";
+  return /^\d+$/.test(round) ? `${round}. kolo` : round;
 }
 
 const OUTCOME_LABEL: Record<MatchOutcome, string> = {
@@ -359,7 +362,11 @@ function FeaturedPoster({ match, isNext }: { match: Match; isNext: boolean }) {
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center gap-4 px-6 py-8 text-center">
-          <p className="line-clamp-2 font-display uppercase leading-[0.87] tracking-tight text-[clamp(1.7rem,3.8vw,2.75rem)] text-white">
+          {/* `line-clamp` postavlja `overflow: hidden`, a `leading` < 1 skraćuje
+              kutiju prvog reda ispod visine glifa — bez `pt` se kvačice (Ć, Š)
+              odrežu. Padding je unutar overflow kutije, pa vraća prostor bez
+              popuštanja proreda. */}
+          <p className="line-clamp-2 pt-[0.2em] font-display uppercase leading-[0.87] tracking-tight text-[clamp(1.7rem,3.8vw,2.75rem)] text-white">
             {match.homeTeam?.name ?? "-"}
           </p>
 
@@ -380,7 +387,7 @@ function FeaturedPoster({ match, isNext }: { match: Match; isNext: boolean }) {
           </div>
 
           <p
-            className="text-stroke line-clamp-2 font-display uppercase leading-[0.87] tracking-tight text-[clamp(1.7rem,3.8vw,2.75rem)]"
+            className="text-stroke line-clamp-2 pt-[0.2em] font-display uppercase leading-[0.87] tracking-tight text-[clamp(1.7rem,3.8vw,2.75rem)]"
             style={{ "--text-stroke-color": "#ffffff" } as React.CSSProperties}
           >
             {match.awayTeam?.name ?? "-"}

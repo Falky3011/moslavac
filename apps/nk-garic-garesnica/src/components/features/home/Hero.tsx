@@ -8,7 +8,7 @@ import {
 } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
-import type { FrontendTenant } from "@/lib/payload/types";
+import type { FrontendTenant, PayloadMedia } from "@/lib/payload/types";
 
 type HeroProps = {
   tenant: FrontendTenant;
@@ -29,8 +29,14 @@ export default function Hero({ tenant }: HeroProps) {
     offset: ["start start", "end start"],
   });
   const typeY = useTransform(scrollYProgress, [0, 1], [0, 36]);
+  // Grb se pomiče sporije od tipografije — dubina, ne pokret.
+  const crestY = useTransform(scrollYProgress, [0, 1], [0, 12]);
 
   const founded = tenant.branding?.founded ?? 1923;
+  const crest =
+    tenant.branding?.logo && typeof tenant.branding.logo === "object"
+      ? (tenant.branding.logo as PayloadMedia)
+      : null;
   const [first, ...rest] = tenant.displayName.replace(/^NK\s+/i, "").split(" ");
   const wordLeft = first ?? "Garić";
   const wordRight = rest.join(" ") || "Garešnica";
@@ -88,10 +94,34 @@ export default function Hero({ tenant }: HeroProps) {
         }
       />
 
+
       <motion.div
         style={reduce ? undefined : { y: typeY }}
         className="relative z-10 mx-auto flex w-full max-w-350 flex-col items-center px-4 text-center sm:px-6 lg:px-10"
       >
+        {/* Grb otvara lockup: hairline — grb — hairline, pa naziv, pa godina.
+            Linije daju grbu mjesto u kompoziciji; bez njih lebdi. */}
+        {crest?.url && (
+          <motion.div
+            {...anim(0, { y: 18 })}
+            className="mb-8 flex w-full max-w-md items-center gap-5 sm:mb-10 sm:gap-6"
+          >
+            <span className="h-px flex-1 bg-linear-to-r from-transparent to-white/45" />
+            <span className="relative h-14 w-14 shrink-0 sm:h-16 sm:w-16">
+              <Image
+                src={crest.url}
+                alt=""
+                aria-hidden
+                fill
+                priority
+                sizes="64px"
+                className="object-contain"
+              />
+            </span>
+            <span className="h-px flex-1 bg-linear-to-l from-transparent to-white/45" />
+          </motion.div>
+        )}
+
         <h1 className="font-display uppercase leading-[0.84] text-white">
           <motion.span
             {...anim(0.1, { x: -36 })}
@@ -114,7 +144,7 @@ export default function Hero({ tenant }: HeroProps) {
             Osnovan
           </span>
           <span
-            className="text-stroke -mt-2 block font-display text-6xl leading-none tracking-tight sm:text-7xl md:text-8xl"
+            className="text-stroke mt-1 block font-display text-6xl leading-none tracking-tight sm:-mt-1 sm:text-7xl md:-mt-2 md:text-8xl"
             style={{ "--text-stroke-color": "#ffffff" } as React.CSSProperties}
           >
             {founded}

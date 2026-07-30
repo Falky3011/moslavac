@@ -6,12 +6,6 @@ import NewsSection from "@/components/features/home/NewsSection";
 import PlayersSection from "@/components/features/home/PlayersSection";
 import SchoolSection from "@/components/features/home/SchoolSection";
 import StandingsSection from "@/components/features/home/StandingsSection";
-import {
-  SAMPLE_FEATURED,
-  SAMPLE_FIXTURES,
-  SAMPLE_RESULTS,
-} from "@/lib/dev/sampleMatches";
-import { SAMPLE_STANDINGS } from "@/lib/dev/sampleStandings";
 import { fetchAllMatches } from "@/lib/hns/matches";
 import { isFinished } from "@/lib/hns/matchStatus";
 import { fetchPlayerPhotos } from "@/lib/hns/players";
@@ -72,37 +66,28 @@ export default async function HomePage() {
   const finished = seniorMatches.filter(isFinished).sort(byKickoff);
   // "Nadolazeće" = još neodigrane (HNS future upit ionako vraća samo buduće).
   const upcoming = seniorMatches.filter((m) => !isFinished(m)).sort(byKickoff);
-  const liveFeatured = upcoming[0] ?? finished.at(-1) ?? null;
+  const featured = upcoming[0] ?? finished.at(-1) ?? null;
   // Rezultati i termini bez istaknute utakmice — ta je već u traci istaknuta.
   // Kronološki poredak (najstarije prvo) jer traka ide s lijeva na desno.
-  const liveResults = finished
-    .filter((m) => m.id !== liveFeatured?.id)
-    .slice(-3);
-  const liveFixtures = upcoming
-    .filter((m) => m.id !== liveFeatured?.id)
-    .slice(0, 3);
-
-  // Placeholder samo ako HNS nema podataka (npr. dok se ne upiše pravi teamId).
-  const featured = liveFeatured ?? SAMPLE_FEATURED;
-  const results = liveFeatured ? liveResults : SAMPLE_RESULTS;
-  const fixtures = liveFeatured ? liveFixtures : SAMPLE_FIXTURES;
-  const isNext = liveFeatured ? upcoming.length > 0 : true;
-  const standings = liveStandings.length > 0 ? liveStandings : SAMPLE_STANDINGS;
-  const competition = competitionName ?? "3. NL Središte";
+  const results = finished.filter((m) => m.id !== featured?.id).slice(-3);
+  const fixtures = upcoming.filter((m) => m.id !== featured?.id).slice(0, 3);
+  const isNext = upcoming.length > 0;
 
   return (
     <>
       {/* Hero nosi samo identitet kluba. Istaknutu utakmicu prikazuje
           MatchSection odmah ispod, pa je hero ne duplicira. */}
       <Hero tenant={tenant} />
-      <MatchSection
-        featured={featured}
-        results={results}
-        fixtures={fixtures}
-        isNext={isNext}
-      />
+      {featured && (
+        <MatchSection
+          featured={featured}
+          results={results}
+          fixtures={fixtures}
+          isNext={isNext}
+        />
+      )}
       <NewsSection news={news.slice(0, 3)} crestUrl={crestUrl} />
-      <StandingsSection rows={standings} competition={competition} />
+      <StandingsSection rows={liveStandings} competition={competitionName} />
       <PlayersSection players={players} photos={playerPhotos} />
       <HistorySection
         founded={tenant.branding?.founded ?? 1923}
