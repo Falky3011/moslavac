@@ -14,11 +14,15 @@ export const BRAND = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://klubara.com',
 } as const
 
-/** TODO: dopuni prije Stripe verifikacije. */
+/** TODO: dopuni e-poštu i telefon prije Stripe verifikacije. */
 export const LEGAL = {
-  entity: 'Adriano Faletar, obrt za usluge', // TODO
-  address: 'Ulica i broj, 10000 Zagreb', // TODO
-  oib: '00000000000', // TODO
+  entity: 'Caps Lock, obrt za računalne djelatnosti, vl. Marko Sandalj',
+  address: 'Ulica Lavoslava Švarca 3, 10000 Zagreb',
+  oib: '98158982142',
+  /** Matični broj obrta (MB). */
+  mb: '99203626',
+  /** NKD 2007: 62.09 — ostale uslužne djelatnosti u vezi s IT-om i računalima. */
+  activity: '62.09 Ostale uslužne djelatnosti u vezi s informacijskom tehnologijom i računalima',
   email: 'kontakt@klubara.com', // TODO
   phone: '+385 91 000 0000', // TODO
   /** Prikazuje se u uvjetima; paušalni obrt nije u sustavu PDV-a. */
@@ -31,13 +35,13 @@ export const PRICING = {
    * kontakt i pravila otkazivanja. Postavi na `true` ako ipak želiš iznos na
    * stranici; sve sekcije se same prilagode.
    */
-  showPrice: true,
+  showPrice: false,
   monthly: 50,
   yearly: 500,
   currency: 'EUR',
   trialDays: 30,
   includes: [
-    'Izrada i dizajn stranice s grbom i bojama kluba',
+    'Dizajn i izrada stranice po vašem klubu, ne gotov predložak',
     'Automatski rezultati, tablica, raspored i strijelci',
     'Hosting, domena, SSL certifikat i sigurnosne kopije',
     'Pristup CMS-u za novosti, galeriju i dokumente',

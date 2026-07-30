@@ -45,8 +45,8 @@ export function Clubs() {
               transition={{ duration: 0.5 }}
             >
               <p className="max-w-xl text-[17px] leading-relaxed text-white/55">
-                Svaka stranica nosi boje i grb svog kluba, a ispod je ista platforma. Otvorite ih i
-                provjerite jesu li rezultati i tablica ažurni — nitko iz kluba ih ne upisuje.
+                Otvorite ih jednu za drugom — dizajn nijedne nije isti. Zajedničko im je samo ono
+                ispod: rezultati i tablica koje nitko iz kluba ne upisuje.
               </p>
             </MotionPreset>
           </div>

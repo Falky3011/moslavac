@@ -28,7 +28,7 @@ const STEPS: Step[] = [
     icon: <PenTool />,
     title: 'Radimo demo',
     description:
-      'Stranicu složimo u bojama kluba, s vašim podacima i stvarnim rezultatima, na privremenoj adresi.',
+      'Dizajn crtamo za vaš klub: raspored, tipografija, fotografije. Demo ide na privremenu adresu, s vašim stvarnim rezultatima.',
     progress: 60,
     duration: '~3 dana',
   },

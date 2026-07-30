@@ -14,7 +14,7 @@ export const FAQ: FaqItem[] = [
   {
     question: 'Koliko traje izrada?',
     answer:
-      'Demo s grbom i bojama kluba obično je gotov u nekoliko dana. Objava uživo ovisi o tome koliko brzo dobijemo domenu i sadržaj o klubu.',
+      'Prvi demo, s vašim dizajnom i stvarnim rezultatima, obično je gotov u nekoliko dana. Objava uživo ovisi o tome koliko brzo dobijemo domenu i sadržaj o klubu.',
   },
   {
     question: 'Postoji li zaseban trošak postavljanja?',

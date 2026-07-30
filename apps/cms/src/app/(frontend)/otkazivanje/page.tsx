@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { LegalPage } from '@/marketing/components/LegalPage'
-import { BRAND, LEGAL, PRICING, formatPrice } from '@/marketing/config'
+import { BRAND, LEGAL, PRICING } from '@/marketing/config'
 
 export const metadata: Metadata = {
   title: 'Otkazivanje i povrat',

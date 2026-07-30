@@ -31,7 +31,7 @@ const PLANS: Plan[] = [
     buttonText: 'Zatražite ponudu',
     buttonHref: DEMO_ANCHOR,
     features: [
-      'Stranica u bojama i s grbom vašeg kluba',
+      'Dizajn crtan za vaš klub, ne gotov predložak',
       'Vlastita domena i SSL certifikat',
       'Hosting i sigurnosne kopije',
       'Pristup CMS-u za novosti, galeriju i dokumente',
