@@ -47,11 +47,11 @@ export default function NewsArticleHero({
         <>
           <div
             aria-hidden
-            className="absolute -top-[16vw] left-[12%] -z-20 size-[50vw] rounded-full bg-club/25 blur-[120px]"
+            className="absolute -top-[calc(16vw+120px)] left-[calc(12%-120px)] -z-20 size-[calc(50vw+240px)] opacity-25 glow-club"
           />
           <div
             aria-hidden
-            className="absolute -right-[12vw] top-1/3 -z-20 size-[38vw] rounded-full bg-club/15 blur-[100px]"
+            className="absolute -right-[calc(12vw+100px)] top-[calc(33.333%-100px)] -z-20 size-[calc(38vw+200px)] opacity-15 glow-club"
           />
           <div
             aria-hidden

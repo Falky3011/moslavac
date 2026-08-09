@@ -58,7 +58,7 @@ export default function FirstTeamCarousel({
 			{/* Brand glow */}
 			<div
 				aria-hidden
-				className="pointer-events-none absolute -right-40 top-1/4 size-[32rem] rounded-full bg-club/20 blur-[120px]"
+				className="pointer-events-none absolute -right-70 top-[calc(25%-120px)] size-188 opacity-20 glow-club"
 			/>
 
 			<div className="relative mx-auto w-full max-w-7xl space-y-14 px-4 py-20 sm:py-28">

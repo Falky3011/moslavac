@@ -77,27 +77,26 @@ export default function MatchHero({
   return (
     <section className="dark relative isolate -mt-20 flex min-h-[62svh] w-full items-center overflow-hidden bg-navy-deep pt-20 text-foreground">
       {/* Matchday photo behind the scoreboard. Flat navy read as an empty box —
-          the dark needs something to be dark ABOUT. Same grayscale + club-blue
-          duotone treatment as ComeToMatchSection, so it stays one language. */}
+          the dark needs something to be dark ABOUT. Same club-blue duotone as
+          ComeToMatchSection, so it stays one language. */}
       <ParallaxImage
-        src="/game.jpg"
+        src="/game-club.jpg"
         alt=""
         sizes="100vw"
         priority
         className="absolute inset-0 -z-30"
-        imageClassName="grayscale opacity-45 object-cover"
+        imageClassName="opacity-45 object-cover"
         strength={12}
       />
-      <div aria-hidden className="absolute inset-0 -z-20 bg-club/30 mix-blend-color" />
 
       {/* Floodlight glows */}
       <div
         aria-hidden
-        className="absolute -top-[18vw] left-[12%] -z-20 size-[52vw] rounded-full bg-club/25 blur-[120px]"
+        className="absolute -top-[calc(18vw+120px)] left-[calc(12%-120px)] -z-20 size-[calc(52vw+240px)] opacity-25 glow-club"
       />
       <div
         aria-hidden
-        className="absolute -right-[12vw] top-1/3 -z-20 size-[40vw] rounded-full bg-club/15 blur-[100px]"
+        className="absolute -right-[calc(12vw+100px)] top-[calc(33.333%-100px)] -z-20 size-[calc(40vw+200px)] opacity-15 glow-club"
       />
       {/* Legibility floor: the scoreline must never fight the photo. */}
       <div

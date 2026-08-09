@@ -181,6 +181,71 @@
   color: transparent;
 }
 
+/* Floodlight glow — a soft club-blue pool of light.
+   Painted as a radial gradient, not `bg-club/N blur-[120px]`. A blur() that
+   large makes Safari rasterise the whole layer into an offscreen buffer and
+   redo it on every paint; on iOS that alone costs seconds of first paint and
+   kills scrolling. A gradient paints the same falloff at zero cost.
+   Size the element to the old size PLUS twice the old blur radius; intensity
+   comes from `opacity-N`, matching the old `bg-club/N`. */
+@utility glow-club {
+  background-image: radial-gradient(
+    closest-side,
+    var(--club),
+    color-mix(in oklab, var(--club) 38%, transparent) 50%,
+    transparent 100%
+  );
+}
+
+/* Hero entrance — CSS, not framer-motion.
+   `initial={{ opacity: 0 }}` ships `style="opacity:0"` in the server HTML, so
+   the whole hero stayed invisible until React had hydrated. On a phone that
+   reads as "the page never loaded". CSS animations start at first paint and
+   never depend on JS. */
+@keyframes hero-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes hero-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+@keyframes hero-letter-in {
+  from {
+    transform: translateY(110%);
+  }
+}
+
+@utility hero-enter-backdrop {
+  animation: hero-fade-in 1.4s cubic-bezier(0.25, 0.1, 0.25, 1) both;
+}
+@utility hero-enter-watermark {
+  animation: hero-fade-in 2s cubic-bezier(0.25, 0.1, 0.25, 1) 0.9s both;
+}
+@utility hero-enter-prefix {
+  animation: hero-fade-in 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) 0.5s both;
+}
+@utility hero-enter-letter {
+  /* Per-letter stagger comes from an inline animation-delay. */
+  animation: hero-letter-in 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@utility hero-enter-actions {
+  animation: hero-rise-in 0.7s cubic-bezier(0.25, 0.1, 0.25, 1) 0.95s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-enter-backdrop,
+  .hero-enter-watermark,
+  .hero-enter-prefix,
+  .hero-enter-letter,
+  .hero-enter-actions {
+    animation: none;
+  }
+}
+
 @keyframes marquee {
   to {
     transform: translateX(-50%);

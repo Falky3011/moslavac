@@ -18,9 +18,6 @@ type HeroProps = {
   hasNextMatch: boolean;
 };
 
-const EXPO_OUT = [0.16, 1, 0.3, 1] as const;
-const EASE = [0.25, 0.1, 0.25, 1] as const;
-
 export default function Hero({ tenant, hasNextMatch }: HeroProps) {
   const reduced = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
@@ -67,35 +64,33 @@ export default function Hero({ tenant, hasNextMatch }: HeroProps) {
       onPointerLeave={resetPointer}
       className="dark relative isolate -mt-20 flex min-h-svh w-full flex-col overflow-hidden bg-navy-deep text-foreground"
     >
-      {/* Floodlit photo backdrop — grayscale shot tinted club-blue */}
+      {/* Floodlit photo backdrop. The club-blue duotone is baked into the file
+          (scripts/bake-duotone.mjs) — doing it live with `mix-blend-color`
+          stalled first paint for seconds on iOS. */}
       <motion.div
         aria-hidden
-        className="absolute inset-0 -z-30"
+        className="hero-enter-backdrop absolute inset-0 -z-30"
         style={reduced ? undefined : { y: bgY }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.4, ease: EASE }}
       >
         <Image
-          src="/naslovna.jpg"
+          src="/naslovna-club.jpg"
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-50 grayscale"
+          className="object-cover opacity-50"
         />
-        <div className="absolute inset-0 bg-club mix-blend-color" />
         <div className="absolute inset-0 bg-linear-to-b from-navy-deep/90 via-navy-deep/55 to-navy-deep" />
       </motion.div>
 
       {/* Floodlight glows */}
       <div
         aria-hidden
-        className="absolute -top-[20vw] left-[15%] -z-20 size-[55vw] rounded-full bg-club/25 blur-[120px]"
+        className="absolute -top-[calc(20vw+120px)] left-[calc(15%-120px)] -z-20 size-[calc(55vw+240px)] opacity-25 glow-club"
       />
       <div
         aria-hidden
-        className="absolute -right-[10vw] top-1/3 -z-20 size-[38vw] rounded-full bg-club/15 blur-[100px]"
+        className="absolute -right-[calc(10vw+100px)] top-[calc(33.333%-100px)] -z-20 size-[calc(38vw+200px)] opacity-15 glow-club"
       />
 
       {/* Centre stage */}
@@ -109,10 +104,7 @@ export default function Hero({ tenant, hasNextMatch }: HeroProps) {
           {founded && (
             <motion.span
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 block -translate-x-1/2 -translate-y-1/2 select-none font-display font-black leading-none text-stroke [--text-stroke-color:color-mix(in_oklab,var(--chalk)_14%,transparent)] text-[34vw] md:text-[22vw]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2, delay: 0.9, ease: EASE }}
+              className="hero-enter-watermark pointer-events-none absolute left-1/2 top-1/2 -z-10 block -translate-x-1/2 -translate-y-1/2 select-none font-display font-black leading-none text-stroke [--text-stroke-color:color-mix(in_oklab,var(--chalk)_14%,transparent)] text-[34vw] md:text-[22vw]"
               style={
                 reduced
                   ? undefined
@@ -133,15 +125,12 @@ export default function Hero({ tenant, hasNextMatch }: HeroProps) {
             className="relative select-none font-display font-black uppercase"
           >
             {prefix && (
-              <motion.span
+              <span
                 aria-hidden
-                className="mb-1 flex items-center justify-center gap-4 text-[clamp(1.4rem,4vw,2.75rem)] leading-none tracking-[0.55em] text-foreground/60 [text-indent:0.55em]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
+                className="hero-enter-prefix mb-1 flex items-center justify-center gap-4 text-[clamp(1.4rem,4vw,2.75rem)] leading-none tracking-[0.55em] text-foreground/60 indent-[0.55em]"
               >
                 {prefix}
-              </motion.span>
+              </span>
             )}
             <motion.span
               aria-hidden
@@ -149,33 +138,22 @@ export default function Hero({ tenant, hasNextMatch }: HeroProps) {
               style={reduced ? undefined : { x: headingX, y: headingPointerY }}
             >
               {letters.map(({ char, key }, i) => (
-                <motion.span
+                <span
                   key={key}
-                  className="inline-block whitespace-pre"
-                  initial={{ y: reduced ? 0 : "110%" }}
-                  animate={{ y: 0 }}
-                  transition={{
-                    duration: 0.85,
-                    delay: 0.3 + i * 0.045,
-                    ease: EXPO_OUT,
-                  }}
+                  className="hero-enter-letter inline-block whitespace-pre"
+                  style={{ animationDelay: `${0.3 + i * 0.045}s` }}
                 >
                   {char}
-                </motion.span>
+                </span>
               ))}
             </motion.span>
           </h1>
         </div>
 
         {/* One clear matchday action; the squad remains available in navigation. */}
-        <motion.div
-          className="mt-10 md:mt-12"
-          initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.95, ease: EASE }}
-        >
+        <div className="hero-enter-actions mt-10 md:mt-12">
           <HeroActions hasNextMatch={hasNextMatch} />
-        </motion.div>
+        </div>
       </motion.div>
     </section>
   );

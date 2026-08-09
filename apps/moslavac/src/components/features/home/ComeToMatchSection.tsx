@@ -12,15 +12,13 @@ export default function ComeToMatchSection() {
 	return (
 		<section className="dark relative isolate w-full overflow-hidden bg-navy-deep text-foreground">
 			<ParallaxImage
-				src="/game.jpg"
+				src="/game-club.jpg"
 				alt="SNK Moslavac utakmica"
 				sizes="100vw"
 				className="absolute inset-0 -z-20"
-				imageClassName="grayscale opacity-70"
+				imageClassName="opacity-70"
 				strength={10}
 			/>
-			{/* Club-blue duotone over the grayscale shot */}
-			<div className="absolute inset-0 -z-10 bg-club/30 mix-blend-color" />
 			<div className="absolute inset-0 -z-10 bg-linear-to-r from-navy-deep/95 via-navy-deep/70 to-navy-deep/30" />
 
 			<div className="mx-auto flex max-w-7xl flex-col items-start gap-8 px-4 py-28 sm:py-40 md:px-6">

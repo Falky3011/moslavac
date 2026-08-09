@@ -49,11 +49,11 @@ export function MatchSection({
         <>
           <div
             aria-hidden
-            className="absolute -top-[14vw] left-[10%] -z-20 size-[44vw] rounded-full bg-club/20 blur-[120px]"
+            className="absolute -top-[calc(14vw+120px)] left-[calc(10%-120px)] -z-20 size-[calc(44vw+240px)] opacity-20 glow-club"
           />
           <div
             aria-hidden
-            className="absolute -bottom-[14vw] right-[8%] -z-20 size-[36vw] rounded-full bg-club/12 blur-[100px]"
+            className="absolute -bottom-[calc(14vw+100px)] right-[calc(8%-100px)] -z-20 size-[calc(36vw+200px)] opacity-[0.12] glow-club"
           />
         </>
       )}

@@ -34,7 +34,7 @@ export default function PreviousAndNextMatchSection({
           {/* Faint centre glow keeps the scoreboard lit */}
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-0 -z-10 h-160 w-240 -translate-x-1/2 rounded-full bg-club/10 blur-[140px]"
+            className="pointer-events-none absolute left-1/2 -top-35 -z-10 h-230 w-310 -translate-x-1/2 opacity-10 glow-club"
           />
           <div className="mx-auto w-full max-w-5xl px-4 py-16 md:py-24">
             <NextMatchHero match={nextMatch} />
