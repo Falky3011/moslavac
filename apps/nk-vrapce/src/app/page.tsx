@@ -10,6 +10,7 @@ import {
 } from "@/components/animations";
 import { CardSlider } from "@/components/features/CardSlider";
 import Hero from "@/components/features/home/Hero";
+import { NextMatch } from "@/components/features/home/NextMatch";
 import { ResultsStrip } from "@/components/features/home/ResultsStrip";
 import { SquadTeaser } from "@/components/features/home/SquadTeaser";
 import { StandingsTable } from "@/components/features/home/StandingsTable";
@@ -18,6 +19,7 @@ import { getRecentForm } from "@/lib/helpers/form";
 import { getHnsTeamId } from "@/lib/hns/client";
 import {
 	fetchCompetitionMatches,
+	fetchMatchSlots,
 	fetchSeniorCompetition,
 } from "@/lib/hns/competitions";
 import { fetchTeamStandings } from "@/lib/hns/standings";
@@ -46,8 +48,16 @@ const priceFormatter = new Intl.NumberFormat("hr-HR", {
 });
 
 export default async function HomePage() {
-	const [tenant, news, featured, albums, roster, standings, matchData] =
-		await Promise.all([
+	const [
+		tenant,
+		news,
+		featured,
+		albums,
+		roster,
+		standings,
+		matchData,
+		nextMatch,
+	] = await Promise.all([
 			getTenant(),
 			fetchLatestNews(),
 			fetchFeaturedEquipment(),
@@ -75,6 +85,20 @@ export default async function HomePage() {
 					return { results: [] };
 				}
 			})(),
+			(async () => {
+				try {
+					const [slots, teamIdStr] = await Promise.all([
+						fetchMatchSlots(),
+						getHnsTeamId(),
+					]);
+					// HNS zna vratiti prazan objekt umjesto null kad utakmice nema.
+					const next = slots.next;
+					if (next?.kickoffAtUtcMs == null) return null;
+					return { match: next, ourTeamId: Number(teamIdStr) };
+				} catch {
+					return null;
+				}
+			})(),
 		]);
 
 	const galleryPreview = albums.slice(0, 3);
@@ -95,6 +119,13 @@ export default async function HomePage() {
 	return (
 		<>
 			<Hero tenant={tenant} />
+
+			{nextMatch && (
+				<NextMatch
+					match={nextMatch.match}
+					ourTeamId={nextMatch.ourTeamId}
+				/>
+			)}
 
 			<ResultsStrip results={matchData.results} />
 
