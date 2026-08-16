@@ -109,14 +109,16 @@ export default function NextMatchBar({ slots }: { slots: MatchSlots }) {
 
         <FadeInView className="mt-14 md:mt-20">
           {/* Scoreboard */}
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-10">
+          {/* Mobitel: timovi u dva stupca, rezultat/countdown u redu ispod.
+              Od `sm` klasični tri-stupčani scoreboard. */}
+          <div className="grid grid-cols-2 items-center gap-x-4 gap-y-10 sm:grid-cols-[1fr_auto_1fr] sm:gap-10">
             <TeamBlock
               picture={match.homeTeam?.picture}
               name={match.homeTeam?.name}
               winner={!hasScore || home! >= away!}
             />
 
-            <div className="flex flex-col items-center gap-5">
+            <div className="order-last col-span-2 flex flex-col items-center gap-5 sm:order-0 sm:col-span-1">
               {hasScore ? (
                 <div className="flex items-baseline gap-3 font-display text-7xl leading-none tabular-nums sm:gap-5 sm:text-9xl">
                   <span

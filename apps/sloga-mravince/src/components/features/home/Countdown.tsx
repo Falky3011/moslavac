@@ -29,19 +29,19 @@ export default function Countdown({ target, className }: CountdownProps) {
   const state = useCountdown(target);
 
   return (
-    <div className={cn("flex items-start gap-2.5 sm:gap-4", className)}>
+    <div className={cn("flex items-start gap-1.5 sm:gap-4", className)}>
       {TILES.map(({ key, forms }, i) => (
-        <div key={key} className="flex items-start gap-2.5 sm:gap-4">
+        <div key={key} className="flex items-start gap-1.5 sm:gap-4">
           {i > 0 && (
             <span
               aria-hidden
-              className="pt-2 font-display text-3xl leading-none text-white/25 sm:text-4xl"
+              className="pt-1.5 font-display text-2xl leading-none text-white/25 sm:pt-2 sm:text-4xl"
             >
               :
             </span>
           )}
           <div className="flex flex-col items-center">
-            <span className="min-w-14 bg-white/6 px-2 py-3 text-center font-display text-4xl leading-none tabular-nums text-white ring-1 ring-white/12 clip-corner sm:min-w-20 sm:text-6xl">
+            <span className="min-w-13 bg-white/6 px-1.5 py-2.5 text-center font-display text-3xl leading-none tabular-nums text-white ring-1 ring-white/12 clip-corner sm:min-w-20 sm:px-2 sm:py-3 sm:text-6xl">
               {state ? String(state[key]).padStart(2, "0") : "––"}
             </span>
             <span className="mt-2 text-[0.58rem] font-bold uppercase tracking-[0.28em] text-white/45">
