@@ -85,12 +85,6 @@ export default function WebshopSection({ url }: { url: string }) {
             >
               <ShoppingBag aria-hidden className="size-4.5 shrink-0" />
               Kupi opremu
-              <span
-                aria-hidden
-                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-              >
-                ↗
-              </span>
               <span className="sr-only">(otvara se u novoj kartici)</span>
             </a>
           </div>
