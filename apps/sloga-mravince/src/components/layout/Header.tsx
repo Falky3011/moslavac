@@ -10,6 +10,8 @@ interface HeaderProps {
 type NavItem = {
   label: string;
   href?: string;
+  /** Vodi izvan stranice — renderira se kao <a> u novoj kartici. */
+  external?: boolean;
 };
 
 const NAV_ITEMS: readonly NavItem[] = [
@@ -31,6 +33,11 @@ export default function Header({ tenant }: HeaderProps) {
       : null;
   const wordmark = tenant.branding?.shortName ?? tenant.displayName;
   const founded = tenant.branding?.founded;
+  const webshopUrl = tenant.social?.webshop;
+  // Webshop je tuđi (JAKO) i vidi se samo kad je link upisan u CMS-u.
+  const navItems: readonly NavItem[] = webshopUrl
+    ? [...NAV_ITEMS, { label: "Webshop", href: webshopUrl, external: true }]
+    : NAV_ITEMS;
 
   return (
     <header className="sticky top-0 z-50 h-20 bg-ink-deep text-chalk">
@@ -60,11 +67,25 @@ export default function Header({ tenant }: HeaderProps) {
           </span>
         </Link>
 
-        <nav aria-label="Glavna navigacija" className="ml-auto hidden md:block">
-          <ul className="flex items-center gap-9">
-            {NAV_ITEMS.map((item) => (
+        <nav aria-label="Glavna navigacija" className="ml-auto hidden lg:block">
+          <ul className="flex items-center gap-6 2xl:gap-9">
+            {navItems.map((item) => (
               <li key={item.label}>
-                {item.href ? (
+                {item.href && item.external ? (
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative pb-1 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-chalk/80 transition-colors hover:text-chalk"
+                  >
+                    {item.label}
+                    <span className="sr-only">(otvara se u novoj kartici)</span>
+                    <span
+                      aria-hidden
+                      className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 bg-club-red transition-transform duration-300 ease-out group-hover:scale-x-100"
+                    />
+                  </a>
+                ) : item.href ? (
                   <Link
                     href={item.href}
                     className="group relative pb-1 text-[0.72rem] font-bold uppercase tracking-[0.22em] text-chalk/80 transition-colors hover:text-chalk"
@@ -89,7 +110,7 @@ export default function Header({ tenant }: HeaderProps) {
           </ul>
         </nav>
 
-        <MobileNav items={NAV_ITEMS} />
+        <MobileNav items={navItems} />
       </div>
     </header>
   );

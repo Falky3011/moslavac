@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 type NavItem = {
   label: string;
   href?: string;
+  /** Vodi izvan stranice — renderira se kao <a> u novoj kartici. */
+  external?: boolean;
 };
 
 /**
@@ -37,7 +39,7 @@ export default function MobileNav({ items }: { items: readonly NavItem[] }) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Otvori navigaciju"
-        className="ml-auto inline-flex size-10 items-center justify-center rounded-md text-chalk transition-colors hover:bg-chalk/10 md:hidden"
+        className="ml-auto inline-flex size-10 items-center justify-center rounded-md text-chalk transition-colors hover:bg-chalk/10 lg:hidden"
       >
         <Menu className="size-6" />
       </button>
@@ -52,7 +54,7 @@ export default function MobileNav({ items }: { items: readonly NavItem[] }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
             />
             <motion.div
               key="panel"
@@ -60,7 +62,7 @@ export default function MobileNav({ items }: { items: readonly NavItem[] }) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
-              className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-ink-deep text-chalk shadow-2xl md:hidden"
+              className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-ink-deep text-chalk shadow-2xl lg:hidden"
             >
               <div className="flex h-20 shrink-0 items-center justify-end border-b border-chalk/10 px-6">
                 <button
@@ -78,7 +80,24 @@ export default function MobileNav({ items }: { items: readonly NavItem[] }) {
                 className="flex flex-col gap-7 px-8 pt-12"
               >
                 {items.map((item, i) =>
-                  item.href ? (
+                  item.href && item.external ? (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setOpen(false)}
+                      className="group flex items-baseline gap-4"
+                    >
+                      <span className="text-[0.6rem] font-bold tabular-nums tracking-[0.3em] text-club-red">
+                        0{i + 1}
+                      </span>
+                      <span className="font-display text-4xl uppercase leading-none tracking-wide transition-colors group-hover:text-club-red">
+                        {item.label}
+                      </span>
+                      <span className="sr-only">(otvara se u novoj kartici)</span>
+                    </a>
+                  ) : item.href ? (
                     <Link
                       key={item.label}
                       href={item.href}

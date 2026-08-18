@@ -32,7 +32,7 @@ function StripHalf({ items }: { items: string[] }) {
 }
 
 /**
- * Crvena heritage marquee traka — potpis između hero-a i sadržaja. Čisti CSS
+ * Crvena heritage marquee traka — najava matchdaya iznad scoreboarda. Čisti CSS
  * marquee (dvije identične polovice, -50% translate), pauzira se za
  * reduced-motion korisnike.
  */

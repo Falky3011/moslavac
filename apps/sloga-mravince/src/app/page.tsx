@@ -9,6 +9,7 @@ import PartnersSection from "@/components/features/home/PartnersSection";
 import PlayersSection from "@/components/features/home/PlayersSection";
 import StadiumSection from "@/components/features/home/StadiumSection";
 import StandingsSection from "@/components/features/home/StandingsSection";
+import WebshopSection from "@/components/features/home/WebshopSection";
 import { formatDateParts } from "@/lib/helpers/date";
 import {
   fetchMatchSlots,
@@ -114,26 +115,30 @@ export default async function HomePage() {
       : logo.url;
 
   const marquee = getNextMatchMarquee(matchSlots, tenant.displayName);
+  const webshopUrl = tenant.social?.webshop ?? null;
 
   return (
     <div>
       {/* Hero puni ekran (viewport minus 5rem header) */}
+
       <div className="flex h-[calc(100svh-5rem)] flex-col">
         <Hero tenant={tenant} news={heroNews} crestSrc={crestSrc} />
       </div>
       {marquee && (
         <MarqueeStrip items={marquee.items} ariaLabel={marquee.ariaLabel} />
       )}
-
       <NewsSection news={allNews} crestSrc={crestSrc} />
+
       <NextMatchBar slots={matchSlots} />
 
-      <StandingsSection rows={standings} />
-      <PartnersSection />
       <PlayersSection players={roster} />
+
+      <StandingsSection rows={standings} />
+      {webshopUrl && <WebshopSection url={webshopUrl} />}
       <StadiumSection />
       <HeritageSection />
       <CtaSection tenant={tenant} />
+      <PartnersSection />
     </div>
   );
 }
