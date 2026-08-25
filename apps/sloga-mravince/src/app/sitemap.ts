@@ -1,6 +1,10 @@
 import type { MetadataRoute } from "next";
 import { buildSitemap } from "@/lib/app-shell/seo/sitemap";
-import { matchSource, newsSource } from "@/lib/app-shell/seo/sources";
+import {
+  matchSource,
+  newsSource,
+  playerSource,
+} from "@/lib/app-shell/seo/sources";
 import { BASE_URL } from "@/lib/siteUrl";
 
 export const revalidate = 3600;
@@ -19,6 +23,7 @@ export default function sitemap(): Promise<MetadataRoute.Sitemap> {
     sources: [
       newsSource({ segment: "/novosti", priority: 0.5 }),
       matchSource({ segment: "/raspored-i-rezultati" }),
+      playerSource({ segment: "/statistika" }),
     ],
   });
 }

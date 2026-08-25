@@ -183,6 +183,7 @@ export const Tenants: CollectionConfig = {
               label: false,
               fields: [
                 { name: 'facebook', label: 'Facebook', type: 'text' },
+                { name: 'instagram', label: 'Instagram', type: 'text' },
                 { name: 'youtube', label: 'YouTube', type: 'text' },
                 { name: 'webshop', label: 'Web trgovina', type: 'text' },
               ],

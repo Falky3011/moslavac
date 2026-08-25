@@ -1,6 +1,8 @@
 import { Mail, MapPin, Navigation, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import { RevealHeading } from "@/components/animations";
+import BreadcrumbJsonLd from "@/lib/app-shell/seo/BreadcrumbJsonLd";
+import { BASE_URL } from "@/lib/siteUrl";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getCometImageUrl } from "@/lib/hns/imageUrl";
@@ -36,6 +38,10 @@ export default async function KlubPage() {
 
   return (
     <div className="mx-auto w-full max-w-screen-xl space-y-24 px-6 py-16 sm:space-y-32 sm:py-24 lg:px-8">
+      <BreadcrumbJsonLd
+        baseUrl={BASE_URL}
+        trail={[{ name: "O klubu", path: "/klub" }]}
+      />
       <Hero
         logoUrl={logoUrl}
         displayName={displayName}

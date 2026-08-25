@@ -1,14 +1,14 @@
 import type { MetadataRoute } from "next";
 import { buildSitemap } from "@/lib/app-shell/seo/sitemap";
 import type { SitemapEntry } from "@/lib/app-shell/seo/sitemap";
-import { matchSource, newsSource } from "@/lib/app-shell/seo/sources";
 import {
-  fetchCurrentSeasonCompetitions,
-  fetchSeniorCompetition,
-} from "@/lib/hns/competitions";
-import { fetchRoster } from "@/lib/payload/getRoster";
+  matchSource,
+  newsSource,
+  playerSource,
+} from "@/lib/app-shell/seo/sources";
+import { fetchCurrentSeasonCompetitions } from "@/lib/hns/competitions";
 import { BASE_URL } from "@/lib/siteUrl";
-import { buildCompetitionSlug, buildPlayerSlug } from "@/lib/helpers/slug";
+import { buildCompetitionSlug } from "@/lib/helpers/slug";
 
 export const revalidate = 3600;
 
@@ -28,29 +28,6 @@ const seasonSource = (): Promise<SitemapEntry[]> =>
       }),
   );
 
-/**
- * Statistička stranica po igraču (/statistika/{igrač}/{natjecanje}) za seniorsku
- * momčad. Inače su siročad — dostupne samo klikom na karticu igrača na /prva-momcad.
- */
-const playerSource = async (): Promise<SitemapEntry[]> => {
-  const [roster, senior] = await Promise.all([
-    fetchRoster(),
-    fetchSeniorCompetition(),
-  ]);
-  if (senior?.id == null) return [];
-  const competitionSlug = buildCompetitionSlug(senior);
-  return roster
-    .filter((entry) => entry.position !== "trener" && entry.personId != null)
-    .map((entry) => ({
-      path: `/statistika/${buildPlayerSlug({
-        personId: entry.personId,
-        name: entry.displayName,
-      })}/${competitionSlug}`,
-      changeFrequency: "weekly",
-      priority: 0.5,
-    }));
-};
-
 export default function sitemap(): Promise<MetadataRoute.Sitemap> {
   return buildSitemap({
     baseUrl: BASE_URL,
@@ -69,7 +46,7 @@ export default function sitemap(): Promise<MetadataRoute.Sitemap> {
       newsSource({ segment: "/novosti", priority: 0.7 }),
       matchSource({ segment: "/utakmice" }),
       seasonSource,
-      playerSource,
+      playerSource({ segment: "/statistika" }),
     ],
   });
 }

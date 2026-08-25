@@ -2,9 +2,15 @@ import "server-only";
 import {
   fetchAllCompetitionMatches,
   fetchCurrentSeasonCompetitions,
+  fetchSeniorCompetition,
 } from "@/lib/hns/competitions";
 import { fetchNewsSitemapEntries } from "@/lib/payload/getNews";
-import { buildMatchSlug } from "@/lib/helpers/slug";
+import { fetchRoster } from "@/lib/payload/getRoster";
+import {
+  buildCompetitionSlug,
+  buildMatchSlug,
+  buildPlayerSlug,
+} from "@/lib/helpers/slug";
 import type { SitemapEntry, SitemapSource } from "./sitemap";
 
 /**
@@ -75,5 +81,41 @@ export function matchSource({
           priority,
         }));
     });
+  };
+}
+
+/**
+ * Statističke stranice pojedinog igrača (`{segment}/{igrač}/{natjecanje}`) za
+ * seniorsku momčad. Bez ovog izvora su siročad — dostupne su samo klikom s
+ * popisa momčadi, pa ih tražilica otkrije kasno ili nikako.
+ */
+export function playerSource({
+  segment,
+  priority = 0.5,
+}: {
+  segment: string;
+  priority?: number;
+}): SitemapSource {
+  return async () => {
+    const [roster, senior] = await Promise.all([
+      fetchRoster(),
+      fetchSeniorCompetition(),
+    ]);
+    if (senior?.id == null) return [];
+    const competitionSlug = buildCompetitionSlug(senior);
+
+    return roster
+      .filter((entry) => entry.position !== "trener" && entry.personId != null)
+      .map((entry): SitemapEntry => {
+        const playerSlug = buildPlayerSlug({
+          personId: entry.personId,
+          name: entry.displayName,
+        });
+        return {
+          path: segmentPath(segment, `${playerSlug}/${competitionSlug}`),
+          changeFrequency: "weekly",
+          priority,
+        };
+      });
   };
 }

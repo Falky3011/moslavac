@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { StaggerContainer, StaggerItem } from "@/components/animations";
+import BreadcrumbJsonLd from "@/lib/app-shell/seo/BreadcrumbJsonLd";
+import { BASE_URL } from "@/lib/siteUrl";
 import { PageHero } from "@/components/layout/PageHero";
 import { fetchNewsPaginated } from "@/lib/payload/getNews";
 import { getTenant } from "@/lib/payload/getTenant";
@@ -40,6 +42,10 @@ export default async function NewsPage({ searchParams }: Props) {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-6 pt-16 pb-24 sm:pt-24 lg:px-8">
+      <BreadcrumbJsonLd
+        baseUrl={BASE_URL}
+        trail={[{ name: "Vijesti", path: "/novosti" }]}
+      />
       <PageHero eyebrow="Novosti kluba" title="Vijesti" />
 
       <div className="mx-auto mt-16 max-w-4xl sm:mt-20">

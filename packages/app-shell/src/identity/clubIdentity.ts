@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { FrontendTenant } from "@/lib/payload/types";
+import type { Facility } from "@/types/hns";
 
 /**
  * Projection of a Tenant into the identity a search engine sees: page metadata
@@ -10,6 +11,27 @@ import type { FrontendTenant } from "@/lib/payload/types";
 type ClubIdentityInput = {
   tenant: FrontendTenant;
   baseUrl: string;
+};
+
+/**
+ * Stadion dolazi iz HNS-a, ne iz Tenanta, pa se predaje zasebno i smije
+ * izostati — JSON-LD kluba mora se izgraditi i kad je HNS nedostupan.
+ */
+type ClubJsonLdInput = ClubIdentityInput & {
+  facility?: Facility | null;
+};
+
+type GeoCoordinates = {
+  "@type": "GeoCoordinates";
+  latitude: number;
+  longitude: number;
+};
+
+type PlaceJsonLd = {
+  "@type": "Place";
+  name: string;
+  address?: PostalAddress;
+  geo?: GeoCoordinates;
 };
 
 type PostalAddress = {
@@ -36,6 +58,8 @@ type OrganizationJsonLd = {
   email?: string;
   telephone?: string;
   sameAs?: string[];
+  location?: PlaceJsonLd;
+  geo?: GeoCoordinates;
 };
 
 type WebSiteJsonLd = {
@@ -97,6 +121,45 @@ function clubAddress(tenant: FrontendTenant): PostalAddress | null {
   };
 }
 
+/**
+ * Stadion kluba kao `Place` s koordinatama. Google lokalne rezultate veže uz
+ * koordinate, a HNS ih isporučuje uz objekt — bez njih se `location` izostavlja
+ * jer je Place bez geo podatka za tražilicu bezvrijedan.
+ */
+function clubVenue(facility: Facility | null | undefined): PlaceJsonLd | null {
+  if (!facility?.name) return null;
+  const { latitude, longitude } = facility;
+  const hasCoords =
+    typeof latitude === "number" &&
+    typeof longitude === "number" &&
+    Number.isFinite(latitude) &&
+    Number.isFinite(longitude);
+  if (!hasCoords) return null;
+
+  const street = facility.address?.trim();
+  const place = facility.place?.trim();
+
+  return {
+    "@type": "Place",
+    name: facility.name,
+    ...(street || place
+      ? {
+          address: {
+            "@type": "PostalAddress" as const,
+            ...(street ? { streetAddress: street } : {}),
+            ...(place ? { addressLocality: place } : {}),
+            addressCountry: "HR" as const,
+          },
+        }
+      : {}),
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude,
+      longitude,
+    },
+  };
+}
+
 export function buildClubMetadata({
   tenant,
   baseUrl,
@@ -133,7 +196,11 @@ export function buildClubMetadata({
   };
 }
 
-export function buildClubJsonLd({ tenant, baseUrl }: ClubIdentityInput): {
+export function buildClubJsonLd({
+  tenant,
+  baseUrl,
+  facility,
+}: ClubJsonLdInput): {
   organization: OrganizationJsonLd;
   website: WebSiteJsonLd;
 } {
@@ -145,9 +212,15 @@ export function buildClubJsonLd({ tenant, baseUrl }: ClubIdentityInput): {
   const founded = tenant.branding?.founded;
   const email = tenant.contact?.email;
   const phone = tenant.contact?.phone;
-  const sameAs = [tenant.social?.facebook, tenant.social?.youtube].filter(
-    (value): value is string => Boolean(value),
-  );
+  // `sameAs` je Googleu potvrda da su klub, profil i trgovina isti entitet, pa
+  // ide svaki javni profil kojim klub raspolaže.
+  const sameAs = [
+    tenant.social?.facebook,
+    tenant.social?.instagram,
+    tenant.social?.youtube,
+    tenant.social?.webshop,
+  ].filter((value): value is string => Boolean(value));
+  const venue = clubVenue(facility);
 
   return {
     organization: {
@@ -165,6 +238,7 @@ export function buildClubJsonLd({ tenant, baseUrl }: ClubIdentityInput): {
       ...(email ? { email } : {}),
       ...(phone ? { telephone: phone } : {}),
       ...(sameAs.length > 0 ? { sameAs } : {}),
+      ...(venue ? { location: venue, geo: venue.geo } : {}),
     },
     website: {
       "@context": "https://schema.org",

@@ -1,4 +1,5 @@
 import type { FrontendTenant } from "@/lib/payload/types";
+import type { Facility } from "@/types/hns";
 import { buildClubJsonLd } from "./clubIdentity";
 
 /**
@@ -8,11 +9,18 @@ import { buildClubJsonLd } from "./clubIdentity";
 export default function ClubJsonLd({
   tenant,
   baseUrl,
+  facility,
 }: {
   tenant: FrontendTenant;
   baseUrl: string;
+  /** Stadion iz HNS-a; izostaje kad je HNS nedostupan. */
+  facility?: Facility | null;
 }) {
-  const { organization, website } = buildClubJsonLd({ tenant, baseUrl });
+  const { organization, website } = buildClubJsonLd({
+    tenant,
+    baseUrl,
+    facility,
+  });
 
   return (
     <>

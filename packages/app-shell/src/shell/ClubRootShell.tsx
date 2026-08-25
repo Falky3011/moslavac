@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import ClubJsonLd from "@/lib/app-shell/identity/ClubJsonLd";
 import Providers from "@/components/providers/Providers";
+import { fetchClubDetails } from "@/lib/hns/team";
 import { getTenant } from "@/lib/payload/getTenant";
 
 /**
@@ -14,6 +15,19 @@ import { getTenant } from "@/lib/payload/getTenant";
  * The Tenant is fetched here rather than passed in; `getTenant` is request
  * cached, so a club layout fetching it again for its own Header costs nothing.
  */
+
+/**
+ * Koordinate stadiona za `SportsOrganization`. HNS je vanjski servis, a ovo je
+ * root layout svake stranice — ispad smije izostaviti `geo`, ne srušiti sajt.
+ */
+async function loadFacility() {
+  try {
+    const team = await fetchClubDetails();
+    return team?.facility ?? null;
+  } catch {
+    return null;
+  }
+}
 
 /** Hosts every club's images come from — preconnected before first paint. */
 const IMAGE_ORIGINS = [
@@ -34,7 +48,7 @@ export default async function ClubRootShell({
   bodyClassName?: string;
   children: React.ReactNode;
 }) {
-  const tenant = await getTenant();
+  const [tenant, facility] = await Promise.all([getTenant(), loadFacility()]);
 
   return (
     <html lang="hr" className={`${fontVariables} antialiased`}>
@@ -44,7 +58,7 @@ export default async function ClubRootShell({
         ))}
       </head>
       <body className={bodyClassName}>
-        <ClubJsonLd tenant={tenant} baseUrl={baseUrl} />
+        <ClubJsonLd tenant={tenant} baseUrl={baseUrl} facility={facility} />
         <Providers tenant={tenant}>{children}</Providers>
         <Analytics />
         <SpeedInsights />

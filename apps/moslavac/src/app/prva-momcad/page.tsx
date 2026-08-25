@@ -10,7 +10,9 @@ export async function generateMetadata(): Promise<Metadata> {
 		alternates: { canonical: "/prva-momcad" },
 	};
 }
+import BreadcrumbJsonLd from "@/lib/app-shell/seo/BreadcrumbJsonLd";
 import { FirstTeamHero } from "@/components/features/first-team/FirstTeamHero";
+import { BASE_URL } from "@/lib/siteUrl";
 import {
 	PlayerGrid,
 	PlayerGridItem,
@@ -96,6 +98,10 @@ export default async function FirstTeamPage() {
 
 	return (
 		<div className="mx-auto w-full max-w-7xl space-y-24 px-6 py-16 sm:space-y-32 sm:py-24 lg:px-8">
+			<BreadcrumbJsonLd
+				baseUrl={BASE_URL}
+				trail={[{ name: "Prva momčad", path: "/prva-momcad" }]}
+			/>
 			<FirstTeamHero
 				totalPlayers={totalPlayers}
 				clubName={tenant.displayName}

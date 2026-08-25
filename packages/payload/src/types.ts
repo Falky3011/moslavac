@@ -38,6 +38,7 @@ export interface FrontendTenant {
   } | null;
   social?: {
     facebook?: string | null;
+    instagram?: string | null;
     youtube?: string | null;
     webshop?: string | null;
   } | null;

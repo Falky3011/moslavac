@@ -179,3 +179,76 @@ describe("buildClubJsonLd", () => {
     expect(organization.slogan).toBe("Ponos kvarta");
   });
 });
+
+describe("buildClubJsonLd — stadion", () => {
+  const facility = {
+    id: 7,
+    fifaId: null,
+    name: "Stadion Kraj Rijeke",
+    address: "Sportska 1",
+    place: "Primjer",
+    latitude: 45.5,
+    longitude: 16.6,
+    field: null,
+  };
+
+  it("dodaje Place i geo koordinate kada ih HNS isporuči", () => {
+    const { organization } = buildClubJsonLd({
+      tenant: tenant(),
+      baseUrl,
+      facility,
+    });
+
+    expect(organization.location).toEqual({
+      "@type": "Place",
+      name: "Stadion Kraj Rijeke",
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: "Sportska 1",
+        addressLocality: "Primjer",
+        addressCountry: "HR",
+      },
+      geo: { "@type": "GeoCoordinates", latitude: 45.5, longitude: 16.6 },
+    });
+    expect(organization.geo).toEqual(organization.location?.geo);
+  });
+
+  it("izostavlja lokaciju kada koordinate nedostaju", () => {
+    const { organization } = buildClubJsonLd({
+      tenant: tenant(),
+      baseUrl,
+      facility: { ...facility, latitude: null, longitude: null },
+    });
+
+    expect(organization.location).toBeUndefined();
+    expect(organization.geo).toBeUndefined();
+  });
+
+  it("gradi se i bez stadiona, jer HNS smije biti nedostupan", () => {
+    const { organization } = buildClubJsonLd({ tenant: tenant(), baseUrl });
+
+    expect(organization.location).toBeUndefined();
+    expect(organization.name).toBe("ŠNK Primjer");
+  });
+
+  it("skuplja svaki javni profil u sameAs", () => {
+    const { organization } = buildClubJsonLd({
+      tenant: tenant({
+        social: {
+          facebook: "https://facebook.com/primjer",
+          instagram: "https://instagram.com/primjer",
+          youtube: "https://youtube.com/@primjer",
+          webshop: "https://trgovina.example",
+        },
+      }),
+      baseUrl,
+    });
+
+    expect(organization.sameAs).toEqual([
+      "https://facebook.com/primjer",
+      "https://instagram.com/primjer",
+      "https://youtube.com/@primjer",
+      "https://trgovina.example",
+    ]);
+  });
+});
