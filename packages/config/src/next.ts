@@ -43,12 +43,31 @@ type Redirects = Awaited<ReturnType<NonNullable<NextConfig["redirects"]>>>;
 type ClubNextConfigOptions = {
   /** Club-specific permanent redirects, e.g. a legacy path this club once had. */
   redirects?: Redirects;
+  /**
+   * Set only for clubs that actually serve `/llms.txt`. It adds the RFC 8288
+   * `Link` relations agents look for to point them at that description; a club
+   * without the route must leave it off rather than advertise a 404.
+   */
+  llmsTxt?: boolean;
 };
 
 export function clubNextConfig(
   options: ClubNextConfigOptions = {},
 ): NextConfig {
-  const { redirects = [] } = options;
+  const { redirects = [], llmsTxt = false } = options;
+
+  // RFC 8288 Link relations. Agents read these before fetching the page body:
+  // `sitemap` gives them every URL, `describedby`/`service-doc` point at the
+  // plain-text description of the site. Comma-separated values are one header.
+  const linkHeader = [
+    '</sitemap.xml>; rel="sitemap"',
+    ...(llmsTxt
+      ? [
+          '</llms.txt>; rel="describedby"; type="text/plain"',
+          '</llms.txt>; rel="service-doc"; type="text/plain"',
+        ]
+      : []),
+  ].join(", ");
 
   return {
     turbopack: {
@@ -62,7 +81,7 @@ export function clubNextConfig(
         {
           source: "/(.*)",
           headers: [
-            { key: "Link", value: '</sitemap.xml>; rel="sitemap"' },
+            { key: "Link", value: linkHeader },
             { key: "X-Frame-Options", value: "SAMEORIGIN" },
             { key: "X-Content-Type-Options", value: "nosniff" },
             {

@@ -189,6 +189,7 @@ export interface Tenant {
   };
   social?: {
     facebook?: string | null;
+    instagram?: string | null;
     youtube?: string | null;
     webshop?: string | null;
   };
@@ -721,6 +722,7 @@ export interface TenantsSelect<T extends boolean = true> {
     | T
     | {
         facebook?: T;
+        instagram?: T;
         youtube?: T;
         webshop?: T;
       };

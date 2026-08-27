@@ -1,3 +1,3 @@
 import { clubNextConfig } from "../../packages/config/src/next";
 
-export default clubNextConfig();
+export default clubNextConfig({ llmsTxt: true });

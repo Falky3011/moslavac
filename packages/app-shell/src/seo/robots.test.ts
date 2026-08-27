@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildRobots } from "./robots";
+import { buildRobots, buildRobotsTxt } from "./robots";
 
 const baseUrl = "https://klub.example";
 
@@ -60,5 +60,44 @@ describe("buildRobots", () => {
 
   it("robot za treniranje ostaje zabranjen i kada AI tražilice imaju pristup", () => {
     expect(ruleFor("CCBot")?.allow).toBeUndefined();
+  });
+});
+
+describe("buildRobotsTxt", () => {
+  const txt = buildRobotsTxt({ baseUrl });
+
+  it("ispisuje sitemap na kraju datoteke", () => {
+    expect(txt.trimEnd().endsWith(`Sitemap: ${baseUrl}/sitemap.xml`)).toBe(true);
+  });
+
+  it("izriče Content Signals za svaki blok pravila", () => {
+    const agentBlocks = txt.split("\n\n").filter((b) => b.startsWith("User-agent:"));
+    expect(agentBlocks.length).toBeGreaterThan(0);
+    for (const block of agentBlocks) {
+      expect(block, block).toMatch(
+        /^Content-Signal: ai-train=(yes|no), search=(yes|no), ai-input=(yes|no)$/m,
+      );
+    }
+  });
+
+  it("dopušta citiranje i tražilice, ali ne treniranje modela", () => {
+    expect(txt).toContain(
+      "Content-Signal: ai-train=no, search=yes, ai-input=yes",
+    );
+  });
+
+  it("zatvara sve signale robotu koji skuplja građu za treniranje", () => {
+    const block = txt
+      .split("\n\n")
+      .find((b) => b.startsWith("User-agent: CCBot"));
+    expect(block).toContain(
+      "Content-Signal: ai-train=no, search=no, ai-input=no",
+    );
+  });
+
+  it("prenosi ista pravila kao i metapodatkovni oblik", () => {
+    expect(txt).toContain("User-agent: *");
+    expect(txt).toContain("Allow: /api/images/");
+    expect(txt).toContain("Disallow: /api/");
   });
 });
