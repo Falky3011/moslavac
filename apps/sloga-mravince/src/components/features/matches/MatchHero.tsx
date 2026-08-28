@@ -11,13 +11,20 @@ function TeamBlock({
   picture,
   name,
   dimmed,
+  className,
 }: {
   picture: string | null | undefined;
   name: string | null | undefined;
   dimmed: boolean;
+  className?: string;
 }) {
   return (
-    <div className="grid grid-rows-[5.5rem_minmax(3rem,auto)] justify-items-center gap-5 text-center sm:grid-rows-[8rem_minmax(4rem,auto)]">
+    <div
+      className={cn(
+        "grid grid-rows-[5.5rem_minmax(3rem,auto)] justify-items-center gap-5 text-center sm:grid-rows-[8rem_minmax(4rem,auto)]",
+        className,
+      )}
+    >
       <div className="row-start-1 flex size-[5.5rem] items-center justify-center sm:size-32">
         <HnsCrest
           picture={picture}
@@ -97,6 +104,10 @@ export default function MatchHero({ match }: { match: Match }) {
 
   const parts = kickoff != null ? formatDateParts(kickoff) : null;
 
+  // Odbrojavanje je preširoko za tri stupca na mobitelu — gurne gostujući tim
+  // izvan ekrana. Kad se prikazuje, timovi idu u jedan red, odbrojavanje ispod.
+  const showCountdown = !hasScore && !calledOff && kickoff != null;
+
   return (
     <section className="relative isolate overflow-hidden bg-ink-deep py-20 text-white md:py-28">
       {/* Atmosfera: crveni sjaj + dijagonalni raster + zrno */}
@@ -135,14 +146,28 @@ export default function MatchHero({ match }: { match: Match }) {
         </div>
 
         <div className="mt-14 md:mt-20">
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 sm:gap-10">
+          <div
+            className={cn(
+              "grid items-center gap-4 sm:gap-10 lg:grid-cols-[1fr_auto_1fr]",
+              showCountdown
+                ? "grid-cols-2 gap-x-4 gap-y-12"
+                : "grid-cols-[1fr_auto_1fr]",
+            )}
+          >
             <TeamBlock
               picture={match.homeTeam?.picture}
               name={match.homeTeam?.name}
               dimmed={hasScore && home < away}
+              className={showCountdown ? "col-start-1 row-start-1" : undefined}
             />
 
-            <div className="flex flex-col items-center gap-5">
+            <div
+              className={cn(
+                "flex flex-col items-center gap-5",
+                showCountdown &&
+                  "col-span-2 row-start-2 lg:col-span-1 lg:col-start-2 lg:row-start-1",
+              )}
+            >
               {hasScore ? (
                 <div className="flex items-baseline gap-3 font-display text-7xl leading-none tabular-nums sm:gap-5 sm:text-9xl">
                   <span className={home > away ? "text-white" : "text-white/35"}>
@@ -170,6 +195,11 @@ export default function MatchHero({ match }: { match: Match }) {
               picture={match.awayTeam?.picture}
               name={match.awayTeam?.name}
               dimmed={hasScore && away < home}
+              className={
+                showCountdown
+                  ? "col-start-2 row-start-1 lg:col-start-3"
+                  : undefined
+              }
             />
           </div>
 
