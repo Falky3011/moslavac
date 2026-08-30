@@ -6,8 +6,9 @@ function goalDiff(row: TeamRanking): number {
   return (row.goalsFor ?? 0) - (row.goalsAgainst ?? 0);
 }
 
-const STAT_HEAD = "px-3 py-4 text-center font-semibold sm:px-4";
-const STAT_CELL = "px-3 py-4.5 text-center text-base tabular-nums sm:px-4";
+const STAT_HEAD = "px-1 py-4 text-center font-semibold sm:px-4";
+const STAT_CELL =
+  "px-1 py-4.5 text-center text-sm tabular-nums sm:px-4 sm:text-base";
 
 interface StandingsTableProps {
   rows: TeamRanking[];
@@ -39,20 +40,24 @@ export default function StandingsTable({
 
   return (
     <div className="-mx-2 overflow-x-auto sm:mx-0">
-      <table className="w-full min-w-160 border-separate border-spacing-y-0.5">
+      <table className="w-full border-separate border-spacing-y-0.5 sm:min-w-160">
         <thead>
           <tr className="text-[0.64rem] uppercase tracking-[0.22em] text-muted-foreground">
-            <th className="w-16 py-3 pl-5 text-left font-semibold">Poz</th>
+            <th className="w-10 py-3 pl-2 text-left font-semibold sm:w-16 sm:pl-5">
+              Poz
+            </th>
             <th className="py-3 text-left font-semibold">Klub</th>
-            <th className={cn(STAT_HEAD, "w-14")}>OU</th>
+            <th className={cn(STAT_HEAD, "w-9 sm:w-14")}>OU</th>
             <th className={cn(STAT_HEAD, "hidden w-12 sm:table-cell")}>P</th>
             <th className={cn(STAT_HEAD, "hidden w-12 sm:table-cell")}>N</th>
             <th className={cn(STAT_HEAD, "hidden w-12 sm:table-cell")}>I</th>
             <th className={cn(STAT_HEAD, "hidden w-20 md:table-cell")}>
               Golovi
             </th>
-            <th className={cn(STAT_HEAD, "w-16")}>GR</th>
-            <th className={cn(STAT_HEAD, "w-16 pr-5 text-club-red")}>Bod</th>
+            <th className={cn(STAT_HEAD, "w-9 sm:w-16")}>GR</th>
+            <th className={cn(STAT_HEAD, "w-10 pr-1 text-club-red sm:w-16 sm:pr-5")}>
+              Bod
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -75,7 +80,12 @@ export default function StandingsTable({
                 )}
               >
                 {/* Pozicija — Anton */}
-                <td className={cn("py-4.5 pl-5 pr-1 text-left", rowBorder)}>
+                <td
+                  className={cn(
+                    "py-4.5 pl-2 pr-1 text-left sm:pl-5",
+                    rowBorder,
+                  )}
+                >
                   <span
                     className={cn(
                       "font-display text-xl tabular-nums",
@@ -89,7 +99,7 @@ export default function StandingsTable({
                 </td>
 
                 {/* Klub */}
-                <td className={cn("py-4 pr-4", rowBorder)}>
+                <td className={cn("py-4 pr-2 sm:pr-4", rowBorder)}>
                   <div className="flex items-center gap-3.5">
                     <HnsCrest
                       picture={row.team?.picture}
@@ -148,7 +158,9 @@ export default function StandingsTable({
                 >
                   {gd > 0 ? `+${gd}` : gd}
                 </td>
-                <td className={cn("py-4.5 pr-5 text-center", rowBorder)}>
+                <td
+                  className={cn("py-4.5 pr-1 text-center sm:pr-5", rowBorder)}
+                >
                   <span className="font-display text-2xl tabular-nums">
                     {row.points ?? 0}
                   </span>

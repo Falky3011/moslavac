@@ -11,10 +11,12 @@ import {
   fetchCurrentSeasonCompetitionsResult,
 } from "@/lib/hns/competitions";
 import { getSeniorCompetitionFilter } from "@/lib/hns/client";
+import { fetchTeamStandings } from "@/lib/hns/standings";
+import StandingsTable from "@/components/features/standings/StandingsTable";
 import { isFinished } from "@/lib/hns/matchStatus";
 import { getTenant } from "@/lib/payload/getTenant";
 import { buildMatchSlug } from "@/lib/helpers/slug";
-import type { Competition, Match } from "@/types/hns";
+import type { Competition, Match, TeamRanking } from "@/types/hns";
 
 export const revalidate = 300;
 
@@ -333,9 +335,12 @@ export default async function ScheduleResultsPage({ searchParams }: Props) {
     competitionId,
   });
 
-  const matches = selectedCompetition?.id
-    ? await fetchAllCompetitionMatches({ competitionId: selectedCompetition.id })
-    : [];
+  const [matches, standings] = selectedCompetition?.id
+    ? await Promise.all([
+        fetchAllCompetitionMatches({ competitionId: selectedCompetition.id }),
+        fetchTeamStandings({ competitionId: selectedCompetition.id }),
+      ])
+    : ([[], []] as [Match[], TeamRanking[]]);
   const { upcoming, results } = splitMatches(matches);
   const selectedName = selectedCompetition
     ? competitionLabel(selectedCompetition)
@@ -364,6 +369,25 @@ export default async function ScheduleResultsPage({ searchParams }: Props) {
               competitions={competitions}
               selectedId={selectedCompetition.id}
             />
+
+            <section>
+              <div className="border-b border-foreground/10 pb-6">
+                <p className="text-xs font-bold uppercase text-muted-foreground">
+                  {selectedName ?? "Natjecanje"} · Poredak
+                </p>
+                <h2 className="mt-3 font-display text-5xl uppercase leading-none text-foreground sm:text-6xl">
+                  Tablica
+                </h2>
+              </div>
+
+              <div className="mt-8">
+                {standings.length > 0 ? (
+                  <StandingsTable rows={standings} />
+                ) : (
+                  <EmptyState>Tablica još nije objavljena.</EmptyState>
+                )}
+              </div>
+            </section>
 
             {upcoming.length > 0 && (
               <section>
