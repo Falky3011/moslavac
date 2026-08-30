@@ -9,11 +9,13 @@ interface FooterProps {
 }
 
 const CLUB_ITEMS = [
-  "Novosti",
-  "Momčad",
-  "Raspored i rezultati",
-  "Tablica",
-  "Video",
+  { label: "Novosti", href: "/novosti" },
+  { label: "Momčad", href: "/momcad" },
+  { label: "Raspored i rezultati", href: "/raspored-i-rezultati" },
+  // Tablica nema svoju rutu — živi kao prva sekcija stranice s rasporedom.
+  { label: "Tablica", href: "/raspored-i-rezultati#tablica" },
+  { label: "O klubu", href: "/o-klubu" },
+  { label: "Kontakt", href: "/kontakt" },
 ] as const;
 
 function textOrNull(value: string | null | undefined): string | null {
@@ -25,7 +27,7 @@ function textOrNull(value: string | null | undefined): string | null {
  * Ink footer s masivnim Anton wordmarkom preko cijele širine, crvenim
  * hairline potpisom na vrhu i stupcima podataka. Prikazuje samo stvarne
  * podatke iz tenanta i HNS-a — kontakt i društvene mreže renderiraju se samo
- * ako postoje. Klupski linkovi su placeholderi (nema ruta još).
+ * ako postoje.
  */
 export default function Footer({ tenant, clubDetails }: FooterProps) {
   const year = new Date().getFullYear();
@@ -110,10 +112,13 @@ export default function Footer({ tenant, clubDetails }: FooterProps) {
               </h3>
               <ul className="space-y-3">
                 {CLUB_ITEMS.map((item) => (
-                  <li key={item}>
-                    <span className="cursor-default text-sm uppercase tracking-wide text-chalk/70 transition-colors hover:text-chalk">
-                      {item}
-                    </span>
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      className="text-sm uppercase tracking-wide text-chalk/70 transition-colors hover:text-chalk"
+                    >
+                      {item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

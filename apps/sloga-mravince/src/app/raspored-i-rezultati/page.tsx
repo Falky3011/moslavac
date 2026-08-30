@@ -64,16 +64,19 @@ function selectCompetition({
   return senior ?? valid[0] ?? null;
 }
 
-function splitMatches(matches: Match[]) {
-  const dated = matches.filter(hasDate);
-  const upcoming = dated
-    .filter((match) => !isFinished(match))
+/**
+ * Jedna kronoloska lista cijele sezone: odigrane utakmice s rezultatom, pa u
+ * nastavku one koje slijede. Klub je trazio da rezultati i raspored ne budu
+ * razdvojeni u dvije sekcije. `nextMatch` je prva neodigrana — nju kartica
+ * oznacava trakom, inace bi se izgubila u sredini duge liste.
+ */
+function buildSchedule(matches: Match[]) {
+  const schedule = matches
+    .filter(hasDate)
     .sort((a, b) => a.kickoffAtUtcMs - b.kickoffAtUtcMs);
-  const results = dated
-    .filter(isFinished)
-    .sort((a, b) => b.kickoffAtUtcMs - a.kickoffAtUtcMs);
+  const nextMatch = schedule.find((match) => !isFinished(match)) ?? null;
 
-  return { upcoming, results };
+  return { schedule, nextMatch };
 }
 
 function scoreOf(match: Match): string | null {
@@ -186,9 +189,12 @@ function detailHref(match: Match): string | null {
 function MatchCard({
   match,
   variant,
+  next = false,
 }: {
   match: MatchWithDate;
   variant: "upcoming" | "result";
+  /** Prva neodigrana utakmica — dobiva natpis iznad kartice. */
+  next?: boolean;
 }) {
   const { weekdayShort, day, monthShort, time } = formatDateParts(
     match.kickoffAtUtcMs,
@@ -285,19 +291,35 @@ function MatchCard({
     </article>
   );
 
-  if (!href) return card;
+  const marker = next ? (
+    <p className="flex items-center gap-3 pt-6 text-[0.6rem] font-black uppercase tracking-[0.16em] text-club-red">
+      <span className="h-px w-8 bg-club-red" />
+      Sljedeća utakmica
+    </p>
+  ) : null;
+
+  if (!href)
+    return (
+      <>
+        {marker}
+        {card}
+      </>
+    );
 
   return (
-    <Link
-      href={href}
-      aria-label={`${match.homeTeam?.name ?? "Domaćin"} – ${match.awayTeam?.name ?? "Gost"}, detalji utakmice`}
-      // Crvena traka koja izraste uz lijevi rub retka — poster jezik. Namjerno
-      // bez podloge u sivom: puna siva ploha preko cijele širine izgledala je
-      // kao greška, a ne kao hover.
-      className="group relative block before:absolute before:inset-y-0 before:-left-4 before:w-1 before:scale-y-0 before:bg-club-red before:transition-transform before:duration-300 hover:before:scale-y-100"
-    >
-      {card}
-    </Link>
+    <>
+      {marker}
+      <Link
+        href={href}
+        aria-label={`${match.homeTeam?.name ?? "Domaćin"} – ${match.awayTeam?.name ?? "Gost"}, detalji utakmice`}
+        // Crvena traka koja izraste uz lijevi rub retka — poster jezik. Namjerno
+        // bez podloge u sivom: puna siva ploha preko cijele širine izgledala je
+        // kao greška, a ne kao hover.
+        className="group relative block before:absolute before:inset-y-0 before:-left-4 before:w-1 before:scale-y-0 before:bg-club-red before:transition-transform before:duration-300 hover:before:scale-y-100"
+      >
+        {card}
+      </Link>
+    </>
   );
 }
 
@@ -341,7 +363,7 @@ export default async function ScheduleResultsPage({ searchParams }: Props) {
         fetchTeamStandings({ competitionId: selectedCompetition.id }),
       ])
     : ([[], []] as [Match[], TeamRanking[]]);
-  const { upcoming, results } = splitMatches(matches);
+  const { schedule, nextMatch } = buildSchedule(matches);
   const selectedName = selectedCompetition
     ? competitionLabel(selectedCompetition)
     : null;
@@ -370,7 +392,7 @@ export default async function ScheduleResultsPage({ searchParams }: Props) {
               selectedId={selectedCompetition.id}
             />
 
-            <section>
+            <section id="tablica" className="scroll-mt-28">
               <div className="border-b border-foreground/10 pb-6">
                 <p className="text-xs font-bold uppercase text-muted-foreground">
                   {selectedName ?? "Natjecanje"} · Poredak
@@ -389,53 +411,30 @@ export default async function ScheduleResultsPage({ searchParams }: Props) {
               </div>
             </section>
 
-            {upcoming.length > 0 && (
-              <section>
-                <div className="border-b border-foreground/10 pb-6">
-                  <p className="text-xs font-bold uppercase text-muted-foreground">
-                    {selectedName ?? "Natjecanje"} ·{" "}
-                    {String(upcoming.length).padStart(2, "0")}{" "}
-                    {pluralForm(upcoming.length, MATCH_FORMS)}
-                  </p>
-                  <h2 className="mt-3 font-display text-5xl uppercase leading-none text-foreground sm:text-6xl">
-                    Nadolazeće utakmice
-                  </h2>
-                </div>
-
-                <div className="mt-2">
-                  {upcoming.map((match) => (
-                    <MatchCard
-                      key={match.id ?? match.kickoffAtUtcMs}
-                      match={match}
-                      variant="upcoming"
-                    />
-                  ))}
-                </div>
-              </section>
-            )}
-
             <section>
               <div className="border-b border-foreground/10 pb-6">
                 <p className="text-xs font-bold uppercase text-muted-foreground">
-                  {String(results.length).padStart(2, "0")}{" "}
-                  {pluralForm(results.length, MATCH_FORMS)}
+                  {selectedName ?? "Natjecanje"} ·{" "}
+                  {String(schedule.length).padStart(2, "0")}{" "}
+                  {pluralForm(schedule.length, MATCH_FORMS)}
                 </p>
                 <h2 className="mt-3 font-display text-5xl uppercase leading-none text-foreground sm:text-6xl">
-                  Rezultati
+                  Raspored i rezultati
                 </h2>
               </div>
 
               <div className="mt-2">
-                {results.length > 0 ? (
-                  results.map((match) => (
+                {schedule.length > 0 ? (
+                  schedule.map((match) => (
                     <MatchCard
                       key={match.id ?? match.kickoffAtUtcMs}
                       match={match}
-                      variant="result"
+                      variant={isFinished(match) ? "result" : "upcoming"}
+                      next={match === nextMatch}
                     />
                   ))
                 ) : (
-                  <EmptyState>Još nema odigranih utakmica.</EmptyState>
+                  <EmptyState>Raspored još nije objavljen.</EmptyState>
                 )}
               </div>
             </section>
