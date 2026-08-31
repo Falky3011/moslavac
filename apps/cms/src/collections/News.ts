@@ -72,5 +72,14 @@ export const News = createCollection({
       },
     },
     mediaArrayField('gallery', { label: 'Galerija' }),
+    {
+      name: 'sourceMatchId',
+      label: 'HNS ID utakmice',
+      type: 'number',
+      index: true,
+      // Skriveno — popunjava ga samo cron za izvještaje s utakmica, da istu
+      // utakmicu ne objavi dvaput. Editor ga nema zašto vidjeti ni dirati.
+      admin: { hidden: true },
+    },
   ],
 })

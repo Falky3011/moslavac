@@ -32,6 +32,11 @@ export default defineConfig({
       { find: /^@\/types\//, replacement: here("./packages/types/src/") },
       { find: /^@\/lib\/payload\//, replacement: here("./packages/payload/src/") },
       { find: /^@\/lib\/hns\//, replacement: here("./packages/hns/src/") },
+      { find: /^@\/lib\/ai\//, replacement: here("./packages/ai/src/") },
+      {
+        find: /^@\/lib\/match-reports\//,
+        replacement: here("./packages/match-reports/src/"),
+      },
       {
         find: /^@\/lib\/app-shell\//,
         replacement: here("./packages/app-shell/src/"),

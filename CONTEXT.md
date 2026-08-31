@@ -34,6 +34,7 @@ The deep, shared modules every Club app consumes (see `packages/README.md`):
 - **lib** — framework-free helpers shared by every Club app.
 - **ui** — shadcn primitives plus shared app-level components.
 - **ai** — Lexical rich-text helpers.
+- **match-reports** — turns a played Match into a MatchReport.
 
 A Club app's own knobs are few and named: `src/lib/siteUrl.ts` (dev port),
 `src/lib/theme.ts` (`THEME_COLOR`, mirroring `globals.css` for the PWA chrome
@@ -49,3 +50,13 @@ at 256×256 and 180×180 — the sizes `buildClubManifest` declares.
   directly; nothing fetches data from the browser. The single route handler that
   serves the browser is `/api/images/[uuid]`, which proxies HNS crest bytes. See
   each app's `.claude/rules/api-architecture.md`.
+
+## Match reports
+
+- **MatchReport** — a News item whose text is derived from one played Match
+  rather than written by a person. Published without human review.
+- **MatchFacts** — the facts about a played Match that a MatchReport may state:
+  score, scorers with minutes, cards, attendance, venue, round, competition.
+  Derived from HNS. Nothing outside MatchFacts may appear in a MatchReport.
+- **MatchReportWriter** — turns MatchFacts into the paragraphs of a MatchReport.
+  Two adapters: one asks a language model, one fills a fixed Croatian template.

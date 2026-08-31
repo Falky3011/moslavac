@@ -35,6 +35,12 @@
       "@/lib/ai/*": [
         "../../packages/ai/src/*"
       ],
+      "@/lib/match-reports/*": [
+        "../../packages/match-reports/src/*"
+      ],
+      "@/lib/helpers/*": [
+        "../../packages/lib/src/helpers/*"
+      ],
       "@/*": [
         "./src/*"
       ],

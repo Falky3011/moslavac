@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import EventsTimeline from "@/components/features/matches/EventsTimeline";
+import { MatchResultCard } from "@/components/features/news/MatchResultCard";
 import { formatDateLong } from "@/lib/helpers/date";
+import { fetchMatchEvents, fetchMatchInfo } from "@/lib/hns/matches";
 import { htmlToMetaDescription } from "@/lib/helpers/text";
 import { fetchNewsBySlug } from "@/lib/payload/getNews";
 import { getTenant } from "@/lib/payload/getTenant";
@@ -119,6 +122,17 @@ export default async function NewsDetailPage({ params }: Props) {
   ]);
   if (!news) notFound();
 
+  // Automatski izvještaj nosi `sourceMatchId`; ručno pisana novost ga nema i
+  // stranica onda ne dira HNS. Ako HNS zakaže, izvještaj ostaje čitljiv kao
+  // običan tekst — zato `null` prolazi bez greške.
+  const match = news.sourceMatchId
+    ? await fetchMatchInfo({ matchId: news.sourceMatchId })
+    : null;
+  const matchEvents =
+    news.sourceMatchId && match
+      ? await fetchMatchEvents({ matchId: news.sourceMatchId })
+      : [];
+
   const logo = tenant.branding?.logo;
   const logoUrl = !logo ? null : typeof logo === "string" ? logo : logo.url;
   const jsonLd = buildNewsJsonLd({
@@ -152,6 +166,8 @@ export default async function NewsDetailPage({ params }: Props) {
         {news.title}
       </h1>
 
+      {match && <MatchResultCard match={match} />}
+
       {news.thumbnailPath && (
         <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-xl">
           <Image
@@ -170,6 +186,15 @@ export default async function NewsDetailPage({ params }: Props) {
           className="mt-10 leading-relaxed [&_a]:text-club-red [&_a]:underline [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:font-semibold [&_img]:my-6 [&_img]:rounded-lg [&_li]:mt-1 [&_ol]:my-4 [&_ol]:list-decimal [&_ol]:pl-6 [&_p]:my-4 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:pl-6"
           dangerouslySetInnerHTML={{ __html: news.content }}
         />
+      )}
+
+      {match && matchEvents.length > 0 && (
+        <section className="mt-12">
+          <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-muted-foreground">
+            Tijek utakmice
+          </h2>
+          <EventsTimeline match={match} events={matchEvents} />
+        </section>
       )}
     </article>
   );

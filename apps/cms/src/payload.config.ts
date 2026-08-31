@@ -21,6 +21,7 @@ import { SchoolPrograms } from "./collections/SchoolPrograms";
 import { Tenants } from "./collections/Tenants";
 import { Users } from "./collections/Users";
 import { hnsPlayerSearchEndpoint } from "./endpoints/hnsPlayerSearch";
+import { matchReportsCronEndpoint } from "./endpoints/matchReportsCron";
 import type { Config } from "./payload-types";
 
 const filename = fileURLToPath(import.meta.url);
@@ -69,7 +70,7 @@ export default buildConfig({
 		SchoolPrograms,
 		GalleryAlbums,
 	],
-	endpoints: [hnsPlayerSearchEndpoint],
+	endpoints: [hnsPlayerSearchEndpoint, matchReportsCronEndpoint],
 	// Frontend klubova poziva CMS cross-origin.
 	cors: process.env.CORS_ORIGINS
 		? process.env.CORS_ORIGINS.split(",").map((o) => o.trim())

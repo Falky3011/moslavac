@@ -26,6 +26,21 @@ interface LexicalParagraphNode {
   children: LexicalTextNode[];
 }
 
+/**
+ * Payloadov link čvor (`SerializedLinkNode`). `convertLexicalToHTML` iz njega
+ * radi <a href>, pa poveznica u novosti mora imati točno ovaj oblik.
+ */
+interface LexicalLinkNode {
+  [k: string]: unknown;
+  type: "link";
+  format: "";
+  indent: 0;
+  version: 3;
+  direction: "ltr";
+  fields: { linkType: "custom"; url: string; newTab: boolean };
+  children: LexicalTextNode[];
+}
+
 export interface LexicalState {
   [k: string]: unknown;
   root: {
@@ -39,33 +54,60 @@ export interface LexicalState {
   };
 }
 
+const textNode = (text: string): LexicalTextNode => ({
+  type: "text",
+  detail: 0,
+  format: 0,
+  mode: "normal",
+  style: "",
+  text,
+  version: 1,
+});
+
+const paragraphNode = (
+  children: (LexicalTextNode | LexicalLinkNode)[],
+): LexicalParagraphNode => ({
+  type: "paragraph",
+  format: "",
+  indent: 0,
+  version: 1,
+  direction: "ltr",
+  textFormat: 0,
+  textStyle: "",
+  children: children as LexicalTextNode[],
+});
+
+/** Odlomak koji je cijeli jedna poveznica, npr. „Detalji utakmice”. */
+export const linkParagraph = (
+  text: string,
+  url: string,
+): LexicalParagraphNode =>
+  paragraphNode([
+    {
+      type: "link",
+      format: "",
+      indent: 0,
+      version: 3,
+      direction: "ltr",
+      fields: { linkType: "custom", url, newTab: false },
+      children: [textNode(text)],
+    },
+  ]);
+
 /** Build a Lexical rich-text value from plain paragraph strings. */
-export const paragraphsToLexical = (paragraphs: string[]): LexicalState => ({
+export const paragraphsToLexical = (
+  paragraphs: string[],
+  extra: LexicalParagraphNode[] = [],
+): LexicalState => ({
   root: {
     type: "root",
     format: "",
     indent: 0,
     version: 1,
     direction: "ltr",
-    children: paragraphs.map((text) => ({
-      type: "paragraph",
-      format: "",
-      indent: 0,
-      version: 1,
-      direction: "ltr",
-      textFormat: 0,
-      textStyle: "",
-      children: [
-        {
-          type: "text",
-          detail: 0,
-          format: 0,
-          mode: "normal",
-          style: "",
-          text,
-          version: 1,
-        },
-      ],
-    })),
+    children: [
+      ...paragraphs.map((text) => paragraphNode([textNode(text)])),
+      ...extra,
+    ],
   },
 });

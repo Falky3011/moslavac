@@ -21,6 +21,7 @@ interface PayloadNews {
       }[]
     | null;
   tenant: number | { id: number; slug: string } | null;
+  sourceMatchId: number | string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,6 +52,9 @@ export function adaptNews(doc: PayloadNews): News {
         ?.map((item) => mediaUrl(item.image))
         .filter((url): url is string => url !== null) ?? [],
     tenantId: tenantSlugOf(doc.tenant),
+    // Payload numeric polje stiže kao string iz `numeric` stupca.
+    sourceMatchId:
+      doc.sourceMatchId == null ? null : Number(doc.sourceMatchId) || null,
   };
 }
 

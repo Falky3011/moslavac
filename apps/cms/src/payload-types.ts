@@ -167,6 +167,14 @@ export interface Tenant {
      * Dio naziva natjecanja koji identificira seniorsko natjecanje.
      */
     seniorCompetitionFilter?: string | null;
+    /**
+     * Dnevni cron sam objavljuje novost za svaku odigranu seniorsku utakmicu. Objavljuje se bez pregleda — vidi docs/adr/0002.
+     */
+    matchReports?: boolean | null;
+    /**
+     * Rubrika s rasporedom na klupskom webu. Izvještaj dobiva poveznicu "Detalji utakmice" na <putanja>/<slug>.
+     */
+    matchPagePath?: string | null;
   };
   payment?: {
     iban?: string | null;
@@ -324,6 +332,7 @@ export interface News {
         id?: string | null;
       }[]
     | null;
+  sourceMatchId?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -692,6 +701,8 @@ export interface TenantsSelect<T extends boolean = true> {
         apiKey?: T;
         teamId?: T;
         seniorCompetitionFilter?: T;
+        matchReports?: T;
+        matchPagePath?: T;
       };
   payment?:
     | T
@@ -786,6 +797,7 @@ export interface NewsSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  sourceMatchId?: T;
   updatedAt?: T;
   createdAt?: T;
 }

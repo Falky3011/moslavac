@@ -9,6 +9,12 @@ export interface News {
   thumbnailPath: string | null;
   imagePaths: string[];
   tenantId: string;
+  /**
+   * HNS ID utakmice kad je novost automatski izvještaj s utakmice. `null` za
+   * novosti koje je napisao čovjek. Stranica po njemu zna smije li dohvatiti
+   * rezultat i tijek utakmice.
+   */
+  sourceMatchId: number | null;
 }
 
 export interface PaginatedNews {

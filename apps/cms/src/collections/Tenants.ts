@@ -108,6 +108,27 @@ export const Tenants: CollectionConfig = {
             description: 'Dio naziva natjecanja koji identificira seniorsko natjecanje.',
           },
         },
+        {
+          name: 'matchReports',
+          label: 'Automatski izvještaji s utakmica',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description:
+              'Dnevni cron sam objavljuje novost za svaku odigranu seniorsku utakmicu. Objavljuje se bez pregleda — vidi docs/adr/0002.',
+          },
+        },
+        {
+          name: 'matchPagePath',
+          label: 'Putanja do stranice utakmice',
+          type: 'text',
+          defaultValue: '/raspored-i-rezultati',
+          admin: {
+            condition: (_, siblingData) => Boolean(siblingData?.matchReports),
+            description:
+              'Rubrika s rasporedom na klupskom webu. Izvještaj dobiva poveznicu "Detalji utakmice" na <putanja>/<slug>.',
+          },
+        },
       ],
     },
     {
