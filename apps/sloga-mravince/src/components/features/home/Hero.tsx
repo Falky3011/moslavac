@@ -218,7 +218,9 @@ function HeroSlider({
                         transition: { duration: 0.75, ease: EXPO_OUT },
                       },
                     }}
-                    className="block pt-[0.04em] text-balance text-4xl sm:text-5xl md:text-7xl"
+                    // `text-7xl` nosi i `line-height: 1`, pa `leading` mora stajati OVDJE —
+                    // na h2 ga Tailwindov razred za veličinu pregazi.
+                    className="block pt-[0.04em] text-balance text-4xl leading-[1.4] sm:text-5xl sm:leading-[1.36] md:text-7xl md:leading-[1.34]"
                   >
                     {active.title}
                   </motion.span>
