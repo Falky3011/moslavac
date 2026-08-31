@@ -160,7 +160,7 @@ export default function PlayersCarousel({
       </div>
 
       {/* Kontrole + CTA */}
-      <div className="mt-10 flex items-center justify-between gap-6">
+      <div className="mt-10 flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="h-1 w-40 overflow-hidden bg-black/25 sm:w-56">
             <div

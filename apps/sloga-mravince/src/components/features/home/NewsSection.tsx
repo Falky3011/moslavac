@@ -64,7 +64,7 @@ function FeatureCard({ item, crestSrc }: { item: News; crestSrc: string }) {
       <div className="absolute inset-x-0 bottom-0 p-6 sm:p-9">
         <p className="flex items-center gap-3">
           <span className="bg-club-red px-2 py-0.5 text-[0.58rem] font-black uppercase tracking-[0.24em] text-white">
-            Udarna
+            Izdvojeno
           </span>
           <span className="text-[0.6rem] font-semibold uppercase tracking-[0.24em] text-white/60">
             {formatDateLong(item.date)}

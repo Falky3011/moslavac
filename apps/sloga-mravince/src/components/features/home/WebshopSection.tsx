@@ -76,7 +76,7 @@ export default function WebshopSection({ url }: { url: string }) {
             </a>
           </FadeInView>
 
-          <div className="absolute -bottom-7 left-6 z-20 flex sm:left-10 md:left-14">
+          <div className="absolute inset-x-0 -bottom-7 z-20 flex justify-center">
             <a
               href={url}
               target="_blank"

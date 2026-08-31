@@ -5,6 +5,7 @@ import PlayerStatsBoard, {
 import PlayerStatsHero from "@/components/features/players/PlayerStatsHero";
 import { getCometImageUrl } from "@/lib/hns/imageUrl";
 import { fetchPlayerDetails, fetchPlayerStats } from "@/lib/hns/players";
+import { fetchRoster } from "@/lib/payload/getRoster";
 import { getTenant } from "@/lib/payload/getTenant";
 import type { PayloadMedia } from "@/lib/payload/types";
 import { BASE_URL } from "@/lib/siteUrl";
@@ -37,10 +38,11 @@ export default async function PlayerStatsPage({ params }: Props) {
   const personId = String(parseTrailingId(playerId));
   const cid = parseTrailingId(competitionId);
 
-  const [playerDetails, playerStats, tenant] = await Promise.all([
+  const [playerDetails, playerStats, tenant, roster] = await Promise.all([
     fetchPlayerDetails({ personId }),
     fetchPlayerStats({ personId, competitionId: cid }),
     getTenant(),
+    fetchRoster(),
   ]);
 
   if (!playerDetails) notFound();
@@ -49,9 +51,14 @@ export default async function PlayerStatsPage({ params }: Props) {
   // bez server-side redirecta koji uzrokuje dupli fetch/flicker pri navigaciji.
   const { first, last } = splitName(playerDetails.name ?? "");
   const crestSrc = getCrestSrc(tenant.branding?.logo);
-  const photoUrl = playerDetails.picture
-    ? getCometImageUrl(playerDetails.picture)
-    : null;
+  // Ista slika kao na izlistu igrača: uploadana fotka iz Payloada ima prednost
+  // pred HNS ("Comet") portretom.
+  const rosterEntry = roster.find(
+    (entry) => String(entry.personId) === personId,
+  );
+  const photoUrl =
+    rosterEntry?.photo?.url ??
+    (playerDetails.picture ? getCometImageUrl(playerDetails.picture) : null);
   const shirtNumber = playerDetails.shirtNumber;
   const isCaptain = playerDetails.captain ?? false;
 
