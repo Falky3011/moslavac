@@ -206,7 +206,9 @@ function HeroSlider({
               </motion.p>
 
               {/* Naslov — clip reveal */}
-              <h2 className="mt-5 font-display uppercase leading-[1.28] tracking-normal text-white sm:leading-[1.24] md:leading-[1.22]">
+              {/* Razmak redaka mora primiti kvačice na verzalu (Š, Č, Ž) — ispod
+                  1.3 caron gornjeg reda dodiruje slova iznad. */}
+              <h2 className="mt-5 font-display uppercase leading-[1.4] tracking-normal text-white sm:leading-[1.36] md:leading-[1.34]">
                 <span className="block overflow-hidden pt-[0.3em] pb-[0.12em]">
                   <motion.span
                     variants={{
