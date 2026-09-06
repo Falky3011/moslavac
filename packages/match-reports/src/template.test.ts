@@ -144,7 +144,6 @@ describe("templateWriter", () => {
 
 describe("aftermathParagraph", () => {
   const withContext = facts({
-    standing: { position: 9, points: 1 },
     nextMatch: {
       opponent: "HNK Primorac (BNM)",
       atHome: false,
@@ -153,11 +152,14 @@ describe("aftermathParagraph", () => {
     },
   });
 
-  it("uvijek navodi tablicu i sljedećeg protivnika s datumom", () => {
+  it("navodi sljedećeg protivnika s datumom", () => {
     expect(aftermathParagraph(withContext)).toBe(
-      "Klub je na tablici 9. s 1 bodom. " +
-        "Sljedeći protivnik u gostima: HNK Primorac (BNM), 5. rujna 2026. u 16:30.",
+      "Sljedeći protivnik u gostima: HNK Primorac (BNM), 5. rujna 2026. u 16:30.",
     );
+  });
+
+  it("ne spominje mjesto na tablici", () => {
+    expect(aftermathParagraph(withContext)).not.toContain("tablici");
   });
 
   it("kod kuće se razlikuje od gostiju", () => {
@@ -169,7 +171,7 @@ describe("aftermathParagraph", () => {
     expect(aftermathParagraph(home)).toContain("Sljedeći protivnik kod kuće:");
   });
 
-  it("prazan je kad HNS nema ni tablicu ni raspored", () => {
+  it("prazan je kad HNS nema raspored", () => {
     expect(aftermathParagraph(facts())).toBe("");
   });
 });

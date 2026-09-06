@@ -46,6 +46,29 @@ describe("splitParagraphs", () => {
 });
 
 describe("openAiWriter", () => {
+  it("kaže modelu koji je klub naš, da izvještaj ne bude iz kuta protivnika", async () => {
+    const { client, create } = fakeClient("Prvi.");
+
+    await openAiWriter({ apiKey: "sk-test", client })(facts);
+
+    const sent = JSON.parse(create.mock.calls[0][0].input);
+    expect(sent.nasKlub).toEqual({
+      ime: "HNK Sloga Mravince",
+      igraKao: "domacin",
+    });
+  });
+
+  it("bez `clubSide` nema `nasKlub` — izvještaj ostaje neutralan", async () => {
+    const { client, create } = fakeClient("Prvi.");
+
+    await openAiWriter({ apiKey: "sk-test", client })({
+      ...facts,
+      clubSide: null,
+    });
+
+    expect(JSON.parse(create.mock.calls[0][0].input).nasKlub).toBeNull();
+  });
+
   it("šalje činjenice modelu i vraća odlomke", async () => {
     const { client, create } = fakeClient("Prvi.\n\nDrugi.\n\nTreći.");
 

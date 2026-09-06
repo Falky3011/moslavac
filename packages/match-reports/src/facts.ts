@@ -15,16 +15,6 @@ export interface FactEvent {
   display: string;
 }
 
-/**
- * Sve što MatchReport smije tvrditi o odigranoj utakmici. Ništa izvan ovog
- * objekta ne smije završiti u tekstu — ni ocjena igre, ni tumačenje rezultata.
- */
-/** Gdje je klub na tablici nakon ove utakmice. */
-export interface StandingFact {
-  position: number;
-  points: number;
-}
-
 /** Sljedeća utakmica istog kluba, ako je HNS već ima u rasporedu. */
 export interface NextMatchFact {
   opponent: string;
@@ -33,6 +23,10 @@ export interface NextMatchFact {
   time: string;
 }
 
+/**
+ * Sve što MatchReport smije tvrditi o odigranoj utakmici. Ništa izvan ovog
+ * objekta ne smije završiti u tekstu — ni ocjena igre, ni tumačenje rezultata.
+ */
 export interface MatchFacts {
   matchId: number;
   /** Slug stranice utakmice na klupskom webu (`buildMatchSlug`). */
@@ -57,10 +51,9 @@ export interface MatchFacts {
   /** Strana na kojoj igra klub čiji je ovo web. `null` kad HNS ne kaže. */
   clubSide: MatchSide | null;
   /**
-   * Kontekst oko utakmice. Puni ga `publishMatchReports` iz zasebnih HNS
+   * Kontekst oko utakmice. Puni ga `publishMatchReports` iz zasebnog HNS
    * poziva; `toMatchFacts` ostaje čista funkcija i vraća `null`.
    */
-  standing: StandingFact | null;
   nextMatch: NextMatchFact | null;
 }
 
@@ -127,7 +120,6 @@ export function toMatchFacts(
     yellowCards: collect("yellow"),
     redCards: collect("red"),
     clubSide: match.teamSide,
-    standing: null,
     nextMatch: null,
   };
 }

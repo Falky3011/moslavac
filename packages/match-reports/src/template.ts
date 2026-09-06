@@ -9,7 +9,6 @@ import type { FactEvent, MatchFacts } from "./facts";
 export type MatchReportWriter = (facts: MatchFacts) => Promise<string[]>;
 
 const VIEWERS = { one: "gledatelj", few: "gledatelja", many: "gledatelja" };
-const POINTS = { one: "bodom", few: "boda", many: "bodova" };
 const YELLOW_COUNT = {
   one: "žuti karton",
   few: "žuta kartona",
@@ -163,19 +162,16 @@ function cards(facts: MatchFacts): string {
 }
 
 /**
- * Kontekst nakon utakmice: mjesto na tablici i sljedeći protivnik. Ovo NE piše
- * model. Prepuštanje modelu značilo je da podatak povremeno nestane — a nestao
- * podatak provjera ne hvata, jer izostavljanje nije laž. Zato ga kod uvijek
- * dopiše sam, uvijek jednako i uvijek točno.
+ * Kontekst nakon utakmice: sljedeći protivnik. Ovo NE piše model. Prepuštanje
+ * modelu značilo je da podatak povremeno nestane — a nestao podatak provjera
+ * ne hvata, jer izostavljanje nije laž. Zato ga kod uvijek dopiše sam, uvijek
+ * jednako i uvijek točno.
+ *
+ * Mjesto na tablici je namjerno izbačeno: pozicija se mijenja svakim kolom, a
+ * novost stoji u arhivi zauvijek, pa bi tvrdnja ubrzo bila netočna.
  */
 export function aftermathParagraph(facts: MatchFacts): string {
   const sentences: string[] = [];
-
-  if (facts.standing) {
-    sentences.push(
-      `Klub je na tablici ${facts.standing.position}. s ${pluralize(facts.standing.points, POINTS)}.`,
-    );
-  }
 
   if (facts.nextMatch) {
     const where = facts.nextMatch.atHome ? "kod kuće" : "u gostima";

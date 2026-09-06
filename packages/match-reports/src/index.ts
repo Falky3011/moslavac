@@ -8,26 +8,15 @@ import {
   fetchUpcomingMatches,
 } from "@/lib/hns/matches";
 import { isFinished } from "@/lib/hns/matchStatus";
-import { fetchTeamStandings } from "@/lib/hns/standings";
 import type { Match } from "@/types/hns";
-import {
-  toMatchFacts,
-  type MatchFacts,
-  type NextMatchFact,
-  type StandingFact,
-} from "./facts";
+import { toMatchFacts, type MatchFacts, type NextMatchFact } from "./facts";
 import {
   aftermathParagraph,
   templateTitle,
   type MatchReportWriter,
 } from "./template";
 
-export type {
-  MatchFacts,
-  FactEvent,
-  NextMatchFact,
-  StandingFact,
-} from "./facts";
+export type { MatchFacts, FactEvent, NextMatchFact } from "./facts";
 export type { MatchReportWriter } from "./template";
 export { templateWriter, templateTitle } from "./template";
 export { openAiWriter, DEFAULT_MODEL } from "./openai";
@@ -79,20 +68,6 @@ export interface PublishOptions {
 function hasUsableEvents(facts: MatchFacts): boolean {
   const scored = facts.homeGoals + facts.awayGoals > 0;
   return !scored || facts.goals.length + facts.ownGoals.length > 0;
-}
-
-/**
- * Pozicija kluba na tablici nakon odigranog kola. `adaptTeamRanking` označi
- * vlastiti redak s `highlight`, pa ga ne moramo tražiti po imenu.
- */
-async function fetchStanding(match: Match): Promise<StandingFact | null> {
-  const competitionId = match.competition?.id;
-  if (competitionId == null) return null;
-
-  const rows = await fetchTeamStandings({ competitionId });
-  const own = rows.find((row) => row.highlight);
-  if (!own || own.position == null) return null;
-  return { position: own.position, points: own.points };
 }
 
 /**
@@ -184,13 +159,11 @@ export async function publishMatchReports(
         continue;
       }
 
-      // Tablica i sljedeći protivnik su dodatak, ne uvjet: ako HNS zakaže,
-      // izvještaj svejedno izlazi, samo bez tog konteksta.
-      const [standing, nextMatch] = await Promise.all([
-        fetchStanding(detail ?? match).catch(() => null),
-        fetchNextMatch(detail ?? match, base.clubSide).catch(() => null),
-      ]);
-      const facts: MatchFacts = { ...base, standing, nextMatch };
+      // Sljedeći protivnik je dodatak, ne uvjet: ako HNS zakaže, izvještaj
+      // svejedno izlazi, samo bez tog konteksta.
+      const nextMatch = await fetchNextMatch(detail ?? match, base.clubSide)
+        .catch(() => null);
+      const facts: MatchFacts = { ...base, nextMatch };
 
       // Zadnji odlomak nije model — vidi `aftermathParagraph`.
       const written = await opts.writer(facts);

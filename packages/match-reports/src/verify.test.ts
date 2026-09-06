@@ -203,3 +203,66 @@ describe("withFallback", () => {
     });
   });
 });
+
+describe("imena igrača u živoj rečenici", () => {
+  const scored = (player: string): MatchFacts => ({
+    ...facts,
+    homeGoals: 1,
+    goals: [
+      { side: "home", team: "HNK Sloga Mravince", player, display: "41'" },
+    ],
+  });
+
+  it("prihvaća prezime u padežu", () => {
+    const text = [
+      "HNK Sloga Mravince i NK Gošk Kaštela odigrali su 1:0.",
+      "Pogodak Marina Bilušića u 41. minuti odlučio je utakmicu. Sudac je podijelio dva žuta kartona, jedan domaćinu i jedan gostima.",
+    ];
+
+    expect(verifyReport(text, scored("Marino Bilušić"))).toEqual({
+      ok: true,
+      problems: [],
+    });
+  });
+
+  it("prihvaća skraćeno dugo ime", () => {
+    const text = [
+      "HNK Sloga Mravince i NK Gošk Kaštela odigrali su 1:0.",
+      "Coutada je zabio u 41. minuti. Sudac je podijelio dva žuta kartona, jedan domaćinu i jedan gostima.",
+    ];
+
+    expect(
+      verifyReport(text, scored("Joao Pedro Ramos Coutada")),
+    ).toEqual({ ok: true, problems: [] });
+  });
+
+  it("i dalje odbija tekst bez strijelca", () => {
+    const text = [
+      "HNK Sloga Mravince i NK Gošk Kaštela odigrali su 1:0.",
+      "Gol je pao u 41. minuti. Sudac je podijelio dva žuta kartona, jedan domaćinu i jedan gostima.",
+    ];
+
+    expect(verifyReport(text, scored("Marino Bilušić")).problems).toContain(
+      "nedostaje Marino Bilušić",
+    );
+  });
+
+  it("kod istog prezimena traži i ime", () => {
+    const brothers: MatchFacts = {
+      ...facts,
+      homeGoals: 2,
+      goals: [
+        { side: "home", team: "A", player: "Ante Bašić", display: "41'" },
+        { side: "home", team: "A", player: "Matej Bašić", display: "70'" },
+      ],
+    };
+    const text = [
+      "HNK Sloga Mravince i NK Gošk Kaštela odigrali su 2:0.",
+      "Bašić je zabio u 41. i u 70. minuti. Sudac je podijelio dva žuta kartona, jedan domaćinu i jedan gostima.",
+    ];
+
+    expect(verifyReport(text, brothers).problems).toContain(
+      "nedostaje Ante Bašić",
+    );
+  });
+});

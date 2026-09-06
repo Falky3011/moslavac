@@ -109,6 +109,63 @@ function yellowCardProblems(text: string, facts: MatchFacts): string[] {
 }
 
 /**
+ * Ime igrača kako ga tekst smije napisati. Doslovan `includes(player)` je
+ * tražio puni oblik u nominativu — a živa hrvatska rečenica ime sklanja
+ * („Bilušića”), a dugo ime krati („Joao Pedro Ramos Coutada” → „Coutada”).
+ * Takav tekst nije bio netočan, ali je padao na šablonu. Zato tražimo prezime,
+ * i to bez završnog samoglasnika, jer se padežni nastavak lijepi na kraj.
+ */
+function nameStem(word: string): string {
+  const w = word.trim();
+  return w.length > 3 && /[aeiou]$/i.test(w) ? w.slice(0, -1) : w;
+}
+
+const surnameStem = (player: string): string => {
+  const parts = player.trim().split(/\s+/);
+  return nameStem(parts[parts.length - 1] ?? player);
+};
+
+const firstNameStem = (player: string): string =>
+  nameStem(player.trim().split(/\s+/)[0] ?? player);
+
+/**
+ * Traži korijen na početku riječi. Bez toga bi „Marić” prošao i unutar
+ * „Zmarić”. Podniz duže riječi svjesno prolazi — „Coutad” mora uhvatiti
+ * „Coutada” i „Coutade”.
+ */
+function mentions(text: string, stem: string): boolean {
+  const escaped = stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?<!\\p{L})${escaped}`, "iu").test(text);
+}
+
+/**
+ * Prezimena se ponavljaju (braća u istoj momčadi). Kad dva imenovana događaja
+ * dijele prezime, tekst mora navesti i ime — inače ne znamo o kome piše.
+ */
+function playerProblems(text: string, facts: MatchFacts): string[] {
+  const named = namedEvents(facts);
+  const stems = named.map((e) => surnameStem(e.player));
+  const problems: string[] = [];
+
+  named.forEach((event, index) => {
+    const own = stems[index] ?? event.player;
+    const ambiguous = stems.some(
+      (other, j) => j !== index && other.toLowerCase() === own.toLowerCase(),
+    );
+    const needed = ambiguous ? [firstNameStem(event.player), own] : [own];
+
+    if (!needed.every((stem) => mentions(text, stem))) {
+      problems.push(`nedostaje ${event.player}`);
+    }
+    if (!text.includes(event.display.replace(/'$/, ""))) {
+      problems.push(`nedostaje minuta ${event.display} (${event.player})`);
+    }
+  });
+
+  return problems;
+}
+
+/**
  * Provjera prije objave. Nema urednika koji bi uhvatio grešku (vidi ADR 0002),
  * pa brojevi moraju proći kroz kod. Provjeravamo četvero: točan rezultat, sve
  * golove i crvene kartone poimence, točan broj žutih kartona, i da tekst ne
@@ -131,14 +188,7 @@ export function verifyReport(
     problems.push(`rezultat ${score} nije naveden`);
   }
 
-  for (const event of namedEvents(facts)) {
-    if (!text.includes(event.player)) {
-      problems.push(`nedostaje ${event.player}`);
-    }
-    if (!text.includes(event.display.replace(/'$/, ""))) {
-      problems.push(`nedostaje minuta ${event.display} (${event.player})`);
-    }
-  }
+  problems.push(...playerProblems(text, facts));
 
   problems.push(...yellowCardProblems(text, facts));
 
